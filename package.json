@@ -1,0 +1,21 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://aleksandrsralovecs@bitbucket.org/aralovecs/minesweeper-game-solver.git",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    }
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.7.5",
+    "babel-core": "^6.26.3",
+    "babel-jest": "^24.9.0",
+    "jest": "^24.9.0"
+  }
+}
