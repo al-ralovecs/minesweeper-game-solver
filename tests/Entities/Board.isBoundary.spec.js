@@ -1,19 +1,8 @@
-import Board from '../../src/Entities/Board';
+import Board from '../../src/Entities/Board.ts';
+import state from './states/3x3.json';
 
 describe('Board', () => {
   test('determine if a cell is boundary', () => {
-    const state = [
-      [
-        -1, 1, -1,
-      ],
-      [
-        2, -1, -1,
-      ],
-      [
-        -1, -1, -1,
-      ],
-    ];
-
     const board = new Board(state);
 
     expect(board.isBoundary(0, 0)).toBe(true);

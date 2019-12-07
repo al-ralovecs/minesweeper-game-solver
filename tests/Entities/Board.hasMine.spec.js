@@ -1,20 +1,9 @@
-import Board from '../../src/Entities/Board';
+import Board from '../../src/Entities/Board.ts';
+import state9x9 from './states/9x9.json';
 
 describe('Board', () => {
-  test('analitically infer if there is a mine at cell', () => {
-    const state = [
-      [  0,  0, 2, -1, -1, -1, -1, -1, -1 ],
-      [  0,  0, 2, -1, -1, -1, -1, -1, -1 ],
-      [  0,  0, 1,  1,  2,  1,  1,  1, -1 ],
-      [  0,  0, 0,  0,  0,  0,  0,  1, -1 ],
-      [  0,  0, 0,  0,  0,  0,  0,  1,  1 ],
-      [  0,  0, 0,  0,  0,  0,  0,  0,  0 ],
-      [  0,  0, 0,  0,  0,  1,  1,  1,  0 ],
-      [  1,  1, 1,  0,  1,  2, -1,  2,  1 ],
-      [ -1, -1, 1,  0,  1, -1, -1, -1, -1 ],
-    ];
-
-    const board = new Board(state);
+  test('analytically infer if there is a mine at a cell', () => {
+    const board = new Board(state9x9);
 
     expect(board.hasMine(0, 0)).toBe(false);
     expect(board.hasMine(0, 1)).toBe(false);
