@@ -9,6 +9,6 @@ export default class Margin {
         this.top = 0 === y ? 0 : -1;
         this.bottom = height - 1 === y ? 0 : 1;
         this.left = 0 === x ? 0 : -1;
-        this.right = width - 1 === j ? 0 : 1;
+        this.right = width - 1 === x ? 0 : 1;
     }
 }

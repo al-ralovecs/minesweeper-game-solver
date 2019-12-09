@@ -4,7 +4,7 @@ describe('Coordinate', () => {
     test('get value of a Coordinate', () => {
         const p = new Coordinate(1, 12);
 
-        expect(p.value).toBe('first=1;second=12');
+        expect(p.value).toBe('y=1&x=12;');
     });
     test('array contains a pair', () => {
         const p = new Coordinate(1, 12);
