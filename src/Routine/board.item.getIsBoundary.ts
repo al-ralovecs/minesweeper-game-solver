@@ -20,6 +20,9 @@ export default function (
 
     for (let i: number = y + m.top; i <= y + m.bottom; i++) {
         for (let j: number = x + m.left; j <= x + m.right; j++) {
+            if (i === y && j === x) {
+                continue;
+            }
             if (0 <= data[i][j]) {
                 return true;
             }

@@ -1,6 +1,8 @@
 import Coordinate from "./Coordinate";
 import countFlags from '../Routine/board.matrix.countTotalFlags';
 import countFlagsAround from '../Routine/board.item.countFlagsAround';
+import countUnrevealedItemsAround from '../Routine/board.item.countUnrevealedItemsAround';
+import flagEmpty from '../Routine/board.matrix.flagEmpty';
 import flagMines from '../Routine/board.matrix.flagMines';
 import generateBitwiseMatrix from '../Routine/board.matrix.generateBitwise';
 import getFlag from '../Routine/board.item.getFlag';
@@ -34,6 +36,7 @@ export default class Board {
         if (initialize) {
             this.initialize();
             this.flagMines();
+            this.flagEmpty();
         }
     }
 
@@ -79,6 +82,11 @@ export default class Board {
     public get countEmpty(): number
     {
         return countFlags(this.modelEmpty, this.height, this.width);
+    }
+
+    public countUnrevealedItemsAround(y: number, x: number): number
+    {
+        return countUnrevealedItemsAround(this.data, y, x, this.height, this.width);
     }
 
     public countMinesAround(y: number, x: number): number
@@ -136,6 +144,11 @@ export default class Board {
     private flagMines(): void
     {
         this.modelMines = flagMines(this.modelMines, this.data, this.height, this.width);
+    }
+
+    private flagEmpty(): void
+    {
+        this.modelEmpty = flagEmpty(this.modelEmpty, this.data, this.height, this.width);
     }
 
     private static isValid(state: number[][]): boolean

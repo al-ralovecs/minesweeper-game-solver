@@ -1,5 +1,5 @@
 import Margin from '../Entity/Margin';
-import countFreeItemsAround from './board.item.countFreeItemsAround';
+import countFreeItemsAround from './board.item.countUnrevealedItemsAround';
 
 export default function (
     model: boolean[][],
@@ -20,6 +20,9 @@ export default function (
 
             for (let ii: number = i + m.top; ii <= i + m.bottom; ii++) {
                 for (let jj: number = j + m.left; jj <= j + m.right; jj++) {
+                    if (ii === i && jj == j) {
+                        continue;
+                    }
                     if (-1 === data[ii][jj]) {
                         model[ii][jj] = true;
                     }
