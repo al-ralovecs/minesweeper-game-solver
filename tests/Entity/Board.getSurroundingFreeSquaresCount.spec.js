@@ -1,9 +1,9 @@
-import Board from '../../src/Entities/Board.ts';
-import state3x3 from './states/3x3.json';
-import state9x9 from './states/9x9.json';
+import Board from '../../src/Entity/Board.ts';
+import state3x3 from '../fixtures/state/3x3.json';
+import state9x9 from '../fixtures/state/9x9.json';
 
 describe('Board', () => {
-  test('count free squares around', () => {
+  test('count free squares around, 3x3 board', () => {
     const board = new Board(state3x3);
 
     expect(board.getSurroundingFreeSquaresCount(0, 0)).toBe(1);
@@ -17,7 +17,7 @@ describe('Board', () => {
     expect(board.getSurroundingFreeSquaresCount(2, 2)).toBe(3);
   });
 
-  test('count free squares around 2', () => {
+  test('count free squares around,  9x9 board', () => {
     const board = new Board(state9x9);
 
     expect(board.getSurroundingFreeSquaresCount(0, 0)).toBe(0);
