@@ -40,10 +40,10 @@ export default class BitwiseMatrix {
         return getIsFlag(this.data, y, x, this.height, this.width);
     }
 
-    public setIsFlag(y: number, x: number): void
+    public setIsFlag(y: number, x: number, value: boolean = true): void
     {
         if (isCoordinatesValid(y, x, this.height, this.width)) {
-            this.data[y][x] = true;
+            this.data[y][x] = value;
         }
     }
 

@@ -4,7 +4,7 @@ import listEmptyItems from '../Routine/region.board.listEmptyItems';
 import listBorderItems from '../Routine/region.board.listBorderItems';
 import segregate from '../Routine/region.borderItems.segregate';
 
-export default class Region {
+export default class RegionList {
     private data: Coordinate[][] = [];
     private readonly bruteForceLimit: number;
 
@@ -13,12 +13,12 @@ export default class Region {
         this.bruteForceLimit = bruteForceLimit;
     }
 
-    public get getData(): Coordinate[][]
+    public get all(): Coordinate[][]
     {
         return this.data;
     }
 
-    public get(n: number): Coordinate[]
+    public item(n: number): Coordinate[]
     {
         if (0 <= n && this.count > n) {
             return this.data[n];

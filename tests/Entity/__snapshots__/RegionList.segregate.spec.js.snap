@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Region check if segregates 1`] = `
+exports[`RegionList check if segregates 1`] = `
 Array [
   Array [
     Coordinate {

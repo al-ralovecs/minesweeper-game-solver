@@ -1,7 +1,7 @@
 import Coordinate from '../../src/Entity/Coordinate';
 
 describe('Coordinate', () => {
-    test('get value of a Coordinate', () => {
+    test('item value of a Coordinate', () => {
         const p = new Coordinate(1, 12);
 
         expect(p.value).toBe('y=1&x=12;');

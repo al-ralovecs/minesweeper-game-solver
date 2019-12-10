@@ -1,4 +1,4 @@
-export default function (matrix: number[][]): boolean
+export default function (matrix: any[][]): boolean
 {
     let width: number = matrix[0].length;
 
