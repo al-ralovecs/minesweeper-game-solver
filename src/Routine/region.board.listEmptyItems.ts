@@ -7,7 +7,7 @@ export default function (board: Board): Coordinate[]
 
     for (let i = 0; i < board.height; i++) {
         for (let j = 0; j < board.width; j++) {
-            if (-1 === board.getValue(i, j) && ! board.getIsMine(i, j)) {
+            if (-1 === board.getValue(i, j) && ! board.getMinesMap.getIsFlag(i, j)) {
                 region.push(new Coordinate(i, j));
             }
         }

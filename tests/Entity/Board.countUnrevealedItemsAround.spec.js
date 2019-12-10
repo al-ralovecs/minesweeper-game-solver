@@ -3,7 +3,7 @@ import state3x3 from '../fixtures/state/3x3.json';
 import state9x9 from '../fixtures/state/9x9.json';
 
 describe('Board', () => {
-  test('count empty items around, 3x3 board', () => {
+  test('count unrevealed items around, 3x3 board', () => {
     const board = new Board(state3x3);
 
     expect(board.countUnrevealedItemsAround(0, 0)).toBe(1);
@@ -17,7 +17,7 @@ describe('Board', () => {
     expect(board.countUnrevealedItemsAround(2, 2)).toBe(3);
   });
 
-  test('count empty items around,  9x9 board', () => {
+  test('count unrevealed items around, 9x9 board', () => {
     const board = new Board(state9x9);
 
     expect(board.countUnrevealedItemsAround(0, 0)).toBe(0);

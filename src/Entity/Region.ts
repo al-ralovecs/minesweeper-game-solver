@@ -1,5 +1,8 @@
 import Coordinate from './Coordinate';
 import Board from './Board';
+import listEmptyItems from '../Routine/region.board.listEmptyItems';
+import listBorderItems from '../Routine/region.board.listBorderItems';
+import segregate from '../Routine/region.borderItems.segregate';
 
 export default class Region {
     private data: Coordinate[][] = [];
@@ -8,6 +11,11 @@ export default class Region {
     public constructor(bruteForceLimit: number = 8)
     {
         this.bruteForceLimit = bruteForceLimit;
+    }
+
+    public get getData(): Coordinate[][]
+    {
+        return this.data;
     }
 
     public get(n: number): Coordinate[]
@@ -26,18 +34,13 @@ export default class Region {
 
     public segregate(board: Board): void
     {
-        let emptyItems: Coordinate[] = board.listEmptyItems;
-        let borderItems: Coordinate[] = board.listBorderItems;
+        let emptyItems: Coordinate[] = listEmptyItems(board);
+        let borderItems: Coordinate[] = listBorderItems(board);
 
         if (emptyItems.length - borderItems.length <= this.bruteForceLimit) {
             this.data.push(emptyItems);
         } else {
-            this.data = Region.process(borderItems);
+            this.data = segregate(borderItems, board);
         }
-    }
-
-    private static process(borderItems: Coordinate[]): Coordinate[][]
-    {
-
     }
 }

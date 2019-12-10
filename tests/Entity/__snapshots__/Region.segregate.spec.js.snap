@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Region check if segregates 1`] = `
+Array [
+  Array [
+    Coordinate {
+      "x": 6,
+      "y": 0,
+    },
+    Coordinate {
+      "x": 6,
+      "y": 1,
+    },
+    Coordinate {
+      "x": 6,
+      "y": 3,
+    },
+    Coordinate {
+      "x": 6,
+      "y": 5,
+    },
+    Coordinate {
+      "x": 7,
+      "y": 7,
+    },
+    Coordinate {
+      "x": 7,
+      "y": 8,
+    },
+    Coordinate {
+      "x": 7,
+      "y": 6,
+    },
+    Coordinate {
+      "x": 7,
+      "y": 5,
+    },
+    Coordinate {
+      "x": 6,
+      "y": 4,
+    },
+    Coordinate {
+      "x": 6,
+      "y": 2,
+    },
+  ],
+  Array [
+    Coordinate {
+      "x": 7,
+      "y": 10,
+    },
+    Coordinate {
+      "x": 7,
+      "y": 12,
+    },
+    Coordinate {
+      "x": 7,
+      "y": 14,
+    },
+    Coordinate {
+      "x": 6,
+      "y": 14,
+    },
+    Coordinate {
+      "x": 6,
+      "y": 15,
+    },
+    Coordinate {
+      "x": 7,
+      "y": 13,
+    },
+    Coordinate {
+      "x": 7,
+      "y": 11,
+    },
+  ],
+]
+`;

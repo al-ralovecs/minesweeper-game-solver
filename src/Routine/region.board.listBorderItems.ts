@@ -1,5 +1,5 @@
-import Board from "../Entity/Board";
-import Coordinate from "../Entity/Coordinate";
+import Board from '../Entity/Board';
+import Coordinate from '../Entity/Coordinate';
 
 export default function (board: Board): Coordinate[]
 {
@@ -7,7 +7,7 @@ export default function (board: Board): Coordinate[]
 
     for (let i = 0; i < board.height; i++) {
         for (let j = 0; j < board.width; j++) {
-            if (board.getIsBoundary(i, j) && ! board.getIsMine(i, j)) {
+            if (board.getIsBoundary(i, j) && ! board.getMinesMap.getIsFlag(i, j)) {
                 region.push(new Coordinate(i, j));
             }
         }
