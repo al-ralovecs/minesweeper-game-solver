@@ -1,23 +1,25 @@
 import BoardDto from '../dto/board.dto';
 import CoordinateDto from '../dto/coordinate.dto';
+import { StrategyType } from '../strategy/strategy-type.enum';
 import AbstractStrategy from '../strategy/abstract-strategy';
+import FlagAllMines from '../strategy/flag-all-mines';
 import ExposeWhenSure from '../strategy/expose-when-sure';
-import Deduce from "../Strategy/Deduce";
-import GuessAsDoOrDie from "../Strategy/GuessAsDoOrDie";
-import {FlagAllMines} from "../strategy/flag-all-mines";
+import Deduce from "../strategy/deduce";
+import GuessAsDoOrDie from "../strategy/guess-as-do-or-die";
 
-export default class Play
+
+export class Play
 {
     private readonly board: BoardDto;
-    private readonly countMines: number;
+    private readonly totalMinesCount: number;
 
-    private currentStrategyId: number = -1;
+    private currentStrategyType: number = -1;
     private exercisedStrategies: AbstractStrategy[];
 
-    public constructor(board: BoardDto, countMines: number)
+    public constructor(board: BoardDto, totalMinesCount: number)
     {
         this.board = board;
-        this.countMines = countMines;
+        this.totalMinesCount = totalMinesCount;
 
         this.init();
     }
@@ -44,25 +46,25 @@ export default class Play
 
     private get getNextStrategy(): AbstractStrategy
     {
-        this.currentStrategyId++;
+        this.currentStrategyType++;
 
         let strategy: AbstractStrategy;
 
-        switch (this.currentStrategyId) {
-            case 0:
-                strategy = new FlagAllMines(this.board, this.countMines);
+        switch (this.currentStrategyType) {
+            case StrategyType.FindAllMines:
+                strategy = new FlagAllMines(this.board, this.totalMinesCount);
                 break;
-            case 1:
-                strategy = new ExposeWhenSure(this.board, this.countMines);
+            case StrategyType.ExposeWhenSure:
+                strategy = new ExposeWhenSure(this.board, this.totalMinesCount);
                 break;
-            case 2:
+            case StrategyType.Deduce:
                 strategy = new Deduce(this.board);
                 break;
-            case 3:
+            case StrategyType.GuessAsDoItOrDie:
                 strategy = new GuessAsDoOrDie(this.board, this.exercisedStrategies[1]);
                 break;
             default:
-                throw Error(`Invalid strategy Id [${this.currentStrategyId}] provided.`);
+                throw Error(`Invalid strategy Id [${this.currentStrategyType}] provided.`);
         }
 
         return strategy;
@@ -70,11 +72,11 @@ export default class Play
 
     private cacheCalcs(strategy: AbstractStrategy): void
     {
-        if ([2].indexOf(this.currentStrategyId) === -1) {
+        if ([2].indexOf(this.currentStrategyType) === -1) {
             return;
         }
 
-        this.exercisedStrategies[this.currentStrategyId] = strategy;
+        this.exercisedStrategies[this.currentStrategyType] = strategy;
     }
 
     private init(): void

@@ -4,21 +4,21 @@ import CoordinateDto from "../dto/coordinate.dto";
 export default abstract class AbstractStrategy
 {
     protected readonly board: BoardDto;
-    protected mineCount: number;
+    protected totalMinesCount: number;
     protected solution: CoordinateDto;
-    protected hasSolution: boolean = false;
+    protected isHasSolution: boolean = false;
 
-    public constructor(board: BoardDto, mineCount: number)
+    protected constructor(board: BoardDto, totalMinesCount: number)
     {
         this.board = board;
-        this.mineCount = mineCount;
+        this.totalMinesCount = totalMinesCount;
     }
 
     public abstract apply();
 
     public get hasSolution(): boolean
     {
-        return this.hasSolution && typeof this.solution !== 'undefined';
+        return this.isHasSolution && typeof this.solution !== 'undefined';
     }
 
     public get getNextMove(): CoordinateDto

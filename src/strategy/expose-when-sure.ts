@@ -4,6 +4,7 @@ import MarginDto from '../dto/margin.dto';
 
 export default class ExposeWhenSure extends AbstractStrategy
 {
+
     apply(): void
     {
         for (let y: number = 0; y < this.board.height; y++) {
@@ -20,7 +21,7 @@ export default class ExposeWhenSure extends AbstractStrategy
                         for (let j: number = x + m.left; j < x + m.right; j++) {
                             if (this.canExposeTile(i, j)) {
                                 this.solution = new CoordinateDto(y, x);
-                                this.hasSolution = true;
+                                this.isHasSolution = true;
 
                                 break;
                             }
