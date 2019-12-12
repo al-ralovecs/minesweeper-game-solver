@@ -5,10 +5,14 @@ export class PerimeterListsListDto {
 
     private currentItemIndex: number;
 
-    public set initItem(index: number)
+    public add(index: number, perimeterList: PerimeterListDto): void
     {
+        if (typeof this.currentItemIndex[index] !== 'undefined') {
+            throw Error(`[PerimeterListsList] Cannot add a list with index [${index}]; this index is already reserved`);
+        }
+
         this.currentItemIndex = index;
-        this.items[index] = new PerimeterListDto();
+        this.items[index] = perimeterList;
     }
 
     public get current(): PerimeterListDto

@@ -1,0 +1,33 @@
+[before] kiss64_x = 1; kiss64_c = 3; kiss64_y = 5; kiss64_z = 9; kiss64_t = 0.
+[after step 1] kiss64_x = 1; kiss64_c = 3; kiss64_y = 5; kiss64_z = 9; kiss64_t = 67108867.
+[after step 2] kiss64_x = 1; kiss64_c = 0; kiss64_y = 5; kiss64_z = 9; kiss64_t = 67108867.
+[after step 3] kiss64_x = 67108868; kiss64_c = 0; kiss64_y = 5; kiss64_z = 9; kiss64_t = 67108867.
+[after step 4] kiss64_x = 67108868; kiss64_c = 0; kiss64_y = 5; kiss64_z = 9; kiss64_t = 67108867.
+[after step 5] kiss64_x = 67108868; kiss64_c = 0; kiss64_y = 40965; kiss64_z = 9; kiss64_t = 67108867.
+[after step 6] kiss64_x = 67108868; kiss64_c = 0; kiss64_y = 40965; kiss64_z = 9; kiss64_t = 67108867.
+[after step 7] kiss64_x = 67108868; kiss64_c = 0; kiss64_y = 83920901; kiss64_z = 9; kiss64_t = 67108867.
+[after step 8] kiss64_x = 67108868; kiss64_c = 0; kiss64_y = 83920901; kiss64_z = 62163956188; kiss64_t = 67108867.
+[after step 9; rand = 62314985957] kiss64_x = 67108868; kiss64_c = 0; kiss64_y = 83920901; kiss64_z = 62163956188; kiss64_t = 67108867.
+
+
+[before] kiss64_x = 1; kiss64_c = 3; kiss64_y = 5; kiss64_z = 9; kiss64_t = 0.
+[after step 1] kiss64_x = 1; kiss64_c = 3; kiss64_y = 5; kiss64_z = 9; kiss64_t = 288230376151711747.
+[after step 2] kiss64_x = 1; kiss64_c = 0; kiss64_y = 5; kiss64_z = 9; kiss64_t = 288230376151711747.
+[after step 3] kiss64_x = 288230376151711748; kiss64_c = 0; kiss64_y = 5; kiss64_z = 9; kiss64_t = 288230376151711747.
+[after step 4] kiss64_x = 288230376151711748; kiss64_c = 0; kiss64_y = 5; kiss64_z = 9; kiss64_t = 288230376151711747.
+[after step 5] kiss64_x = 288230376151711748; kiss64_c = 0; kiss64_y = 40965; kiss64_z = 9; kiss64_t = 288230376151711747.
+[after step 6] kiss64_x = 288230376151711748; kiss64_c = 0; kiss64_y = 40965; kiss64_z = 9; kiss64_t = 288230376151711747.
+[after step 7] kiss64_x = 288230376151711748; kiss64_c = 0; kiss64_y = 360331950654791685; kiss64_z = 9; kiss64_t = 288230376151711747.
+[after step 8] kiss64_x = 288230376151711748; kiss64_c = 0; kiss64_y = 360331950654791685; kiss64_z = 62163956188; kiss64_t = 288230376151711747.
+[after step 9: rand = 648562388970459621] kiss64_x = 288230376151711748; kiss64_c = 0; kiss64_y = 360331950654791685; kiss64_z = 62163956188; kiss64_t = 288230376151711747.
+
+[before] kiss64_x = 1; kiss64_c = 3; kiss64_y = 5; kiss64_z = 9; kiss64_t = 0.
+[after step 1] kiss64_x = 1; kiss64_c = 3; kiss64_y = 5; kiss64_z = 9; kiss64_t = 288230376151711747.
+[after step 2] kiss64_x = 1; kiss64_c = 0; kiss64_y = 5; kiss64_z = 9; kiss64_t = 288230376151711747.
+[after step 3] kiss64_x = 288230376151711748; kiss64_c = 0; kiss64_y = 5; kiss64_z = 9; kiss64_t = 288230376151711747.
+[after step 4] kiss64_x = 288230376151711748; kiss64_c = 0; kiss64_y = 5; kiss64_z = 9; kiss64_t = 288230376151711747.
+[after step 5] kiss64_x = 288230376151711748; kiss64_c = 0; kiss64_y = 40965; kiss64_z = 9; kiss64_t = 288230376151711747.
+[after step 6] kiss64_x = 288230376151711748; kiss64_c = 0; kiss64_y = 40965; kiss64_z = 9; kiss64_t = 288230376151711747.
+[after step 7] kiss64_x = 288230376151711748; kiss64_c = 0; kiss64_y = 360331950654791685; kiss64_z = 9; kiss64_t = 288230376151711747.
+[after step 8] kiss64_x = 288230376151711748; kiss64_c = 0; kiss64_y = 360331950654791685; kiss64_z = 62163956188; kiss64_t = 288230376151711747.
+[after step 9; rand = 648562388970459621] kiss64_x = 288230376151711748; kiss64_c = 0; kiss64_y = 360331950654791685; kiss64_z = 62163956188; kiss64_t = 288230376151711747.

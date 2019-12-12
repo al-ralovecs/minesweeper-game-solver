@@ -1,16 +1,20 @@
 import BoardDto from '../dto/board.dto';
 import PerimeterListsListDto from '../dto/perimeter-lists-list.dto';
 import {MarginDto} from "../dto/margin.dto";
+import {createPerimeterListAndPopulateWithDefaults} from "../routine/perimeter-list.populate-with-defaults";
+import {NeighborDto} from "../dto/neighbor.dto";
 
 export class PerimeterListsComputation {
     private readonly board: BoardDto;
 
-    public data: PerimeterListsListDto;
+    public perimeter: PerimeterListsListDto;
+    public neighbor: NeighborDto[];
+
     public topToBottomPriority: boolean = true;
 
     public used: number[][];
 
-    public lists: number = 0;
+    public listsCount: number = 0;
     public listNext: number = 0;
     public neighborNext: number = 0;
 
@@ -58,42 +62,37 @@ export class PerimeterListsComputation {
             return;
         }
 
-        this.listStart[this.lists] = this.listNext;
-        this.enclosed[this.lists] = true;
-        this.dead[this.lists] = true;
-        this.neighborStart[this.lists] = this.neighborNext;
+        this.listStart[this.listsCount] = this.listNext;
+        this.enclosed[this.listsCount] = true;
+        this.dead[this.listsCount] = true;
+        this.neighborStart[this.listsCount] = this.neighborNext;
 
         this.createList(y, x);
 
-        this.neighborEnd[this.lists] = this.neighborNext - 1;
-        this.listEnd[this.lists] = this.listNext - 1;
-        this.lists++;
+        this.neighborEnd[this.listsCount] = this.neighborNext - 1;
+        this.listEnd[this.listsCount] = this.listNext - 1;
+
+        this.listsCount++;
     }
 
     private createList(y: number, x: number, endGame: boolean = false): void
     {
         this.used[y][x] = this.listNext;
-        this.data.initItem = this.listNext;
-        this.data.current.y = y;
-        this.data.current.x = x;
-        this.data.current.neighborCount = 0;
-        this.data.current.adjacentListCount = 0;
-        this.data.current.isDead = false;
-        this.data.current.similarListsIndex = undefined;
 
-        if (this.data.current.index !== this.listStart[this.lists]) {
-            this.data.previous.nextListIndex = this.data.current.index;
+        this.perimeter.add(
+            this.listNext,
+            createPerimeterListAndPopulateWithDefaults(y, x, this.listsCount, this.listStart[this.listsCount])
+        );
+
+        if (this.perimeter.current.index !== this.listStart[this.listsCount]) {
+            this.perimeter.previous.nextListIndex = this.perimeter.current.index; // .previous()  =?= (list - 1)->next
         }
 
-        this.data.current.nextListIndex = this.listStart[this.lists];
-
-        this.data.current.index = this.lists;
-        this.data.current.tried = -1;
-        this.data.current.merged = -1;
         this.listNext++;
 
         if (endGame) {
-            this.data.current.probability = this.nonPerimeterProbability;
+            this.perimeter.current.probability = this.nonPerimeterProbability;
+            return;
         }
 
         const m: MarginDto = new MarginDto(y, x, this.board.height, this.board.width);
@@ -114,7 +113,32 @@ export class PerimeterListsComputation {
 
     private addNeighbor(y: number, x: number): void
     {
+        const next: NeighborDto = new NeighborDto();
+        this.neighbor[this.listsCount] = next;
 
+
+
+        /**
+         void AddNeighbor(List * list, int x, int y)
+         {
+	Neighbor * next = &neighborArray[lists];
+	for (; next < &neighborArray[neighborNext]; next++)
+	{
+		if (next->x == x && next->y == y)
+			goto FOUND;										// already on the list
+	}
+	neighborNext++;
+	next->x = x;
+	next->y = y;
+	next->unexposed = unexposed[y][x];
+	next->needed = needed[y][x];
+	next->count = 0;
+FOUND:
+	next->entries[next->count++] = list;
+	list->neighbors[list->numNeighbors] = next;
+	list->numNeighbors++;
+}
+         */
     }
 
     private checkNeighbors(y: number, x: number): void
