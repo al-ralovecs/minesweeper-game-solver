@@ -1,5 +1,5 @@
 import ActionDto from "./action.dto";
-import LocationDto from './coordinate.dto';
+import LocationDto from './location.dto';
 
 export default class BoardStateDto
 {
@@ -22,7 +22,7 @@ export default class BoardStateDto
     public action: ActionDto[][];
     public actionList: ActionDto[];
 
-    public livingWitnesses: LocationDto[];
+    public livingWitnesses: LocationDto[] = [];
 
     public unPlayedMoves: number[];
 

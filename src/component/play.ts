@@ -1,31 +1,34 @@
+import PlayInterface from '../interface/play.interface';
+
 import BoardDto from '../dto/board.dto';
-import CoordinateDto from '../dto/coordinate.dto';
-import { StrategyType } from '../strategy/strategy-type.enum';
-import AbstractStrategy from '../strategy/abstract-strategy';
-import FlagAllMines from '../strategy/flag-all-mines';
-import ExposeWhenSure from '../strategy/expose-when-sure';
-import Deduce from "../strategy/deduce";
-import GuessAsDoOrDie from "../strategy/guess-as-do-or-die";
+import BoardStateDto from "../dto/board-state.dto";
+import LocationDto from '../dto/location.dto';
 
+import BoardStateComputation from "../computation/board-state.computation";
 
-export class Play
+import { StrategyType, AbstractStrategy } from '../strategy/abstract-strategy';
+import FirstMoveStrategy from "../strategy/first-move.strategy";
+import TrivialStrategy from "../strategy/trivial.strategy";
+
+export class Play implements PlayInterface
 {
     private readonly board: BoardDto;
-    private readonly totalMinesCount: number;
+    private readonly expectedMinesCountOnBoard: number;
+
+    private boardState: BoardStateDto;
 
     private currentStrategyType: number = -1;
-    private exercisedStrategies: AbstractStrategy[];
 
-    public constructor(board: BoardDto, totalMinesCount: number)
+    public constructor(board: BoardDto, expectedMinesCountOnBoard: number)
     {
         this.board = board;
-        this.totalMinesCount = totalMinesCount;
-
-        this.init();
+        this.expectedMinesCountOnBoard = expectedMinesCountOnBoard;
     }
 
-    public get getNextMove(): CoordinateDto
+    public get getNextMove(): LocationDto
     {
+        this.prepareBoardState();
+
         let hasMove: boolean = false;
         let strategy: AbstractStrategy;
 
@@ -35,10 +38,6 @@ export class Play
             strategy.apply();
 
             hasMove = strategy.hasSolution;
-
-            if (! hasMove) {
-                this.cacheCalcs(strategy);
-            }
         }
 
         return strategy.getNextMove;
@@ -51,17 +50,11 @@ export class Play
         let strategy: AbstractStrategy;
 
         switch (this.currentStrategyType) {
-            case StrategyType.FindAllMines:
-                strategy = new FlagAllMines(this.board, this.totalMinesCount);
+            case StrategyType.FirstMove:
+                strategy = new FirstMoveStrategy(this.boardState);
                 break;
-            case StrategyType.ExposeWhenSure:
-                strategy = new ExposeWhenSure(this.board, this.totalMinesCount);
-                break;
-            case StrategyType.Deduce:
-                strategy = new Deduce(this.board);
-                break;
-            case StrategyType.GuessAsDoItOrDie:
-                strategy = new GuessAsDoOrDie(this.board, this.exercisedStrategies[1]);
+            case StrategyType.Trivial:
+                strategy = new TrivialStrategy(this.boardState);
                 break;
             default:
                 throw Error(`Invalid strategy Id [${this.currentStrategyType}] provided.`);
@@ -70,29 +63,12 @@ export class Play
         return strategy;
     }
 
-    private cacheCalcs(strategy: AbstractStrategy): void
+    private prepareBoardState(): void
     {
-        if ([2].indexOf(this.currentStrategyType) === -1) {
-            return;
-        }
+        const computation: BoardStateComputation = new BoardStateComputation(this.board.height, this.board.width);
+        computation.setBoard = this.board;
+        computation.do();
 
-        this.exercisedStrategies[this.currentStrategyType] = strategy;
-    }
-
-    private init(): void
-    {
-        for (let i: number = 0; i < this.board.height; i++) {
-            this.board.mines[i] = [];
-            this.board.unexposed[i] = [];
-            this.board.neighbors[i] = [];
-            this.board.needed[i] = [];
-
-            for (let j: number = 0; j < this.board.width; j++) {
-                this.board.mines[i][j] = 0;
-                this.board.unexposed[i][j] = 0;
-                this.board.neighbors[i][j] = 0;
-                this.board.needed[i][j] = 0;
-            }
-        }
+        this.boardState = computation.getBoardState;
     }
 }

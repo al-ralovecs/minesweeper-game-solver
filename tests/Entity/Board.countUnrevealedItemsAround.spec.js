@@ -1,5 +1,5 @@
 import Board from '../../src/Entity/Board.ts';
-import state3x3 from '../fixtures/state/3x3.json';
+import state3x3 from '../fixtures/state/3x3.json.js';
 import state9x9 from '../fixtures/state/9x9.json';
 
 describe('Board', () => {

@@ -1,5 +1,5 @@
 import Board from '../../src/Entity/Board.ts';
-import state from '../fixtures/state/3x3.json';
+import state from '../fixtures/state/3x3.json.js';
 
 describe('Board', () => {
   test('determine if a cell is a boundary one', () => {

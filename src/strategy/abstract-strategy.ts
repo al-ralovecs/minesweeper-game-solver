@@ -1,17 +1,30 @@
-import BoardDto from "../dto/board.dto";
-import CoordinateDto from "../dto/coordinate.dto";
+import PlayInterface from '../interface/play.interface';
 
-export default abstract class AbstractStrategy
+import LocationDto from '../dto/location.dto';
+import BoardStateDto from '../dto/board-state.dto';
+
+export enum StrategyType
 {
-    protected readonly board: BoardDto;
-    protected totalMinesCount: number;
-    protected solution: CoordinateDto;
+    FirstMove,
+    Trivial,
+    FindAllMines,
+    ExposeWhenSure,
+    Deduce,
+    GuessAsDoItOrDie,
+}
+
+export abstract class AbstractStrategy implements PlayInterface
+{
+    public readonly name: StrategyType;
+
+    protected readonly boardState: BoardStateDto;
+
+    protected solution: LocationDto;
     protected isHasSolution: boolean = false;
 
-    protected constructor(board: BoardDto, totalMinesCount: number)
+    public constructor(boardState: BoardStateDto)
     {
-        this.board = board;
-        this.totalMinesCount = totalMinesCount;
+        this.boardState = boardState;
     }
 
     public abstract apply();
@@ -21,7 +34,7 @@ export default abstract class AbstractStrategy
         return this.isHasSolution && typeof this.solution !== 'undefined';
     }
 
-    public get getNextMove(): CoordinateDto
+    public get getNextMove(): LocationDto
     {
         if (typeof this.solution === 'undefined') {
             throw Error('[Strategy] Fail on attempt to query a solution that does not exist');

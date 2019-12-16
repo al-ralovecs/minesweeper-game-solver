@@ -1,5 +1,5 @@
 import AbstractStrategy from './abstract-strategy';
-import CoordinateDto from '../dto/coordinate.dto';
+import LocationDto from '../dto/location.dto';
 import MarginDto from '../dto/margin.dto';
 
 export default class ExposeWhenSure extends AbstractStrategy
@@ -20,7 +20,7 @@ export default class ExposeWhenSure extends AbstractStrategy
                     for (let i: number = y + m.top; i < y + m.bottom; i++) {
                         for (let j: number = x + m.left; j < x + m.right; j++) {
                             if (this.canExposeTile(i, j)) {
-                                this.solution = new CoordinateDto(y, x);
+                                this.solution = new LocationDto(y, x);
                                 this.isHasSolution = true;
 
                                 break;

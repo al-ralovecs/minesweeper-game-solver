@@ -2,7 +2,7 @@ import BoardDto from "../dto/board.dto";
 import BoardStateDto from "../dto/board-state.dto";
 import ActionDto from "../dto/action.dto";
 import { MarginDto } from "../dto/margin.dto";
-import LocationDto from '../dto/coordinate.dto';
+import LocationDto from '../dto/location.dto';
 
 export default class BoardStateComputation
 {
@@ -123,6 +123,8 @@ export default class BoardStateComputation
         boardState.adjFlagsOnBoard = [];
         boardState.adjUnrevealed = [];
         boardState.flagConfirmed = [];
+        boardState.revealed = [];
+        boardState.board = [];
 
         for (let i: number = 0; i < boardState.height; i++) {
             boardState.action[i] = [];
@@ -130,12 +132,16 @@ export default class BoardStateComputation
             boardState.adjFlagsOnBoard[i] = [];
             boardState.adjUnrevealed[i] = [];
             boardState.flagConfirmed[i] = [];
+            boardState.revealed[i] = [];
+            boardState.board[i] = [];
 
             for (let j: number = 0; j < boardState.width; j++) {
                 boardState.action[i][j] = undefined;
                 boardState.flagOnBoard[i][j] = false;
                 boardState.adjFlagsOnBoard[i][j] = 0;
                 boardState.flagConfirmed[i][j] = false;
+                boardState.revealed[i][j] = false;
+                boardState.board[i][j] = -1;
 
                 let adjacent: number = 8;
 

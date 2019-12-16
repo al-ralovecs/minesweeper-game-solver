@@ -1,4 +1,4 @@
-export default class CoordinateDto {
+export default class LocationDto {
     public readonly y: number;
     public readonly x: number;
 

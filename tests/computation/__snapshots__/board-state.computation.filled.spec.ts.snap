@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`BoardStateComputation check if segregates 1`] = `
+exports[`BoardStateComputation check how computes filled board 1`] = `
 BoardStateDto {
   "action": Array [
     Array [
@@ -39,19 +39,36 @@ BoardStateDto {
   ],
   "adjUnrevealed": Array [
     Array [
+      1,
+      2,
       3,
-      5,
-      3,
-    ],
-    Array [
-      5,
-      8,
-      5,
     ],
     Array [
       3,
       5,
+      5,
+    ],
+    Array [
+      1,
+      5,
       3,
+    ],
+  ],
+  "board": Array [
+    Array [
+      -1,
+      1,
+      -1,
+    ],
+    Array [
+      2,
+      -1,
+      -1,
+    ],
+    Array [
+      -1,
+      -1,
+      -1,
     ],
   ],
   "flagConfirmed": Array [
@@ -89,7 +106,34 @@ BoardStateDto {
     ],
   ],
   "height": 3,
-  "numOfHidden": 9,
+  "livingWitnesses": Array [
+    LocationDto {
+      "x": 1,
+      "y": 0,
+    },
+    LocationDto {
+      "x": 0,
+      "y": 1,
+    },
+  ],
+  "numOfHidden": 7,
+  "revealed": Array [
+    Array [
+      false,
+      true,
+      false,
+    ],
+    Array [
+      true,
+      false,
+      false,
+    ],
+    Array [
+      false,
+      false,
+      false,
+    ],
+  ],
   "totalFlags": 0,
   "totalFlagsConfirmed": 0,
   "width": 3,
