@@ -32,15 +32,36 @@ export default class BoardStateDto
         this.width = width;
     }
 
+    public get getTotalUnrevealedCount(): number
+    {
+        return this.numOfHidden;
+    }
+
+    public get getAllLivingWitnesses(): LocationDto[]
+    {
+        return this.livingWitnesses;
+    }
+
     public addLivingWitness(location: LocationDto): void
     {
-        if (0 === this.livingWitnesses.filter(e => e.value === location.value).length) {
+        if (0 === this.livingWitnesses.filter(l => l.value === location.value).length) {
             this.livingWitnesses.push(location);
         }
     }
 
     public removeLivingWitnesses(toRemove: LocationDto[]): void
     {
+        if (0 === toRemove.length) {
+            return;
+        }
 
+        let toRemoveValues: string[] = toRemove.map(l => l.value);
+
+        this.livingWitnesses = this.livingWitnesses.filter(l => -1 === toRemoveValues.indexOf(l.value));
+    }
+
+    public countAdjacentUnrevealed(location: LocationDto): number
+    {
+        return this.adjUnrevealed[location.y][location.x];
     }
 }

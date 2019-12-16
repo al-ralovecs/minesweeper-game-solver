@@ -1,6 +1,6 @@
 import { disposition } from '../fixtures/state/3x3.empty.json';
 import BoardDto from "../../src/dto/board.dto";
-import BoardStateComputation from "../../src/computation/board-state.computation";
+import { BoardStateComputation } from "../../src/computation/board-state.computation";
 
 describe('BoardStateComputation', () => {
     test('check how computes empty board', () => {
@@ -8,7 +8,7 @@ describe('BoardStateComputation', () => {
         const boardStateComputation = new BoardStateComputation(board.height, board.width);
 
         boardStateComputation.setBoard = board;
-        boardStateComputation.do();
+        boardStateComputation.process();
 
         expect(boardStateComputation.getBoardState).toMatchSnapshot();
     });

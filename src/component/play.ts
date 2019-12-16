@@ -67,7 +67,7 @@ export class Play implements PlayInterface
     {
         const computation: BoardStateComputation = new BoardStateComputation(this.board.height, this.board.width);
         computation.setBoard = this.board;
-        computation.do();
+        computation.process();
 
         this.boardState = computation.getBoardState;
     }

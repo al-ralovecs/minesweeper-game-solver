@@ -4,7 +4,7 @@ import ActionDto from "../dto/action.dto";
 import { MarginDto } from "../dto/margin.dto";
 import LocationDto from '../dto/location.dto';
 
-export default class BoardStateComputation
+export class BoardStateComputation
 {
     private board: BoardDto;
     private readonly boardState: BoardStateDto;
@@ -27,7 +27,7 @@ export default class BoardStateComputation
         return this.boardState;
     }
 
-    public do(): void
+    public process(): void
     {
         for (let i: number = 0; i < this.boardState.height; i++) {
             this.boardState.adjFlagsOnBoard[i] = [];
@@ -77,7 +77,11 @@ export default class BoardStateComputation
 
                         for (let k: number = i + m.top; k <= i + m.bottom; k++) {
                             for (let l: number = j + m.left; l <= j + m.right; l++) {
-                                this.boardState.adjUnrevealed[k][j]--;
+                                if (k === i && l === j) {
+                                    continue;
+                                }
+
+                                this.boardState.adjUnrevealed[k][l]--;
                             }
                         }
                     }
@@ -98,22 +102,17 @@ export default class BoardStateComputation
             }
         }
 
-        // let toRemove: LocationDto[];
-        // this.boardState.livingWitnesses.forEach(e => {
-        //     if (0 === this.countAdjacentUnrevealed(e)) {
-        //         toRemove.push(e);
-        //     }
-        // });
-        // this.boardState.removeLivingWitnesses(toRemove);
+        let toRemove: LocationDto[] = [];
+        this.boardState.livingWitnesses.forEach(l => {
+            if (0 === this.boardState.countAdjacentUnrevealed(l)) {
+                toRemove.push(l);
+            }
+        });
+        this.boardState.removeLivingWitnesses(toRemove);
 
         // this.boardState.actionList.forEach(a => {
         //    this.boardState.unPlayedMoves[a.getMoveMethod]++;
         // });
-    }
-
-    private countAdjacentUnrevealed(location: LocationDto): number
-    {
-
     }
 
     private static init(boardState: BoardStateDto): void

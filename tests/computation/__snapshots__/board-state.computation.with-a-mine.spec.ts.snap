@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`BoardStateComputation check how computes filled board 1`] = `
+exports[`BoardStateComputation check how computes board with a mine 1`] = `
 BoardStateDto {
   "action": Array [
     Array [
@@ -39,36 +39,36 @@ BoardStateDto {
   ],
   "adjUnrevealed": Array [
     Array [
+      0,
+      2,
       1,
-      4,
-      2,
     ],
     Array [
-      3,
-      5,
-      4,
+      0,
+      2,
+      1,
     ],
     Array [
-      2,
-      3,
-      3,
+      0,
+      1,
+      1,
     ],
   ],
   "board": Array [
     Array [
-      -1,
+      0,
       1,
       -1,
     ],
     Array [
-      2,
-      -1,
+      0,
+      1,
       -1,
     ],
     Array [
-      2,
-      -1,
-      -1,
+      0,
+      1,
+      1,
     ],
   ],
   "flagConfirmed": Array [
@@ -112,30 +112,34 @@ BoardStateDto {
       "y": 0,
     },
     LocationDto {
-      "x": 0,
+      "x": 1,
       "y": 1,
     },
     LocationDto {
-      "x": 0,
+      "x": 1,
+      "y": 2,
+    },
+    LocationDto {
+      "x": 2,
       "y": 2,
     },
   ],
-  "numOfHidden": 6,
+  "numOfHidden": 2,
   "revealed": Array [
     Array [
-      false,
+      true,
       true,
       false,
     ],
     Array [
       true,
-      false,
+      true,
       false,
     ],
     Array [
       true,
-      false,
-      false,
+      true,
+      true,
     ],
   ],
   "totalFlags": 0,

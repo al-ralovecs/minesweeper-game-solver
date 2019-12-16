@@ -7,9 +7,9 @@ export default class FirstMoveStrategy extends AbstractStrategy
 
     apply(): void
     {
-        const totalTiles: number = this.boardState.height * this.boardState.width;
+        const totalTilesCount: number = this.boardState.height * this.boardState.width;
 
-        if (this.boardState.numOfHidden !== totalTiles) {
+        if (this.boardState.getTotalUnrevealedCount !== totalTilesCount) {
             return;
         }
 
