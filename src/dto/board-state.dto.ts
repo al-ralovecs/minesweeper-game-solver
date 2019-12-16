@@ -1,5 +1,8 @@
 import ActionDto from "./action.dto";
 import LocationDto from './location.dto';
+import LocationSetDto from "./location-set.dto";
+import AreaDto from "./area.dto";
+import {AdjacentSquaresDto} from "./adjacent-squares.dto";
 
 export default class BoardStateDto
 {
@@ -22,7 +25,10 @@ export default class BoardStateDto
     public action: ActionDto[][];
     public actionList: ActionDto[];
 
-    public livingWitnesses: LocationDto[] = [];
+    public livingWitnesses: LocationSetDto;
+
+    public adjacentLocations1: AdjacentSquaresDto[][];
+    public adjacentLocations2: AdjacentSquaresDto[][];
 
     public unPlayedMoves: number[];
 
@@ -39,29 +45,50 @@ export default class BoardStateDto
 
     public get getAllLivingWitnesses(): LocationDto[]
     {
-        return this.livingWitnesses;
-    }
-
-    public addLivingWitness(location: LocationDto): void
-    {
-        if (0 === this.livingWitnesses.filter(l => l.value === location.value).length) {
-            this.livingWitnesses.push(location);
-        }
-    }
-
-    public removeLivingWitnesses(toRemove: LocationDto[]): void
-    {
-        if (0 === toRemove.length) {
-            return;
-        }
-
-        let toRemoveValues: string[] = toRemove.map(l => l.value);
-
-        this.livingWitnesses = this.livingWitnesses.filter(l => -1 === toRemoveValues.indexOf(l.value));
+        return this.livingWitnesses.data;
     }
 
     public countAdjacentUnrevealed(location: LocationDto): number
     {
         return this.adjUnrevealed[location.y][location.x];
+    }
+
+    public getUnrevealedArea(witnesses: LocationDto[]): AreaDto
+    {
+        return new AreaDto(this.getUnrevealedSquaresDo(witnesses));
+    }
+
+    private getUnrevealedSquaresDo(witnesses: LocationDto[]): LocationSetDto
+    {
+        let work: LocationSetDto = new LocationSetDto();
+
+        witnesses.forEach(l => {
+            this.getAdjacentSquaresIterable(l).forEach(adj => {
+                if (this.isUnrevealed(adj)) {
+                    work.add(adj);
+                }
+            })
+        });
+
+        return work;
+    }
+
+    private isUnrevealed(location: LocationDto): boolean
+    {
+        return ! this.flagConfirmed[location.y][location.x] && ! this.revealed[location.y][location.x];
+    }
+
+    private getAdjacentSquaresIterable(location: LocationDto): LocationDto[]
+    {
+        if (undefined === this.adjacentLocations1[location.y][location.x]) {
+            this.adjacentLocations1[location.y][location.x] = new AdjacentSquaresDto(
+                location,
+                this.height,
+                this.width,
+                1
+            );
+        }
+
+        return this.adjacentLocations1[location.y][location.x].locations;
     }
 }

@@ -68,7 +68,7 @@ export class BoardStateComputation
                     //     }
                     // }
                     if (! this.boardState.revealed[i][j]) {
-                        this.boardState.addLivingWitness(location);
+                        this.boardState.livingWitnesses.add(location);
 
                         this.boardState.revealed[i][j] = true;
                         this.boardState.board[i][j] = info;
@@ -103,12 +103,12 @@ export class BoardStateComputation
         }
 
         let toRemove: LocationDto[] = [];
-        this.boardState.livingWitnesses.forEach(l => {
+        this.boardState.livingWitnesses.data.forEach(l => {
             if (0 === this.boardState.countAdjacentUnrevealed(l)) {
                 toRemove.push(l);
             }
         });
-        this.boardState.removeLivingWitnesses(toRemove);
+        this.boardState.livingWitnesses.removeAll(toRemove);
 
         // this.boardState.actionList.forEach(a => {
         //    this.boardState.unPlayedMoves[a.getMoveMethod]++;
