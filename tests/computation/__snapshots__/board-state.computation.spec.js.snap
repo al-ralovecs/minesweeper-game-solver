@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BoardStateComputation check if segregates 1`] = `
+BoardStateDto {
+  "action": Array [
+    Array [
+      undefined,
+      undefined,
+      undefined,
+    ],
+    Array [
+      undefined,
+      undefined,
+      undefined,
+    ],
+    Array [
+      undefined,
+      undefined,
+      undefined,
+    ],
+  ],
+  "actionList": Array [],
+  "adjFlagsOnBoard": Array [
+    Array [
+      0,
+      0,
+      0,
+    ],
+    Array [
+      0,
+      0,
+      0,
+    ],
+    Array [
+      0,
+      0,
+      0,
+    ],
+  ],
+  "adjUnrevealed": Array [
+    Array [
+      3,
+      5,
+      3,
+    ],
+    Array [
+      5,
+      8,
+      5,
+    ],
+    Array [
+      3,
+      5,
+      3,
+    ],
+  ],
+  "flagConfirmed": Array [
+    Array [
+      false,
+      false,
+      false,
+    ],
+    Array [
+      false,
+      false,
+      false,
+    ],
+    Array [
+      false,
+      false,
+      false,
+    ],
+  ],
+  "flagOnBoard": Array [
+    Array [
+      false,
+      false,
+      false,
+    ],
+    Array [
+      false,
+      false,
+      false,
+    ],
+    Array [
+      false,
+      false,
+      false,
+    ],
+  ],
+  "height": 3,
+  "numOfHidden": 9,
+  "totalFlags": 0,
+  "totalFlagsConfirmed": 0,
+  "width": 3,
+}
+`;

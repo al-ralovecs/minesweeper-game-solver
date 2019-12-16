@@ -1,26 +1,21 @@
-import isMatrixValid from '../routine/matrix.isValid';
+import isMatrixValid from '../routine/matrix.is-valid';
 
-export class BoardDto
+export default class BoardDto
 {
-    public exposed: number[][];
+    public data: number[][];
 
     public readonly height: number;
     public readonly width: number;
 
-    public mines: number[][];
-    public unexposed: number[][];
-    public neighbors: number[][];
-    public needed: number[][];
-
-    public constructor(exposed: number[number][number])
+    public constructor(data: number[][])
     {
-        if (! isMatrixValid(exposed)) {
-            throw Error('[BoardDto] Provided two dimensional array does not represent a square');
+        if (! isMatrixValid(data)) {
+            throw Error('[BoardDto] Provided two dimensional array does not represent a matrix');
         }
 
-        this.exposed = exposed;
+        this.data = data;
 
-        this.height = exposed.length;
-        this.width = exposed[0].length;
+        this.height = data.length;
+        this.width = data[0].length;
     }
 }
