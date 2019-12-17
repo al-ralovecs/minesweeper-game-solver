@@ -88,18 +88,22 @@ export default class Binomial
 
     private combinationLarge(k: number, n: number): bigint
     {
-        if (0 === k || k === n) {
+        let kk = BigInt(k);
+        let nn = BigInt(n);
+
+
+        if (0n === kk || kk === nn) {
             return 1n;
         }
 
-        const n2: number = n / 2;
+        const n2: bigint = nn / 2n;
 
-        if (k > n2) {
-            k = n - k;
+        if (kk > n2) {
+            kk = nn - kk;
         }
 
-        const nk: number = n - k;
-        const rootN: number = Math.floor(Math.sqrt(n));
+        const nk: bigint = nn - kk;
+        const rootN: bigint = BigInt(Math.floor(Math.sqrt(n)));
         let result: bigint = 1n;
 
         for (let prime of this.ps.getPrimesIterable(2, n)) {
@@ -115,7 +119,7 @@ export default class Binomial
             }
 
             if (biPrime > rootN) {
-                if (n % biPrime < k % biPrime) {
+                if (nn % biPrime < kk % biPrime) {
                     result = result * biPrime;
                 }
                 continue;

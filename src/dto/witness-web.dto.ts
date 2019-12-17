@@ -110,7 +110,7 @@ export default class WitnessWebDto {
 
         let minesLeft: number = boardState.getMines - boardState.getConfirmedFlagCount;
 
-        for (const b: BoxDto of this.boxes) {
+        for (const b of this.boxes) {
             b.calculate(minesLeft);
         }
     }

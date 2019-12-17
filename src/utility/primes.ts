@@ -29,16 +29,21 @@ export default class Primes implements IterableIterator<number>
         this.nextPrime = this.findNext;
 
         return {
-            done: false,
+            done: ! this.hasNext,
             value: result,
         };
+    }
+
+    public get hasNext(): boolean
+    {
+        return (-1 !== this.nextPrime);
     }
 
     private get findNext(): number
     {
         let next: number = -1;
 
-        while (this.index <= stop && -1 === next) {
+        while (this.index <= this.stop && -1 === next) {
             if (! this.composite[this.index]) {
                 next = this.index;
             }
