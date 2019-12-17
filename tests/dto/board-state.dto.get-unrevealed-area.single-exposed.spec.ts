@@ -4,7 +4,6 @@ import { BoardStateComputation } from "../../src/computation/board-state.computa
 import BoardStateDto from "../../src/dto/board-state.dto";
 import LocationDto from "../../src/dto/location.dto";
 import AreaDto from "../../src/dto/area.dto";
-import LocationSetDto from "../../src/dto/location-set.dto";
 
 describe('BoardStateDto', () => {
     test('getUnrevealedArea on a disposition with a single exposed tile', () => {
