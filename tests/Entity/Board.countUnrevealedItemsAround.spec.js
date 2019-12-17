@@ -1,6 +1,6 @@
 import Board from '../../src/Entity/Board.ts';
 import state3x3 from '../fixtures/state/3x3.json.js';
-import state9x9 from '../fixtures/state/9x9.json';
+import state9x9 from '../fixtures/state/9x9.json.js';
 
 describe('Board', () => {
   test('count unrevealed items around, 3x3 board', () => {

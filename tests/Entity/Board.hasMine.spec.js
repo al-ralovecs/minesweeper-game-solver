@@ -1,5 +1,5 @@
 import Board from '../../src/Entity/Board.ts';
-import state9x9 from '../fixtures/state/9x9.json';
+import state9x9 from '../fixtures/state/9x9.json.js';
 
 describe('Board', () => {
   test('analytically infer if there is a mine at a cell', () => {

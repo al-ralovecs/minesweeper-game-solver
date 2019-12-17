@@ -15,7 +15,8 @@
     "globals": {
       "ts-jest": {
         "diagnostics": {
-          "warnOnly": true
+          "warnOnly": true,
+          "ignoreCodes": [ "TS2737" ]
         }
       }
     }

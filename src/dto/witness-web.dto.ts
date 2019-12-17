@@ -31,4 +31,9 @@ export default class WitnessWebDto {
             this.squares.push(new SquareDto(squ));
         }
     }
+
+    public get getPrunedWitnesses(): Iterable<WitnessDto>
+    {
+        return this.prunedWitnesses;
+    }
 }

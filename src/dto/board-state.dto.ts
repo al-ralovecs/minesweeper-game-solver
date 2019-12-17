@@ -1,8 +1,9 @@
-import ActionDto from "./action.dto";
+import ActionDto, {ActionType} from "./action.dto";
 import LocationDto from './location.dto';
 import LocationSetDto from "./location-set.dto";
 import AreaDto from "./area.dto";
 import {AdjacentSquaresDto} from "./adjacent-squares.dto";
+import ChordLocationDto from "./chord-location.dto";
 
 export default class BoardStateDto
 {
@@ -25,6 +26,8 @@ export default class BoardStateDto
 
     public action: ActionDto[][];
     public actionList: ActionDto[];
+
+    public chordLocations: ChordLocationDto[] = [];
 
     public livingWitnesses: LocationSetDto = new LocationSetDto();
 
@@ -65,23 +68,28 @@ export default class BoardStateDto
     {
         let work: LocationSetDto = new LocationSetDto();
 
-        witnesses.forEach(l => {
-            this.getAdjacentSquaresIterable(l).forEach(adj => {
+        for (const l of witnesses) {
+            for (const adj of this.getAdjacentSquaresIterable(l)) {
                 if (this.isUnrevealed(adj)) {
                     work.add(adj);
                 }
-            })
-        });
+            }
+        }
 
         return work;
     }
 
-    private isUnrevealed(location: LocationDto): boolean
+    public isUnrevealed(location: LocationDto): boolean
     {
         return ! this.flagConfirmed[location.y][location.x] && ! this.revealed[location.y][location.x];
     }
 
-    private getAdjacentSquaresIterable(location: LocationDto): LocationDto[]
+    public alreadyActioned(location: LocationDto): boolean
+    {
+        return typeof this.action[location.y][location.x] !== 'undefined';
+    }
+
+    public getAdjacentSquaresIterable(location: LocationDto): Iterable<LocationDto>
     {
         if (undefined === this.adjacentLocations1[location.y][location.x]) {
             this.adjacentLocations1[location.y][location.x] = new AdjacentSquaresDto(
@@ -117,6 +125,69 @@ export default class BoardStateDto
     public get getConfirmedFlagCount(): number
     {
         return this.totalFlagsConfirmed;
+    }
+
+    public countAdjacentFlagsOnBoard(location: LocationDto): number
+    {
+        return this.adjFlagsOnBoard[location.y][location.x];
+    }
+
+    public setChordLocation(location: LocationDto): boolean
+    {
+        let accepted: boolean = false;
+        const benefit: number = this.countAdjacentUnrevealed(location);
+        const cost: number = this.getWitnessValue(location) - this.countAdjacentFlagsOnBoard(location);
+
+        if (1 < benefit - cost) {
+            accepted = true;
+            this.chordLocations.push(new ChordLocationDto(location.y, location.x, benefit - cost));
+        }
+
+        return accepted;
+    }
+
+    public set setAction(action: ActionDto)
+    {
+        if (typeof this.action[action.y][action.x] !== 'undefined') {
+            return;
+        }
+
+        this.action[action.y][action.x] = action;
+
+        if (ActionType.Flag === action.getAction) {
+            this.setFlagConfirmed = action;
+        }
+
+        this.actionList.push(action);
+    }
+
+    public get getActions(): ActionDto[]
+    {
+        return this.actionList;
+    }
+
+    public isConfirmedFlag(l: LocationDto): boolean
+    {
+        return this.flagConfirmed[l.y][l.x];
+    }
+
+    private set setFlagConfirmed(loc: LocationDto)
+    {
+        if (this.isConfirmedFlag(loc)) {
+            return;
+        }
+
+        this.totalFlagsConfirmed++;
+        this.flagConfirmed[loc.y][loc.x] = true;
+
+        if (! this.flagOnBoard[loc.y][loc.x]) {
+            this.totalFlags++;
+        }
+
+        for (const a of this.getAdjacentSquaresIterable(loc)) {
+            this.adjFlagsConfirmed[a.y][a.x]++;
+            this.adjUnrevealed[a.y][a.x]--;
+        }
     }
 }
 
