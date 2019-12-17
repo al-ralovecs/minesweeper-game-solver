@@ -1,5 +1,5 @@
-import LocationDto from "./location.dto";
-import {MarginDto} from "./margin.dto";
+import LocationDto from './location.dto';
+import MarginDto from './margin.dto';
 
 export class AdjacentSquaresDto {
     private readonly location: LocationDto;

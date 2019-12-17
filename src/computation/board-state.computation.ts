@@ -1,19 +1,16 @@
-import BoardDto from "../dto/board.dto";
-import BoardStateDto from "../dto/board-state.dto";
-import ActionDto from "../dto/action.dto";
-import { MarginDto } from "../dto/margin.dto";
+import ActionDto from '../dto/action.dto';
+import BoardDto from '../dto/board.dto';
+import BoardStateDto from '../dto/board-state.dto';
 import LocationDto from '../dto/location.dto';
+import MarginDto from '../dto/margin.dto';
 
-export class BoardStateComputation
+export default class BoardStateComputation
 {
     private board: BoardDto;
     private readonly boardState: BoardStateDto;
-    private readonly expectedMinesCountOnBoard: number;
 
     public constructor(height: number, width: number, expectedMinesCountOnBoard: number)
     {
-        this.expectedMinesCountOnBoard = expectedMinesCountOnBoard;
-
         const boardState = new BoardStateDto(height, width, expectedMinesCountOnBoard);
         BoardStateComputation.init(boardState);
 

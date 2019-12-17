@@ -1,4 +1,4 @@
-export class MarginDto
+export default class MarginDto
 {
     public readonly top: number;
     public readonly bottom: number;
