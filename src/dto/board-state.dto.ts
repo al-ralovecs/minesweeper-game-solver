@@ -25,7 +25,7 @@ export default class BoardStateDto
     public action: ActionDto[][];
     public actionList: ActionDto[];
 
-    public livingWitnesses: LocationSetDto;
+    public livingWitnesses: LocationSetDto = new LocationSetDto();
 
     public adjacentLocations1: AdjacentSquaresDto[][];
     public adjacentLocations2: AdjacentSquaresDto[][];

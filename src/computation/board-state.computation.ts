@@ -75,8 +75,8 @@ export class BoardStateComputation
 
                         let m: MarginDto = new MarginDto(i, j, this.boardState.height, this.boardState.width);
 
-                        for (let k: number = i + m.top; k <= i + m.bottom; k++) {
-                            for (let l: number = j + m.left; l <= j + m.right; l++) {
+                        for (let k: number = m.top; k <= m.bottom; k++) {
+                            for (let l: number = m.left; l <= m.right; l++) {
                                 if (k === i && l === j) {
                                     continue;
                                 }
@@ -124,6 +124,7 @@ export class BoardStateComputation
         boardState.flagConfirmed = [];
         boardState.revealed = [];
         boardState.board = [];
+        boardState.adjacentLocations1 = [];
 
         for (let i: number = 0; i < boardState.height; i++) {
             boardState.action[i] = [];
@@ -133,6 +134,7 @@ export class BoardStateComputation
             boardState.flagConfirmed[i] = [];
             boardState.revealed[i] = [];
             boardState.board[i] = [];
+            boardState.adjacentLocations1[i] = [];
 
             for (let j: number = 0; j < boardState.width; j++) {
                 boardState.action[i][j] = undefined;
@@ -141,6 +143,7 @@ export class BoardStateComputation
                 boardState.flagConfirmed[i][j] = false;
                 boardState.revealed[i][j] = false;
                 boardState.board[i][j] = -1;
+                boardState.adjacentLocations1[i][j] = undefined;
 
                 let adjacent: number = 8;
 

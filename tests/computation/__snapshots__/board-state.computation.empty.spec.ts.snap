@@ -106,7 +106,9 @@ BoardStateDto {
     ],
   ],
   "height": 3,
-  "livingWitnesses": Array [],
+  "livingWitnesses": LocationSetDto {
+    "data": Array [],
+  },
   "numOfHidden": 9,
   "revealed": Array [
     Array [

@@ -106,20 +106,22 @@ BoardStateDto {
     ],
   ],
   "height": 3,
-  "livingWitnesses": Array [
-    LocationDto {
-      "x": 1,
-      "y": 0,
-    },
-    LocationDto {
-      "x": 0,
-      "y": 1,
-    },
-    LocationDto {
-      "x": 0,
-      "y": 2,
-    },
-  ],
+  "livingWitnesses": LocationSetDto {
+    "data": Array [
+      LocationDto {
+        "x": 1,
+        "y": 0,
+      },
+      LocationDto {
+        "x": 0,
+        "y": 1,
+      },
+      LocationDto {
+        "x": 0,
+        "y": 2,
+      },
+    ],
+  },
   "numOfHidden": 6,
   "revealed": Array [
     Array [
