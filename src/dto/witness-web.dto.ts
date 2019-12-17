@@ -51,8 +51,8 @@ export default class WitnessWebDto {
 
         this.prunedWitnesses.sort(WitnessDto.sortByIterationsDesc);
 
-        for (const wit: WitnessDto of this.prunedWitnesses) {
-            for (const squ: SquareDto of this.squares) {
+        for (const wit of this.prunedWitnesses) {
+            for (const squ of this.squares) {
                 if (squ.isAdjacent(wit)) {
                     squ.addWitness= wit;
                 }
@@ -61,9 +61,9 @@ export default class WitnessWebDto {
 
         this.remainingSquares = this.squares.length;
 
-        for (const w: WitnessDto of this.prunedWitnesses) {
+        for (const w of this.prunedWitnesses) {
             let okay: boolean = true;
-            for (const iw: WitnessDto of this.independentWitnesses) {
+            for (const iw of this.independentWitnesses) {
                 if (w.overlap(iw)) {
                     okay = false;
                     break;
@@ -81,7 +81,7 @@ export default class WitnessWebDto {
         }
 
         this.webNum = 0;
-        for (const squ: SquareDto of this.squares) {
+        for (const squ of this.squares) {
             if (0 === squ.getWebNum) {
                 this.webNum++;
                 this.setWeb(squ, this.webNum);
@@ -89,10 +89,10 @@ export default class WitnessWebDto {
         }
 
         let boxCount: number = 0;
-        for (const squ: SquareDto of this.squares) {
+        for (const squ of this.squares) {
             let found: boolean = false;
 
-            for (const b: BoxDto of this.boxes) {
+            for (const b of this.boxes) {
                 if (b.fitsBox(squ)) {
                     b.addSquare = squ;
                     found = true;
@@ -117,7 +117,7 @@ export default class WitnessWebDto {
 
     private set addWitness(wit: WitnessDto)
     {
-        for (const w: WitnessDto of this.prunedWitnesses) {
+        for (const w of this.prunedWitnesses) {
             if (w.equivalent(wit)) {
                 if (this.boardState.getWitnessValue(w) - this.boardState.countAdjacentConfirmedFlags(w)
                     !== this.boardState.getWitnessValue(wit) - this.boardState.countAdjacentConfirmedFlags(wit)
@@ -145,10 +145,10 @@ export default class WitnessWebDto {
 
         squ.setWebNum = num;
 
-        for (const w: WitnessDto of squ.getWitnesses) {
+        for (const w of squ.getWitnesses) {
             w.setWebNum = num;
 
-            for (const s: SquareDto of w.getSquares) {
+            for (const s of w.getSquares) {
                 this.setWeb(s, num); // recursion
             }
         }

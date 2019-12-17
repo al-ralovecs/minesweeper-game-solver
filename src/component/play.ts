@@ -4,7 +4,7 @@ import BoardDto from '../dto/board.dto';
 import BoardStateDto from "../dto/board-state.dto";
 import LocationDto from '../dto/location.dto';
 
-import BoardStateComputation from "../computation/board-state.computation";
+import { BoardStateComputation } from "../computation/board-state.computation";
 
 import { StrategyType, AbstractStrategy } from '../strategy/abstract-strategy';
 import FirstMoveStrategy from "../strategy/first-move.strategy";
@@ -65,7 +65,7 @@ export class Play implements PlayInterface
 
     private prepareBoardState(): void
     {
-        const computation: BoardStateComputation = new BoardStateComputation(this.board.height, this.board.width);
+        const computation: BoardStateComputation = new BoardStateComputation(this.board.height, this.board.width, this.expectedMinesCountOnBoard);
         computation.setBoard = this.board;
         computation.process();
 

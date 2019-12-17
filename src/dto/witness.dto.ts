@@ -75,10 +75,10 @@ export default class WitnessDto extends LocationDto {
             return false;
         }
 
-        for (const l1: SquareDto of this.squares) {
+        for (const l1 of this.squares) {
             let found: boolean = false;
 
-            for (const l2: SquareDto of wit.getSquares) {
+            for (const l2 of wit.getSquares) {
                 if (l2.equals(l1)) {
                     found = true;
                     break;
@@ -102,8 +102,8 @@ export default class WitnessDto extends LocationDto {
         let result: boolean = false;
 
         top:
-        for (const s: SquareDto of w.getSquares) {
-            for (const s1: SquareDto of this.squares) {
+        for (const s of w.getSquares) {
+            for (const s1 of this.squares) {
                 if (s.equals(s1)) {
                     result = true;
                     break top;

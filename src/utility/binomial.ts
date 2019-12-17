@@ -5,7 +5,7 @@ export default class Binomial
     private readonly max: number;
     private readonly ps: PrimeSieve;
 
-    private binomialLookup: bigint[][];
+    private binomialLookup: bigint[][] = [];
     private lookupLimit: number;
 
     public constructor(max: number, lookup: number)
@@ -102,19 +102,21 @@ export default class Binomial
         const rootN: number = Math.floor(Math.sqrt(n));
         let result: bigint = 1n;
 
-        for (let prime: bigint of this.ps.getPrimesIterable(2, n)) {
-            if (prime > nk) {
-                result = result * BigInt(prime);
+        for (let prime of this.ps.getPrimesIterable(2, n)) {
+            const biPrime = BigInt(prime);
+
+            if (biPrime > nk) {
+                result = result * biPrime;
                 continue;
             }
 
-            if (prime > n2) {
+            if (biPrime > n2) {
                 continue;
             }
 
-            if (prime > rootN) {
-                if (n % prime < k % prime) {
-                    result = result * BigInt(prime);
+            if (biPrime > rootN) {
+                if (n % biPrime < k % biPrime) {
+                    result = result * biPrime;
                 }
                 continue;
             }
@@ -125,18 +127,18 @@ export default class Binomial
             let p: bigint = 1n;
 
             while (N > 0) {
-                r = (N % prime) < (k % prime + r) ? 1 : 0;
+                r = (N % biPrime) < (k % prime + r) ? 1 : 0;
 
                 if (1 === r) {
-                    p *= prime;
+                    p *= biPrime;
                 }
 
-                N /= prime;
-                K /= prime;
+                N /= biPrime;
+                K /= biPrime;
             }
 
             if (1 < p) {
-                result = result * BigInt(p);
+                result = result * p;
             }
         }
 

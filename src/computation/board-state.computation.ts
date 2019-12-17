@@ -8,10 +8,13 @@ export class BoardStateComputation
 {
     private board: BoardDto;
     private readonly boardState: BoardStateDto;
+    private readonly expectedMinesCountOnBoard: number;
 
-    public constructor(height: number, width: number)
+    public constructor(height: number, width: number, expectedMinesCountOnBoard: number)
     {
-        const boardState = new BoardStateDto(height, width);
+        this.expectedMinesCountOnBoard = expectedMinesCountOnBoard;
+
+        const boardState = new BoardStateDto(height, width, expectedMinesCountOnBoard);
         BoardStateComputation.init(boardState);
 
         this.boardState = boardState;
@@ -124,6 +127,7 @@ export class BoardStateComputation
         boardState.flagConfirmed = [];
         boardState.revealed = [];
         boardState.board = [];
+        boardState.adjFlagsConfirmed = [];
         boardState.adjacentLocations1 = [];
 
         for (let i: number = 0; i < boardState.height; i++) {
@@ -134,6 +138,7 @@ export class BoardStateComputation
             boardState.flagConfirmed[i] = [];
             boardState.revealed[i] = [];
             boardState.board[i] = [];
+            boardState.adjFlagsConfirmed[i] = [];
             boardState.adjacentLocations1[i] = [];
 
             for (let j: number = 0; j < boardState.width; j++) {
@@ -143,6 +148,7 @@ export class BoardStateComputation
                 boardState.flagConfirmed[i][j] = false;
                 boardState.revealed[i][j] = false;
                 boardState.board[i][j] = -1;
+                boardState.adjFlagsConfirmed[i][j] = 0;
                 boardState.adjacentLocations1[i][j] = undefined;
 
                 let adjacent: number = 8;

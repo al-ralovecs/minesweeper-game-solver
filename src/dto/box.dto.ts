@@ -31,10 +31,10 @@ export default class BoxDto
             return false;
         }
 
-        for (const w: WitnessDto of square.getWitnesses) {
+        for (const w of square.getWitnesses) {
             let found: boolean = false;
 
-            for (const boxWitness: WitnessDto of this.adjWitnesses) {
+            for (const boxWitness of this.adjWitnesses) {
                 if (w.equals(boxWitness)) {
                     found = true;
                     break;
@@ -61,7 +61,7 @@ export default class BoxDto
         this.maxMines = Math.min(this.squares.length, minesLeft);
         this.minMines = 0;
 
-        for (const w: WitnessDto of this.adjWitnesses) {
+        for (const w of this.adjWitnesses) {
             if (w.getMines < this.maxMines) {
                 this.maxMines = w.getMines;
             }
