@@ -1,3 +1,5 @@
+import Primes from './primes';
+
 export default class PrimeSieve
 {
     private readonly composite: boolean[] = [];
@@ -25,5 +27,31 @@ export default class PrimeSieve
                 index = index + i;
             }
         }
+    }
+
+    public isPrime(n: number): boolean
+    {
+        if (1 >= n || this.max < n) {
+            throw Error(`[PrimeSieve] Test value [${n}] is out of range [2..${this.max}]`);
+        }
+
+        return ! this.composite[n];
+    }
+
+    public getPrimesIterable(start: number, stop: number): Iterable<number>
+    {
+        if (start > stop) {
+            throw Error(`[PrimeSieve] Start [${start}] must be less or equal to stop [${stop}]`);
+        }
+
+        if (1 >= start || this.max < start) {
+            throw Error(`[PrimeSieve] Start [${start}] value is out of range of [2..${this.max}]`);
+        }
+
+        if (1 >= stop || this.max < stop) {
+            throw Error(`[PrimerSieve] Stop [${stop}] value is out of range of [2..${this.max}]`);
+        }
+
+        return new Primes(start, stop, this.composite);
     }
 }

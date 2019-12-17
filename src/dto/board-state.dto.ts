@@ -8,6 +8,7 @@ export default class BoardStateDto
 {
     public readonly height: number;
     public readonly width: number;
+    public readonly expectedTotalMines: number;
 
     public totalFlags: number = 0;
     public totalFlagsConfirmed: number = 0;
@@ -32,10 +33,12 @@ export default class BoardStateDto
 
     public unPlayedMoves: number[];
 
-    public constructor(height: number, width: number)
+    public constructor(height: number, width: number, expectedTotalMines: number)
     {
         this.height = height;
         this.width = width;
+        this.expectedTotalMines = expectedTotalMines;
+
     }
 
     public get getTotalUnrevealedCount(): number
@@ -91,4 +94,32 @@ export default class BoardStateDto
 
         return this.adjacentLocations1[location.y][location.x].locations;
     }
+
+    public getWitnessValue(location: LocationDto): number
+    {
+        if (this.isUnrevealed(location)) {
+            throw Error(`[BoardState] Failed when trying to get a witness (${location.x}, ${location.y}) valuu for an unrevealed square`);
+        }
+
+        return this.board[location.y][location.x];
+    }
+
+    public countAdjacentConfirmedFlags(location: LocationDto): number
+    {
+        return this.adjFlagsConfirmed[location.y][location.x];
+    }
+
+    public get getMines(): number
+    {
+        return this.expectedTotalMines;
+    }
+
+    public get getConfirmedFlagCount(): number
+    {
+        return this.totalFlagsConfirmed;
+    }
 }
+
+/**
+
+ */

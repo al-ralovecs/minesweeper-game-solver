@@ -9,38 +9,24 @@ export default  class SquareDto extends LocationDto{
     {
         super(location.y, location.x);
     }
-}
 
-/*
-public class Square extends Location {
-
-    private final List<Witness> witnesses = new ArrayList<>();
-
-    private int webNum = 0;
-
-
-    public Square(Location loc) {
-    	super(loc.x, loc.y);
-
+    public set addWitness(witness: WitnessDto)
+    {
+        this.witnesses.push(witness);
     }
 
-    public void addWitness(Witness wit) {
-        witnesses.add(wit);
+    public get getWitnesses(): WitnessDto[]
+    {
+        return this.witnesses;
     }
 
-    public List<Witness> getWitnesses() {
-        return witnesses;
-    }
-
-
-    public int getWebNum() {
-        return webNum;
-    }
-
-    public void setWebNum(int webNum) {
+    public set setWebNum(webNum: number)
+    {
         this.webNum = webNum;
     }
 
+    public get getWebNum(): number
+    {
+        return this.webNum;
+    }
 }
-
- */

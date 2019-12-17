@@ -1,14 +1,37 @@
-export default class Primes
+export default class Primes implements IterableIterator<number>
 {
+    private readonly composite: boolean[];
+
     private index: number = 0;
     private stop: number;
+
     private nextPrime: number;
 
-    public constructor(start: number, stop: number)
+    public constructor(start: number, stop: number, composite: boolean[])
     {
+        this.composite = composite;
+
         this.index = start;
         this.stop = stop;
-        this.nextPrime = this.findNext();
+
+        this.nextPrime = this.findNext;
+    }
+
+
+    [Symbol.iterator](): IterableIterator<number>
+    {
+        return this;
+    }
+
+    public next(): IteratorResult<number>
+    {
+        const result = this.nextPrime;
+        this.nextPrime = this.findNext;
+
+        return {
+            done: false,
+            value: result,
+        };
     }
 
     private get findNext(): number
@@ -25,7 +48,3 @@ export default class Primes
         return next;
     }
 }
-
-/**
-
- */
