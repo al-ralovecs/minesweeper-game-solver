@@ -4,9 +4,9 @@ import BoardStateDto from '../dto/board-state.dto';
 import WitnessWebDto from '../dto/witness-web.dto';
 import ActionDto, { ActionType } from '../dto/action.dto';
 
-export default class TrivialStrategy extends AbstractStrategy
+export default class TrivialSearchStrategy extends AbstractStrategy
 {
-    public readonly name: StrategyType = StrategyType.Trivial;
+    public readonly name: StrategyType = StrategyType.TrivialSearch;
     private readonly wholeEdge: WitnessWebDto;
 
     public constructor(boardState: BoardStateDto, wholeEdge: WitnessWebDto)
@@ -26,7 +26,7 @@ export default class TrivialStrategy extends AbstractStrategy
                     if (this.boardState.isUnrevealed(l)) {
                         if (! this.boardState.alreadyActioned(l)) {
                             count++;
-                            this.boardState.setAction = new ActionDto(l, ActionType.Flag, StrategyType.Trivial, 1);
+                            this.boardState.setAction = new ActionDto(l, ActionType.Flag, StrategyType.TrivialSearch, 1);
                         }
                     }
                 }
@@ -39,7 +39,7 @@ export default class TrivialStrategy extends AbstractStrategy
                     if (this.boardState.isUnrevealed(l)) {
                         if (! this.boardState.alreadyActioned(l)) {
                             count++;
-                            this.boardState.setAction = new ActionDto(l, ActionType.Clear, StrategyType.Trivial, 1);
+                            this.boardState.setAction = new ActionDto(l, ActionType.Clear, StrategyType.TrivialSearch, 1);
                         }
                     }
                 }
@@ -51,7 +51,7 @@ export default class TrivialStrategy extends AbstractStrategy
         }
 
         for (const action of this.boardState.getActions) {
-            if (action.isCertainty && StrategyType.Trivial === action.moveMethod && ActionType.Clear === action.type) {
+            if (action.isCertainty && StrategyType.TrivialSearch === action.moveMethod && ActionType.Clear === action.type) {
                 this.solution = action;
                 this.isHasSolution = true;
             }

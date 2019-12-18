@@ -5,14 +5,14 @@ import BoardStateDto from '../dto/board-state.dto';
 import LocationDto from '../dto/location.dto';
 import WitnessWebDto from '../dto/witness-web.dto';
 
-import BoardStateComputation from '../computation/board-state.computation';
 import Binomial from '../utility/binomial';
+import BoardStateComputation from '../computation/board-state.computation';
+import WitnessWebService from "../computation/witness-web.service";
 
 import { StrategyType, AbstractStrategy } from '../strategy/abstract-strategy';
 import FirstMoveStrategy from '../strategy/first-move.strategy';
-import TrivialStrategy from '../strategy/trivial.strategy';
-import WitnessWebService from "../computation/witness-web.service";
-import LocalStrategy from "../strategy/local.strategy";
+import TrivialSearchStrategy from '../strategy/trivial-search.strategy';
+import LocalSearchStrategy from "../strategy/local-search.strategy";
 
 
 export class Play implements PlayInterface
@@ -63,11 +63,11 @@ export class Play implements PlayInterface
             case StrategyType.FirstMove:
                 strategy = new FirstMoveStrategy(this.boardState);
                 break;
-            case StrategyType.Trivial:
-                strategy = new TrivialStrategy(this.boardState, this.wholeEdge);
+            case StrategyType.TrivialSearch:
+                strategy = new TrivialSearchStrategy(this.boardState, this.wholeEdge);
                 break;
-            case StrategyType.Local:
-                strategy = new LocalStrategy(this.boardState, this.wholeEdge);
+            case StrategyType.LocalSearch:
+                strategy = new LocalSearchStrategy(this.boardState, this.wholeEdge);
                 break;
             default:
                 throw Error(`[Play::getNextStrategy] Invalid strategy Id [${this.currentStrategyType}] provided.`);
@@ -91,7 +91,7 @@ export class Play implements PlayInterface
 
                 this.boardState = computation.getBoardState;
                 break;
-            case StrategyType.Trivial:
+            case StrategyType.TrivialSearch:
                 const witnessWebService: WitnessWebService = new WitnessWebService(this.boardState, this.binomialEngine);
 
                 const allWitnesses: LocationDto[] = this.boardState.getAllLivingWitnesses;
@@ -102,7 +102,7 @@ export class Play implements PlayInterface
 
                 this.wholeEdge = witnessWebService.getWitnessWeb;
                 break;
-            case StrategyType.Local:
+            case StrategyType.LocalSearch:
                 break;
             default:
                 throw Error(`[Play::prepareAnalysis] Invalid strategy Id [${this.currentStrategyType}] provided.`);

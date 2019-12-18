@@ -7,9 +7,9 @@ import CrunchResultDto from '../dto/crunch-result.dto';
 import WitnessDataDto from '../dto/witness-data.dto';
 import ActionDto, { ActionType } from '../dto/action.dto';
 
-export default class LocalStrategy extends AbstractStrategy
+export default class LocalSearchStrategy extends AbstractStrategy
 {
-    public readonly name: StrategyType = StrategyType.Local;
+    public readonly name: StrategyType = StrategyType.LocalSearch;
     private readonly wholeEdge: WitnessWebDto;
 
     private workRestNotFlags: boolean[];
@@ -49,13 +49,20 @@ export default class LocalStrategy extends AbstractStrategy
                     new SequentialIterator(this.boardState.getWitnessValue(location) - flags, square.length)
                 );
 
-                count += this.checkBigTally(output, StrategyType.Local);
-                count += this.checkWitnesses(output, StrategyType.Local);
+                count += this.checkBigTally(output, StrategyType.LocalSearch);
+                count += this.checkWitnesses(output, StrategyType.LocalSearch);
             }
         }
 
         if (0 === count) {
             return;
+        }
+
+        for (const action of this.boardState.getActions) {
+            if (action.isCertainty && StrategyType.LocalSearch === action.moveMethod && ActionType.Clear === action.type) {
+                this.solution = action;
+                this.isHasSolution = true;
+            }
         }
     }
 

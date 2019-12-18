@@ -6,8 +6,8 @@ import BoardStateDto from '../dto/board-state.dto';
 export enum StrategyType
 {
     FirstMove,
-    Trivial,
-    Local,
+    TrivialSearch,
+    LocalSearch,
     FindAllMines,
     ExposeWhenSure,
     Deduce,
