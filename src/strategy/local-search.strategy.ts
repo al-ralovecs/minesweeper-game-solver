@@ -25,6 +25,7 @@ export default class LocalSearchStrategy extends AbstractStrategy
     apply()
     {
         let count: number = 0;
+
         let square: LocationDto[];
         let witness: LocationDto[];
 
@@ -89,7 +90,12 @@ export default class LocalSearchStrategy extends AbstractStrategy
         }
 
         let sample: number[] = iterator.getSample();
-        let tally: number[] = [];
+        let tally: number[] = new Array<number>(square.length);
+
+        for (let i: number = 0; i < tally.length; i++) {
+            tally[i] = 0;
+        }
+
         let candidates: number = 0;
 
         this.workRestNotFlags = new Array<boolean>(witnessData.length);
@@ -98,22 +104,19 @@ export default class LocalSearchStrategy extends AbstractStrategy
         while (null !== sample) {
             if (this.checkSample(sample, square, witnessData)) {
                 for (let i: number = 0; i < sample.length; i++) {
-                    if (typeof tally[sample[i]] === 'undefined') {
-                        tally[sample[i]] = 1;
-                    } else {
-                        tally[sample[i]]++;
-                    }
+                    tally[sample[i]]++;
                 }
+
                 candidates++;
             }
 
             sample = iterator.getSample();
         }
 
-        let bigTally: bigint[] = [];
+        let bigTally: bigint[] = new Array<bigint>(square.length);
 
         for (let i: number = 0; i < square.length; i++) {
-            bigTally[i] = BigInt(tally[i]);
+            bigTally[i] = ! isNaN(tally[i]) ? BigInt(tally[i]) : 0n;
         }
 
         bign = BigInt(candidates);
@@ -186,7 +189,7 @@ export default class LocalSearchStrategy extends AbstractStrategy
                 let flags2: number = 0;
 
                 for (let j: number = 0; j < mine.length; j++) {
-                    if (mine[i].isAdjacent(witnessData[i].location)) {
+                    if (mine[j].isAdjacent(witnessData[i].location)) {
                         flags2++;
                     }
                 }
@@ -231,6 +234,8 @@ export default class LocalSearchStrategy extends AbstractStrategy
                 witnessData[i].witnessRestFlag = false;
             }
         }
+
+        return true;
     }
 
     private checkBigTally(output: CrunchResultDto, method: StrategyType): number
@@ -242,7 +247,7 @@ export default class LocalSearchStrategy extends AbstractStrategy
         }
 
         for (let i: number = 0; i < output.bigTally.length; i++) {
-            if (0.01 >= output.bigTally[i] - output.bigGoodCandidates) {
+            if (0.01 >= Math.abs(Number(output.bigTally[i]) - Number(output.bigGoodCandidates))) {
                 let l: LocationDto = output.getSquare[i];
 
                 if (! this.boardState.alreadyActioned(l)) {

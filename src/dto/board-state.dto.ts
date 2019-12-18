@@ -210,7 +210,7 @@ export default class BoardStateDto
 
     public getWitnesses(square: LocationDto[]): LocationDto[]
     {
-        let work: LocationSetDto;
+        let work: LocationSetDto = new LocationSetDto();
 
         for (const loc of square) {
             for (const adj of this.getAdjacentSquaresIterable(loc)) {

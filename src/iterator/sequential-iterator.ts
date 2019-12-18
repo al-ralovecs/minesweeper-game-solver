@@ -17,7 +17,9 @@ export default class SequentialIterator extends MyAbstractIterator
     {
         this.index = this.getBalls - 1;
 
-        for (let i: number = 0; i <= this.getBalls; i++) {
+        this.sample = new Array<number>(this.getBalls);
+
+        for (let i: number = 0; i < this.sample.length; i++) {
             this.sample[i] = i;
         }
 

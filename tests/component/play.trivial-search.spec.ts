@@ -6,7 +6,7 @@ import Binomial from '../../src/utility/binomial';
 import ActionDto, {ActionType} from '../../src/dto/action.dto';
 import {StrategyType} from '../../src/strategy/abstract-strategy';
 
-describe('Play: TrivialSearch Search strategy', () => {
+describe('Play: TrivialSearch strategy', () => {
     test('check if provides a move', () => {
         const board = new BoardDto(disposition);
         const binomialEngine: Binomial = new Binomial(1000000, 100);
