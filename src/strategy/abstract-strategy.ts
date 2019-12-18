@@ -1,6 +1,3 @@
-import PlayInterface from '../interface/play.interface';
-
-import LocationDto from '../dto/location.dto';
 import BoardStateDto from '../dto/board-state.dto';
 
 export enum StrategyType
@@ -8,19 +5,18 @@ export enum StrategyType
     FirstMove,
     TrivialSearch,
     LocalSearch,
+    FiftyFiftyGuess,
     FindAllMines,
     ExposeWhenSure,
     Deduce,
     GuessAsDoItOrDie,
 }
 
-export abstract class AbstractStrategy implements PlayInterface
+export abstract class AbstractStrategy
 {
     public readonly name: StrategyType;
 
     protected readonly boardState: BoardStateDto;
-
-    protected solution: LocationDto;
     protected isHasSolution: boolean = false;
 
     public constructor(boardState: BoardStateDto)
@@ -32,15 +28,6 @@ export abstract class AbstractStrategy implements PlayInterface
 
     public get hasSolution(): boolean
     {
-        return this.isHasSolution && typeof this.solution !== 'undefined';
-    }
-
-    public get getNextMove(): LocationDto
-    {
-        if (typeof this.solution === 'undefined') {
-            throw Error('[Strategy] Fail on attempt to query a solution that does not exist');
-        }
-
-        return this.solution;
+        return this.isHasSolution;
     }
 }

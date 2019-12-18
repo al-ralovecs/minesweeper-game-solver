@@ -1,5 +1,6 @@
 import { AbstractStrategy, StrategyType } from "./abstract-strategy";
 import LocationDto from "../dto/location.dto";
+import ActionDto, {ActionType} from "../dto/action.dto";
 
 export default class FirstMoveStrategy extends AbstractStrategy
 {
@@ -20,7 +21,13 @@ export default class FirstMoveStrategy extends AbstractStrategy
             throw Error(`[FirstMoveStrategy] Proposed first move (${x}, ${y}) is out of board`);
         }
 
-        this.solution = new LocationDto(y, x);
+        this.boardState.setAction = new ActionDto(
+            new LocationDto(y, x),
+            ActionType.Clear,
+            StrategyType.FirstMove,
+            1.0
+        );
+
         this.isHasSolution = true;
     }
 }

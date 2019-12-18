@@ -1,5 +1,3 @@
-import PlayInterface from '../interface/play.interface';
-
 import BoardDto from '../dto/board.dto';
 import BoardStateDto from '../dto/board-state.dto';
 import LocationDto from '../dto/location.dto';
@@ -13,9 +11,11 @@ import { StrategyType, AbstractStrategy } from '../strategy/abstract-strategy';
 import FirstMoveStrategy from '../strategy/first-move.strategy';
 import TrivialSearchStrategy from '../strategy/trivial-search.strategy';
 import LocalSearchStrategy from "../strategy/local-search.strategy";
+import ActionDto, {ActionType} from "../dto/action.dto";
+import FiftyFiftyGuessStrategy from "../strategy/fifty-fifty-guess.strategy";
 
 
-export class Play implements PlayInterface
+export default class Play
 {
     private readonly board: BoardDto;
     private readonly binomialEngine: Binomial;
@@ -33,7 +33,7 @@ export class Play implements PlayInterface
         this.expectedMinesCountOnBoard = expectedMinesCountOnBoard;
     }
 
-    public get getNextMove(): LocationDto
+    public get getNextMove(): ActionDto
     {
         let hasMove: boolean = false;
         let strategy: AbstractStrategy;
@@ -52,7 +52,7 @@ export class Play implements PlayInterface
             }
         }
 
-        return strategy.getNextMove;
+        return this.getNextMoveFromBoardState;
     }
 
     private get getNextStrategy(): AbstractStrategy
@@ -68,6 +68,9 @@ export class Play implements PlayInterface
                 break;
             case StrategyType.LocalSearch:
                 strategy = new LocalSearchStrategy(this.boardState, this.wholeEdge);
+                break;
+            case StrategyType.FiftyFiftyGuess:
+                strategy = new FiftyFiftyGuessStrategy(this.boardState);
                 break;
             default:
                 throw Error(`[Play::getNextStrategy] Invalid strategy Id [${this.currentStrategyType}] provided.`);
@@ -103,9 +106,21 @@ export class Play implements PlayInterface
                 this.wholeEdge = witnessWebService.getWitnessWeb;
                 break;
             case StrategyType.LocalSearch:
+            case StrategyType.FiftyFiftyGuess:
                 break;
             default:
                 throw Error(`[Play::prepareAnalysis] Invalid strategy Id [${this.currentStrategyType}] provided.`);
         }
+    }
+
+    private get getNextMoveFromBoardState(): ActionDto
+    {
+        return this.boardState
+            .getActions
+            .filter(a => this.currentStrategyType === a.moveMethod && ActionType.Clear === a.type)
+            .sort((o1: ActionDto, o2: ActionDto) => {
+                return o2.bigProbability - o1.bigProbability
+            })
+            .shift();
     }
 }

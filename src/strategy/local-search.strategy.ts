@@ -59,12 +59,10 @@ export default class LocalSearchStrategy extends AbstractStrategy
             return;
         }
 
-        for (const action of this.boardState.getActions) {
-            if (action.isCertainty && StrategyType.LocalSearch === action.moveMethod && ActionType.Clear === action.type) {
-                this.solution = action;
-                this.isHasSolution = true;
-            }
-        }
+        this.isHasSolution = 0 < this.boardState
+            .getActions
+            .filter(a => a.isCertainty && StrategyType.LocalSearch === a.moveMethod && ActionType.Clear === a.type)
+            .length;
     }
 
     private crunch(square: LocationDto[], witness: LocationDto[], iterator: SequentialIterator): CrunchResultDto

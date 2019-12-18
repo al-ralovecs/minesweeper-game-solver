@@ -50,12 +50,10 @@ export default class TrivialSearchStrategy extends AbstractStrategy
             return;
         }
 
-        for (const action of this.boardState.getActions) {
-            if (action.isCertainty && StrategyType.TrivialSearch === action.moveMethod && ActionType.Clear === action.type) {
-                this.solution = action;
-                this.isHasSolution = true;
-            }
-        }
+        this.isHasSolution = 0 < this.boardState
+            .getActions
+            .filter(a => a.isCertainty && StrategyType.TrivialSearch === a.moveMethod && ActionType.Clear === a.type)
+            .length;
     }
 
     private isObviousClear(location: LocationDto): boolean
