@@ -7,6 +7,7 @@ export enum StrategyType
 {
     FirstMove,
     Trivial,
+    Local,
     FindAllMines,
     ExposeWhenSure,
     Deduce,

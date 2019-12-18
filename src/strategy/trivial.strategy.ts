@@ -2,7 +2,7 @@ import { AbstractStrategy, StrategyType } from './abstract-strategy';
 import LocationDto from '../dto/location.dto';
 import BoardStateDto from '../dto/board-state.dto';
 import WitnessWebDto from '../dto/witness-web.dto';
-import ActionDto, {ActionType} from '../dto/action.dto';
+import ActionDto, { ActionType } from '../dto/action.dto';
 
 export default class TrivialStrategy extends AbstractStrategy
 {

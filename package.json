@@ -16,7 +16,7 @@
       "ts-jest": {
         "diagnostics": {
           "warnOnly": true,
-          "ignoreCodes": [ "TS2737" ]
+          "ignoreCodes": [ "TS2737", "TS151001" ]
         }
       }
     }

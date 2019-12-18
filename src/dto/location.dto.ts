@@ -21,16 +21,8 @@ export default class LocationDto {
         return (! (1 < dy || 1 < dx || (0 === dy && 0 === dx)));
     }
 
-    public equals(m: object): boolean
+    public equals(m: LocationDto): boolean
     {
-        if (m !instanceof LocationDto) {
-            return false;
-        }
-
         return this.y === m.y && this.x === m.x;
     }
 }
-
-/**
-
- */

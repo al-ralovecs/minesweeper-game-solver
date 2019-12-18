@@ -79,6 +79,11 @@ export default class BoardStateDto
         return work;
     }
 
+    public isRevealed(location: LocationDto): boolean
+    {
+        return this.revealed[location.y][location.x];
+    }
+
     public isUnrevealed(location: LocationDto): boolean
     {
         return ! this.flagConfirmed[location.y][location.x] && ! this.revealed[location.y][location.x];
@@ -188,6 +193,34 @@ export default class BoardStateDto
             this.adjFlagsConfirmed[a.y][a.x]++;
             this.adjUnrevealed[a.y][a.x]--;
         }
+    }
+
+    public getAdjacentUnrevealedSquares(location: LocationDto): LocationDto[]
+    {
+        let work: LocationDto[] = [];
+
+        for (const a of this.getAdjacentSquaresIterable(location)) {
+            if (this.isUnrevealed(a)) {
+                work.push(a);
+            }
+        }
+
+        return work;
+    }
+
+    public getWitnesses(square: LocationDto[]): LocationDto[]
+    {
+        let work: LocationSetDto;
+
+        for (const loc of square) {
+            for (const adj of this.getAdjacentSquaresIterable(loc)) {
+                if (this.isRevealed(adj)) {
+                    work.add(adj);
+                }
+            }
+        }
+
+        return work.data;
     }
 }
 

@@ -12,7 +12,7 @@ import { StrategyType, AbstractStrategy } from '../strategy/abstract-strategy';
 import FirstMoveStrategy from '../strategy/first-move.strategy';
 import TrivialStrategy from '../strategy/trivial.strategy';
 import WitnessWebService from "../computation/witness-web.service";
-import AreaDto from "../dto/area.dto";
+import LocalStrategy from "../strategy/local.strategy";
 
 
 export class Play implements PlayInterface
@@ -66,6 +66,9 @@ export class Play implements PlayInterface
             case StrategyType.Trivial:
                 strategy = new TrivialStrategy(this.boardState, this.wholeEdge);
                 break;
+            case StrategyType.Local:
+                strategy = new LocalStrategy(this.boardState, this.wholeEdge);
+                break;
             default:
                 throw Error(`[Play::getNextStrategy] Invalid strategy Id [${this.currentStrategyType}] provided.`);
         }
@@ -98,6 +101,8 @@ export class Play implements PlayInterface
                 witnessWebService.process();
 
                 this.wholeEdge = witnessWebService.getWitnessWeb;
+                break;
+            case StrategyType.Local:
                 break;
             default:
                 throw Error(`[Play::prepareAnalysis] Invalid strategy Id [${this.currentStrategyType}] provided.`);
