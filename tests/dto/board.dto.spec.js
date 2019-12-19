@@ -1,4 +1,4 @@
-import { disposition } from '../fixtures/state/3x3.empty.json.ts';
+import { disposition } from '../__fixtures__/state/3x3.empty.json.ts';
 import BoardDto from "../../src/dto/board.dto";
 
 describe('BoardDto', () => {

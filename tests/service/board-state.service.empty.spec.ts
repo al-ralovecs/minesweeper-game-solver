@@ -1,4 +1,4 @@
-import { disposition } from '../fixtures/state/3x3.empty.json';
+import { disposition } from '../__fixtures__/state/3x3.empty.json';
 import BoardDto from '../../src/dto/board.dto';
 import BoardStateService from '../../src/service/board-state.service';
 

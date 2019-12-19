@@ -1,4 +1,4 @@
-import { disposition } from '../fixtures/state/7x6.fifty-fifty-guess.json';
+import { disposition } from '../__fixtures__/state/7x6.fifty-fifty-guess.json';
 import BoardDto from '../../src/dto/board.dto';
 import Play from '../../src/component/play';
 import LocationDto from '../../src/dto/location.dto';

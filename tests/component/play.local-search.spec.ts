@@ -1,4 +1,4 @@
-import { disposition } from '../fixtures/state/4x4.local-search.json';
+import { disposition } from '../__fixtures__/state/4x4.local-search.json';
 import BoardDto from '../../src/dto/board.dto';
 import Play from '../../src/component/play';
 import LocationDto from '../../src/dto/location.dto';
