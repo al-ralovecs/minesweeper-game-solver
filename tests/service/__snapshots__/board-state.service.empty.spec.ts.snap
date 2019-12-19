@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`BoardStateComputation check how computes empty board 1`] = `
+exports[`BoardStateService check how computes empty board 1`] = `
 BoardStateDto {
   "action": Array [
     Array [
@@ -20,6 +20,23 @@ BoardStateDto {
     ],
   ],
   "actionList": Array [],
+  "adjFlagsConfirmed": Array [
+    Array [
+      0,
+      0,
+      0,
+    ],
+    Array [
+      0,
+      0,
+      0,
+    ],
+    Array [
+      0,
+      0,
+      0,
+    ],
+  ],
   "adjFlagsOnBoard": Array [
     Array [
       0,
@@ -54,6 +71,23 @@ BoardStateDto {
       3,
     ],
   ],
+  "adjacentLocations1": Array [
+    Array [
+      undefined,
+      undefined,
+      undefined,
+    ],
+    Array [
+      undefined,
+      undefined,
+      undefined,
+    ],
+    Array [
+      undefined,
+      undefined,
+      undefined,
+    ],
+  ],
   "board": Array [
     Array [
       -1,
@@ -71,6 +105,8 @@ BoardStateDto {
       -1,
     ],
   ],
+  "chordLocations": Array [],
+  "expectedTotalMines": 4,
   "flagConfirmed": Array [
     Array [
       false,

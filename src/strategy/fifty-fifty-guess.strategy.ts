@@ -5,8 +5,6 @@ import isCoordinatesValid from '../routine/coordinate.is-valid';
 
 export default class FiftyFiftyGuessStrategy extends AbstractStrategy
 {
-    public readonly name: StrategyType = StrategyType.FiftyFiftyGuess;
-
     apply()
     {
         const assumedMoveProbability: number = 0.5; // Not calculated given entire board, therefore, just an assumption
@@ -72,11 +70,11 @@ export default class FiftyFiftyGuessStrategy extends AbstractStrategy
                 }
             }
         }
+    }
 
-        this.isHasSolution = 0 < this.boardState
-            .actionList
-            .filter(a => ActionType.Clear === a.type && StrategyType.FiftyFiftyGuess === a.moveMethod)
-            .length;
+    protected get getMoveMethod(): StrategyType
+    {
+        return StrategyType.FiftyFiftyGuess;
     }
 
     private isTileHidden(x: number, y: number): boolean

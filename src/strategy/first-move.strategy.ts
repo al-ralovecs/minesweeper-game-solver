@@ -1,11 +1,9 @@
-import { AbstractStrategy, StrategyType } from "./abstract-strategy";
+import {AbstractStrategy, StrategyType} from "./abstract-strategy";
 import LocationDto from "../dto/location.dto";
 import ActionDto, {ActionType} from "../dto/action.dto";
 
 export default class FirstMoveStrategy extends AbstractStrategy
 {
-    public readonly name: StrategyType = StrategyType.FirstMove;
-
     apply(): void
     {
         const totalTilesCount: number = this.boardState.height * this.boardState.width;
@@ -27,7 +25,10 @@ export default class FirstMoveStrategy extends AbstractStrategy
             StrategyType.FirstMove,
             1.0
         );
+    }
 
-        this.isHasSolution = true;
+    protected get getMoveMethod(): StrategyType
+    {
+        return StrategyType.FirstMove;
     }
 }

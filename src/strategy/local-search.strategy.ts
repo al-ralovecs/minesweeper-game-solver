@@ -9,7 +9,6 @@ import ActionDto, { ActionType } from '../dto/action.dto';
 
 export default class LocalSearchStrategy extends AbstractStrategy
 {
-    public readonly name: StrategyType = StrategyType.LocalSearch;
     private readonly wholeEdge: WitnessWebDto;
 
     private workRestNotFlags: boolean[];
@@ -54,15 +53,11 @@ export default class LocalSearchStrategy extends AbstractStrategy
                 count += this.checkWitnesses(output, StrategyType.LocalSearch);
             }
         }
+    }
 
-        if (0 === count) {
-            return;
-        }
-
-        this.isHasSolution = 0 < this.boardState
-            .getActions
-            .filter(a => a.isCertainty && StrategyType.LocalSearch === a.moveMethod && ActionType.Clear === a.type)
-            .length;
+    protected get getMoveMethod(): StrategyType
+    {
+        return StrategyType.LocalSearch;
     }
 
     private crunch(square: LocationDto[], witness: LocationDto[], iterator: SequentialIterator): CrunchResultDto

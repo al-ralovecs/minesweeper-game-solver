@@ -1,21 +1,22 @@
+import PlayInterface from '../interface/play.interface';
+
+import ActionDto from '../dto/action.dto';
 import BoardDto from '../dto/board.dto';
 import BoardStateDto from '../dto/board-state.dto';
 import LocationDto from '../dto/location.dto';
 import WitnessWebDto from '../dto/witness-web.dto';
 
 import Binomial from '../utility/binomial';
-import BoardStateComputation from '../computation/board-state.computation';
-import WitnessWebService from "../computation/witness-web.service";
+import BoardStateService from '../service/board-state.service';
+import WitnessWebService from '../service/witness-web.service';
 
-import { StrategyType, AbstractStrategy } from '../strategy/abstract-strategy';
+import { AbstractStrategy, StrategyType } from '../strategy/abstract-strategy';
 import FirstMoveStrategy from '../strategy/first-move.strategy';
 import TrivialSearchStrategy from '../strategy/trivial-search.strategy';
 import LocalSearchStrategy from "../strategy/local-search.strategy";
-import ActionDto, {ActionType} from "../dto/action.dto";
-import FiftyFiftyGuessStrategy from "../strategy/fifty-fifty-guess.strategy";
+import FiftyFiftyGuessStrategy from '../strategy/fifty-fifty-guess.strategy';
 
-
-export default class Play
+export default class Play implements PlayInterface
 {
     private readonly board: BoardDto;
     private readonly binomialEngine: Binomial;
@@ -24,7 +25,7 @@ export default class Play
     private boardState: BoardStateDto;
     private wholeEdge: WitnessWebDto;
 
-    private currentStrategyType: number = 0;
+    private currentStrategyType: StrategyType = StrategyType.FirstMove;
 
     public constructor(board: BoardDto, binomialEngine: Binomial, expectedMinesCountOnBoard: number)
     {
@@ -45,14 +46,29 @@ export default class Play
 
             strategy.apply();
 
-            hasMove = strategy.hasSolution;
+            hasMove = strategy.hasNextMove;
 
             if (! hasMove) {
                 this.currentStrategyType++;
             }
         }
 
-        return this.getNextMoveFromBoardState;
+        return strategy.getNextMove;
+    }
+
+    public get getBoardState(): BoardStateDto
+    {
+        return this.boardState;
+    }
+
+    public get getWitnessWeb(): WitnessWebDto
+    {
+        return this.wholeEdge;
+    }
+
+    public get getCurrentStrategyType(): StrategyType
+    {
+        return this.currentStrategyType;
     }
 
     private get getNextStrategy(): AbstractStrategy
@@ -83,16 +99,16 @@ export default class Play
     {
         switch (this.currentStrategyType) {
             case StrategyType.FirstMove:
-                const computation: BoardStateComputation = new BoardStateComputation(
+                const boardStateService: BoardStateService = new BoardStateService(
                     this.board.height,
                     this.board.width,
                     this.expectedMinesCountOnBoard
                 );
 
-                computation.setBoard = this.board;
-                computation.process();
+                boardStateService.setBoard = this.board;
+                boardStateService.process();
 
-                this.boardState = computation.getBoardState;
+                this.boardState = boardStateService.getBoardState;
                 break;
             case StrategyType.TrivialSearch:
                 const witnessWebService: WitnessWebService = new WitnessWebService(this.boardState, this.binomialEngine);
@@ -109,18 +125,7 @@ export default class Play
             case StrategyType.FiftyFiftyGuess:
                 break;
             default:
-                throw Error(`[Play::prepareAnalysis] Invalid strategy Id [${this.currentStrategyType}] provided.`);
+                throw Error(`[Play::prepareAnalysis] Invalid strategy type Id [${this.currentStrategyType}] provided.`);
         }
-    }
-
-    private get getNextMoveFromBoardState(): ActionDto
-    {
-        return this.boardState
-            .getActions
-            .filter(a => this.currentStrategyType === a.moveMethod && ActionType.Clear === a.type)
-            .sort((o1: ActionDto, o2: ActionDto) => {
-                return o2.bigProbability - o1.bigProbability
-            })
-            .shift();
     }
 }

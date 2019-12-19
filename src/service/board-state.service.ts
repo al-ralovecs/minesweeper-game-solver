@@ -4,7 +4,7 @@ import BoardStateDto from '../dto/board-state.dto';
 import LocationDto from '../dto/location.dto';
 import MarginDto from '../dto/margin.dto';
 
-export default class BoardStateComputation
+export default class BoardStateService
 {
     private board: BoardDto;
     private readonly boardState: BoardStateDto;
@@ -12,7 +12,7 @@ export default class BoardStateComputation
     public constructor(height: number, width: number, expectedMinesCountOnBoard: number)
     {
         const boardState = new BoardStateDto(height, width, expectedMinesCountOnBoard);
-        BoardStateComputation.init(boardState);
+        BoardStateService.init(boardState);
 
         this.boardState = boardState;
     }

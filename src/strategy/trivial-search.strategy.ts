@@ -1,12 +1,11 @@
-import { AbstractStrategy, StrategyType } from './abstract-strategy';
+import {AbstractStrategy, StrategyType} from './abstract-strategy';
 import LocationDto from '../dto/location.dto';
 import BoardStateDto from '../dto/board-state.dto';
 import WitnessWebDto from '../dto/witness-web.dto';
-import ActionDto, { ActionType } from '../dto/action.dto';
+import ActionDto, {ActionType} from '../dto/action.dto';
 
 export default class TrivialSearchStrategy extends AbstractStrategy
 {
-    public readonly name: StrategyType = StrategyType.TrivialSearch;
     private readonly wholeEdge: WitnessWebDto;
 
     public constructor(boardState: BoardStateDto, wholeEdge: WitnessWebDto)
@@ -45,15 +44,11 @@ export default class TrivialSearchStrategy extends AbstractStrategy
                 }
             }
         }
+    }
 
-        if (0 === count) {
-            return;
-        }
-
-        this.isHasSolution = 0 < this.boardState
-            .getActions
-            .filter(a => a.isCertainty && StrategyType.TrivialSearch === a.moveMethod && ActionType.Clear === a.type)
-            .length;
+    protected get getMoveMethod(): StrategyType
+    {
+        return StrategyType.TrivialSearch;
     }
 
     private isObviousClear(location: LocationDto): boolean
