@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeadLocationsService test if finds on a disposition 1`] = `
+AreaDto {
+  "area": LocationSetDto {
+    "data": Array [],
+  },
+  "readOnlyArea": LocationSetDto {
+    "data": Array [],
+  },
+}
+`;

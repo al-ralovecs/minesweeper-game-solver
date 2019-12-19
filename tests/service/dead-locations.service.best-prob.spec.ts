@@ -1,4 +1,4 @@
-import { disposition } from '../__fixtures__/state/16x16x40.pe.most-info.json';
+import { disposition } from '../__fixtures__/state/16x16x40.pe.best-probability.json';
 
 import BoardDto from '../../src/dto/board.dto';
 import BoardStateDto from '../../src/dto/board-state.dto';
@@ -10,14 +10,11 @@ import BoardStateService from '../../src/service/board-state.service';
 import Binomial from '../../src/utility/binomial';
 import WitnessWebService from '../../src/service/witness-web.service';
 import DeadLocationsService from '../../src/service/dead-locations.service';
-import ProbabilityEngineService from '../../src/service/probability-engine.service';
 
-describe('ProbabilityEngineService', () => {
-    test('find a tile which brings about most of the info after being exposed', () => {
-        const mines: number = 40;
-
+describe('DeadLocationsService', () => {
+    test('test if finds on a disposition', () => {
         const board = new BoardDto(disposition);
-        const boardStateService = new BoardStateService(board.height, board.width, mines);
+        const boardStateService = new BoardStateService(board.height, board.width, 40);
 
         boardStateService.setBoard = board;
         boardStateService.process();
@@ -26,9 +23,6 @@ describe('ProbabilityEngineService', () => {
 
         const allWitnesses: LocationDto[] = boardState.getAllLivingWitnesses;
         const allWitnessedSquares: AreaDto = boardState.getUnrevealedArea(allWitnesses);
-
-        const unrevealed: number = boardState.getTotalUnrevealedCount;
-        const minesLeft: number = mines - boardState.getConfirmedFlagCount;
 
         const binomialEngine: Binomial = new Binomial(1000000, 100);
 
@@ -44,11 +38,7 @@ describe('ProbabilityEngineService', () => {
             wholeEdge.getPrunedWitnesses
         );
         deadLocationsService.process();
-
-        const deadLocations = deadLocationsService.getDead;
-
-        const probabilityEngineService = new ProbabilityEngineService(boardState, wholeEdge, binomialEngine, unrevealed, minesLeft, deadLocations);
-
-        expect(probabilityEngineService).toMatchSnapshot();
+        
+        expect(deadLocationsService.getDead).toMatchSnapshot();
     });
 });

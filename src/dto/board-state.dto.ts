@@ -222,8 +222,22 @@ export default class BoardStateDto
 
         return work.data;
     }
+
+    public getAdjacentUnrevealedArea(location: LocationDto): AreaDto
+    {
+        let locationSet: LocationSetDto = new LocationSetDto();
+
+        for (const l of this.getAdjacentUnrevealedSquares(location)) {
+            locationSet.add(l);
+        }
+
+        return new AreaDto(locationSet);
+    }
 }
 
 /**
+ protected Area getAdjacentUnrevealedArea(Location loc) {
 
+		return new Area(getAdjacentUnrevealedSquares(loc, 1));
+	}
  */
