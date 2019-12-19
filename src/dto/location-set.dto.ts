@@ -13,11 +13,15 @@ export default class LocationSetDto {
         return  (0 !== this.data.filter(l => l.value === location.value).length);
     }
 
-    public add(location: LocationDto): void
+    public add(location: LocationDto): boolean
     {
         if (! this.contains(location)) {
             this.data.push(location);
+
+            return true;
         }
+
+        return false;
     }
 
     public addAll(locations: LocationDto[]): void

@@ -32,8 +32,18 @@ export default class WitnessWebDto {
         }
     }
 
-    public get getPrunedWitnesses(): Iterable<WitnessDto>
+    public get getPrunedWitnesses(): WitnessDto[]
     {
         return this.prunedWitnesses;
+    }
+
+    public get getSquares(): SquareDto[]
+    {
+        return this.squares;
+    }
+
+    public get getBoxes(): BoxDto[]
+    {
+        return this.boxes;
     }
 }

@@ -51,6 +51,21 @@ export default class BoxDto
         return true;
     }
 
+    public get isProcessed(): boolean
+    {
+        return this.processed;
+    }
+
+    public set setProcessed(processed: boolean)
+    {
+        this.processed = processed;
+    }
+
+    public get getUID(): number
+    {
+        return this.uid;
+    }
+
     public set addSquare(square: SquareDto)
     {
         this.squares.push(square);
