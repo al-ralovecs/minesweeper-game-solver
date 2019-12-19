@@ -5,7 +5,17 @@ export default class ProbabilityLineDto
     public mineBoxCount: bigint[];
 
     public hashCount: bigint[];
-    public hash: bigint;
+    public hash: bigint = ProbabilityLineDto.getRandomHash;
+
+    public static sortByMineCount(o1: ProbabilityLineDto, o2: ProbabilityLineDto): number
+    {
+        return o2.mineCount = o1.mineCount;
+    }
+
+    private static get getRandomHash(): bigint
+    {
+        return BigInt(Math.random() * Math.pow(10, 9));
+    }
 }
 
 /**

@@ -66,9 +66,29 @@ export default class BoxDto
         return this.uid;
     }
 
+    public get getSquares(): SquareDto[]
+    {
+        return this.squares;
+    }
+
     public set addSquare(square: SquareDto)
     {
         this.squares.push(square);
+    }
+
+    public get getWitnesses(): WitnessDto[]
+    {
+        return this.adjWitnesses;
+    }
+
+    public get getMaxMines(): number
+    {
+        return this.maxMines;
+    }
+
+    public get getMinMines(): number
+    {
+        return this.minMines;
     }
 
     public calculate(minesLeft: number): void
