@@ -12,10 +12,6 @@ import ProbabilityLineDto from '../dto/probability-line.dto';
 import LinkedLocationDto from '../dto/linked-location.dto';
 import LocationDto from '../dto/location.dto';
 
-import toBigInt from "../routine/value.to-bigint";
-import toNumber from "../routine/value.to-number";
-
-
 export const SmallCombinations = [
     [ 1 ],
     [ 1, 1 ],
@@ -34,7 +30,7 @@ export default class ProbabilityEngineService implements ServiceInterface
     public heldProbs: ProbabilityLineDto[] = [];
 
     public boxProb: number[];               //BigDecimal
-    public hashTally: bigint[];
+    public hashTally: number[];
     public offEdgeBest: boolean = true;
     public offEdgeProbability: number;      //BigDecimal
     public bestProbability: number;         //BigDecimal
@@ -60,7 +56,7 @@ export default class ProbabilityEngineService implements ServiceInterface
     private independentGroups: number = 0;
     private recursions: number = 0;
 
-    private finalSolutionsCount: bigint;
+    private finalSolutionsCount: number;
 
     private readonly minTotalMines: number;
     private readonly maxTotalMines: number;
@@ -84,7 +80,7 @@ export default class ProbabilityEngineService implements ServiceInterface
         this.boxCount = this.boxes.length;
 
         this.boxProb = new Array<number>(this.boxCount);
-        this.hashTally = new Array<bigint>(this.boxCount);
+        this.hashTally = new Array<number>(this.boxCount);
 
         // for (const w of this.witnesses) {
         //     w.setProcessed = false;
@@ -98,7 +94,7 @@ export default class ProbabilityEngineService implements ServiceInterface
     public process(): void
     {
         let held: ProbabilityLineDto = new ProbabilityLineDto();
-        held.solutionCount = 1n;
+        held.solutionCount = 1;
         this.heldProbs.push(held);
 
         this.workingProbs.push(new ProbabilityLineDto());
@@ -216,8 +212,8 @@ export default class ProbabilityEngineService implements ServiceInterface
                 npl.solutionCount = pl.solutionCount * epl.solutionCount;
 
                 for (let i: number = 0; i < npl.mineBoxCount.length; i++) {
-                    let w1: bigint = pl.mineBoxCount[i] * epl.solutionCount;
-                    let w2: bigint = epl.mineBoxCount[i] * pl.solutionCount;
+                    let w1: number = pl.mineBoxCount[i] * epl.solutionCount;
+                    let w2: number = epl.mineBoxCount[i] * pl.solutionCount;
                     npl.mineBoxCount[i] = w1 + w2;
 
                     npl.hashCount[i] = epl.hashCount[i] + pl.hashCount[i];
@@ -290,10 +286,10 @@ export default class ProbabilityEngineService implements ServiceInterface
 
     private mergeProbabilities(npl: ProbabilityLineDto, pl: ProbabilityLineDto): void
     {
-        let solutions: bigint = 1n;
+        let solutions: number = 1;
 
         for (let i: number = 0; i < pl.mineBoxCount.length; i++) {
-            solutions *= BigInt(SmallCombinations[toNumber(this.boxes[i].getSquares.length)][toNumber(pl.mineBoxCount[i])]);
+            solutions *= SmallCombinations[this.boxes[i].getSquares.length][pl.mineBoxCount[i]];
         }
 
         npl.solutionCount +=solutions;
@@ -303,12 +299,12 @@ export default class ProbabilityEngineService implements ServiceInterface
                 continue;
             }
 
-            npl.mineBoxCount[i] = toBigInt(npl.mineBoxCount[i]) + toBigInt(pl.mineBoxCount[i]) * solutions;
+            npl.mineBoxCount[i] = npl.mineBoxCount[i] + pl.mineBoxCount[i] * solutions;
 
-            if (0n === pl.mineBoxCount[i]) {
-                npl.hashCount[i] -= pl.hash * BigInt(this.boxes[i].getSquares.length);
+            if (0 === pl.mineBoxCount[i]) {
+                npl.hashCount[i] -= pl.hash * this.boxes[i].getSquares.length;
             } else {
-                npl.hashCount[i] = toBigInt(npl.hashCount[i]) + toBigInt(pl.mineBoxCount[i]) * pl.hash;
+                npl.hashCount[i] = npl.hashCount[i] + pl.mineBoxCount[i] * pl.hash;
             }
         }
     }
@@ -341,7 +337,7 @@ export default class ProbabilityEngineService implements ServiceInterface
         let result: number = 0;
 
         for (const b of nw.oldBoxes) {
-            result += toNumber(pl.mineBoxCount[b.getUID]);
+            result += Number(pl.mineBoxCount[b.getUID]);
         }
 
         return result;
@@ -366,7 +362,7 @@ export default class ProbabilityEngineService implements ServiceInterface
                 return result;
             }
 
-            pl.mineBoxCount[nw.newBoxes[index].getUID] = BigInt(missingMines);
+            pl.mineBoxCount[nw.newBoxes[index].getUID] = missingMines;
             pl.mineCount += missingMines;
             result.push(pl);
 
@@ -391,43 +387,43 @@ export default class ProbabilityEngineService implements ServiceInterface
         let result: ProbabilityLineDto = new ProbabilityLineDto();
 
         result.mineCount = pl.mineCount + mines;
-        result.mineBoxCount[newBox.getUID] = BigInt(mines);
+        result.mineBoxCount[newBox.getUID] = mines;
 
         return result;
     }
 
     private calculateBoxProbabilities(): void
     {
-        let tally: bigint[] = new Array<bigint>(this.boxCount);
+        let tally: number[] = new Array<number>(this.boxCount);
 
         for (let i: number = 0; i < tally.length; i++) {
-            tally[i] = 0n;
-            this.hashTally[i] = 0n;
+            tally[i] = 0;
+            this.hashTally[i] = 0;
         }
 
-        let totalTally: bigint = 0n;
+        let totalTally: number = 0;
 
-        let outsideTally: bigint = 0n;
+        let outsideTally: number = 0;
 
         for (const pl of this.heldProbs) {
             if (this.minTotalMines > pl.mineCount) {
                 continue;
             }
             
-            let mult: bigint = this.binomial.getCombination(this.minesLeft - pl.mineCount, this.squaresLeft);
+            let mult: number = Number(this.binomial.getCombination(this.minesLeft - pl.mineCount, this.squaresLeft));
             
-            outsideTally += mult * BigInt(this.minesLeft - pl.mineCount) * pl.solutionCount;
+            outsideTally += mult * (this.minesLeft - pl.mineCount) * pl.solutionCount;
             
             totalTally += mult * pl.solutionCount;
             
             for (let i: number = 0; i < tally.length; i++) {
-                tally[i] += mult * (toBigInt(pl.mineBoxCount[i]) / BigInt(this.boxes[i].getSquares.length));
+                tally[i] += mult * pl.mineBoxCount[i] / this.boxes[i].getSquares.length;
                 this.hashTally[i] += pl.hashCount[i];
             }
         }
         
         for (let i: number = 0; i < this.boxProb.length; i++) {
-            if (0n !== totalTally) {
+            if (0 !== totalTally) {
                 if (0.01 >= Math.abs(Number(tally[i] - totalTally))) {
                     this.boxProb[i] = 0;
                     
@@ -435,7 +431,7 @@ export default class ProbabilityEngineService implements ServiceInterface
                         this.mines.push(squ);
                     }
                 } else {
-                    this.boxProb[i] = 1 - toNumber(tally[i] / totalTally);
+                    this.boxProb[i] = 1 - tally[i] / totalTally;
                 }
             } else {
                 this.boxProb[i] = 0;
@@ -444,8 +440,8 @@ export default class ProbabilityEngineService implements ServiceInterface
         
         for (let i: number = 0; i < this.hashTally.length; i++) {
             for (let j: number = i + 1; j < this.hashTally.length; j++) {
-                const hash1: bigint = this.hashTally[i] / BigInt(this.boxes[i].getSquares.length);
-                const hash2: bigint = this.hashTally[j] / BigInt(this.boxes[j].getSquares.length);
+                const hash1: number = this.hashTally[i] / this.boxes[i].getSquares.length;
+                const hash2: number = this.hashTally[j] / this.boxes[j].getSquares.length;
                 
                 if (0.01 >= Math.abs(Number(hash1 - hash2))) {
                     ProbabilityEngineService.addLinkedLocation(this.linkedLocations, this.boxes[i], this.boxes[j]);
@@ -461,8 +457,8 @@ export default class ProbabilityEngineService implements ServiceInterface
         
         this.linkedLocations.sort(LinkedLocationDto.sortByLinksDesc);
         
-        if (0 !== this.squaresLeft && 0n !== totalTally) {
-            this.offEdgeProbability = 1 - toNumber(outsideTally / totalTally / BigInt(this.squaresLeft));
+        if (0 !== this.squaresLeft && 0 !== totalTally) {
+            this.offEdgeProbability = 1 - outsideTally / totalTally / this.squaresLeft;
         } else {
             this.offEdgeProbability = 0;
         }
