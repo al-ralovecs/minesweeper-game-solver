@@ -11,6 +11,10 @@ import Binomial from '../../src/utility/binomial';
 import WitnessWebService from '../../src/service/witness-web.service';
 import DeadLocationsService from '../../src/service/dead-locations.service';
 import ProbabilityEngineService from '../../src/service/probability-engine.service';
+import {AbstractStrategy} from "../../src/strategy/abstract-strategy";
+import TrivialSearchStrategy from "../../src/strategy/trivial-search.strategy";
+import {ActionType} from "../../src/dto/action.dto";
+import LocalSearchStrategy from "../../src/strategy/local-search.strategy";
 
 describe('ProbabilityEngineService', () => {
     test('find a tile which brings about most of the info after being exposed', () => {
@@ -22,22 +26,41 @@ describe('ProbabilityEngineService', () => {
         boardStateService.setBoard = board;
         boardStateService.process();
 
-        const boardState: BoardStateDto = boardStateService.getBoardState;
+        let boardState: BoardStateDto = boardStateService.getBoardState;
 
-        const allWitnesses: LocationDto[] = boardState.getAllLivingWitnesses;
-        const allWitnessedSquares: AreaDto = boardState.getUnrevealedArea(allWitnesses);
-
-        const unrevealed: number = boardState.getTotalUnrevealedCount;
-        const minesLeft: number = mines - boardState.getConfirmedFlagCount;
+        let allWitnesses: LocationDto[] = boardState.getAllLivingWitnesses;
+        let allWitnessedSquares: AreaDto = boardState.getUnrevealedArea(allWitnesses);
 
         const binomialEngine: Binomial = new Binomial(1000000, 100);
 
-        const witnessWebService: WitnessWebService = new WitnessWebService(boardState, binomialEngine);
+        let witnessWebService: WitnessWebService = new WitnessWebService(boardState, binomialEngine);
         witnessWebService.setAllWitnesses = allWitnesses;
         witnessWebService.setAllSquares = allWitnessedSquares.getLocations.data;
         witnessWebService.process();
 
-        const wholeEdge: WitnessWebDto = witnessWebService.getWitnessWeb;
+        let wholeEdge: WitnessWebDto = witnessWebService.getWitnessWeb;
+
+        const trivialSearch: AbstractStrategy = new TrivialSearchStrategy(boardState, wholeEdge);
+        trivialSearch.apply();
+        trivialSearch.hasNextMove;
+
+        expect(boardState.getActions.filter(a => ActionType.Clear === a.type).length).toBe(0);
+
+        const localSearch: AbstractStrategy = new LocalSearchStrategy(boardState, wholeEdge);
+        localSearch.apply();
+        localSearch.hasNextMove;
+
+        expect(boardState.getActions.filter(a => ActionType.Clear === a.type).length).toBe(0);
+
+        allWitnesses = boardState.getAllLivingWitnesses;
+        allWitnessedSquares = boardState.getUnrevealedArea(allWitnesses);
+
+        witnessWebService = new WitnessWebService(boardState, binomialEngine);
+        witnessWebService.setAllWitnesses = allWitnesses;
+        witnessWebService.setAllSquares = allWitnessedSquares.getLocations.data;
+        witnessWebService.process();
+
+        wholeEdge = witnessWebService.getWitnessWeb;
 
         const deadLocationsService: DeadLocationsService = new DeadLocationsService(
             boardState,
@@ -45,10 +68,15 @@ describe('ProbabilityEngineService', () => {
         );
         deadLocationsService.process();
 
+        const unrevealed: number = boardState.getTotalUnrevealedCount;
+        const minesLeft: number = mines - boardState.getConfirmedFlagCount;
         const deadLocations = deadLocationsService.getDead;
 
-        const probabilityEngineService = new ProbabilityEngineService(boardState, wholeEdge, binomialEngine, unrevealed, minesLeft, deadLocations);
+        let probabilityEngineService = new ProbabilityEngineService(boardState, wholeEdge, binomialEngine, unrevealed, minesLeft, deadLocations);
+        probabilityEngineService.process();
 
-        expect(probabilityEngineService).toMatchSnapshot();
+        expect(probabilityEngineService.getOffEdgeProb).toBe(0.846856);
+        expect(probabilityEngineService.cutOffProbability).toBe(0.8726601599999999);
+        expect(probabilityEngineService.bestProbability).toBe(0.909021);
     });
 });

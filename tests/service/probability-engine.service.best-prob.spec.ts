@@ -10,11 +10,11 @@ import BoardStateService from '../../src/service/board-state.service';
 import Binomial from '../../src/utility/binomial';
 import WitnessWebService from '../../src/service/witness-web.service';
 import DeadLocationsService from '../../src/service/dead-locations.service';
-import ProbabilityEngineService from "../../src/service/probability-engine.service";
-import TrivialSearchStrategy from "../../src/strategy/trivial-search.strategy";
-import {AbstractStrategy} from "../../src/strategy/abstract-strategy";
-import {ActionType} from "../../src/dto/action.dto";
-import LocalSearchStrategy from "../../src/strategy/local-search.strategy";
+import ProbabilityEngineService from '../../src/service/probability-engine.service';
+import TrivialSearchStrategy from '../../src/strategy/trivial-search.strategy';
+import {AbstractStrategy} from '../../src/strategy/abstract-strategy';
+import {ActionType} from '../../src/dto/action.dto';
+import LocalSearchStrategy from '../../src/strategy/local-search.strategy';
 
 describe('ProbabilityEngineService', () => {
     test('process on adopted disposition', () => {
