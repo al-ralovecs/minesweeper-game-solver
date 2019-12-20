@@ -75,8 +75,8 @@ describe('ProbabilityEngineService', () => {
         let probabilityEngineService = new ProbabilityEngineService(boardState, wholeEdge, binomialEngine, unrevealed, minesLeft, deadLocations);
         probabilityEngineService.process();
 
-        expect(probabilityEngineService.getOffEdgeProb).toBe(0);
-        expect(probabilityEngineService.cutOffProbability).toBe(0);
-        expect(probabilityEngineService.bestProbability).toBe(0);
+        expect(probabilityEngineService.getOffEdgeProb).toBe(0.87487);
+        expect(probabilityEngineService.cutOffProbability).toBe(0.88858464);
+        expect(probabilityEngineService.bestProbability).toBe(0.925609);
     });
 });

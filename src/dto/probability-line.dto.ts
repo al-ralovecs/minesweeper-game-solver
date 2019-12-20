@@ -1,11 +1,19 @@
+/*
+ * Used to hold a solution
+ */
 export default class ProbabilityLineDto
 {
     public mineCount: number = 0;
-    public solutionCount: number = 0;
-    public mineBoxCount: number[] = [];
+    public solutionCount: bigint = 0n;
+    public mineBoxCount: bigint[];
 
     public hashCount: number[] = [];
     public hash: number = ProbabilityLineDto.getRandomHash;
+
+    public constructor(boxCount: number)
+    {
+        this.mineBoxCount = Array<bigint>(boxCount).fill(0n);
+    }
 
     public static sortByMineCount(o1: ProbabilityLineDto, o2: ProbabilityLineDto): number
     {
