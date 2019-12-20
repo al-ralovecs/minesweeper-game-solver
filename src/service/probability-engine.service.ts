@@ -12,6 +12,9 @@ import ProbabilityLineDto from '../dto/probability-line.dto';
 import LinkedLocationDto from '../dto/linked-location.dto';
 import LocationDto from '../dto/location.dto';
 
+import toBigInt from "../routine/value.to-bigint";
+import toNumber from "../routine/value.to-number";
+
 
 export const SmallCombinations = [
     [ 1 ],
@@ -83,13 +86,13 @@ export default class ProbabilityEngineService implements ServiceInterface
         this.boxProb = new Array<number>(this.boxCount);
         this.hashTally = new Array<bigint>(this.boxCount);
 
-        for (const w of this.witnesses) {
-            w.setProcessed = false;
-        }
-
-        for (const b of this.boxes) {
-            b.setProcessed = false;
-        }
+        // for (const w of this.witnesses) {
+        //     w.setProcessed = false;
+        // }
+        //
+        // for (const b of this.boxes) {
+        //     b.setProcessed = false;
+        // }
     }
 
     public process(): void
@@ -115,6 +118,11 @@ export default class ProbabilityEngineService implements ServiceInterface
         }
 
         this.calculateBoxProbabilities();
+    }
+
+    public get getOffEdgeProb(): number
+    {
+        return this.offEdgeProbability;
     }
 
     private findFirstWitness(): NextWitnessDto
@@ -285,7 +293,7 @@ export default class ProbabilityEngineService implements ServiceInterface
         let solutions: bigint = 1n;
 
         for (let i: number = 0; i < pl.mineBoxCount.length; i++) {
-            solutions *= BigInt(SmallCombinations[this.boxes[i].getSquares.length][pl.mineBoxCount[i]]);
+            solutions *= BigInt(SmallCombinations[toNumber(this.boxes[i].getSquares.length)][toNumber(pl.mineBoxCount[i])]);
         }
 
         npl.solutionCount +=solutions;
@@ -295,12 +303,12 @@ export default class ProbabilityEngineService implements ServiceInterface
                 continue;
             }
 
-            npl.mineBoxCount[i] += pl.mineBoxCount[i] * solutions;
+            npl.mineBoxCount[i] = toBigInt(npl.mineBoxCount[i]) + toBigInt(pl.mineBoxCount[i]) * solutions;
 
             if (0n === pl.mineBoxCount[i]) {
                 npl.hashCount[i] -= pl.hash * BigInt(this.boxes[i].getSquares.length);
             } else {
-                npl.hashCount[i] += pl.mineBoxCount[i] * pl.hash;
+                npl.hashCount[i] = toBigInt(npl.hashCount[i]) + toBigInt(pl.mineBoxCount[i]) * pl.hash;
             }
         }
     }
@@ -333,7 +341,7 @@ export default class ProbabilityEngineService implements ServiceInterface
         let result: number = 0;
 
         for (const b of nw.oldBoxes) {
-            result += Number(pl.mineBoxCount[b.getUID]);
+            result += toNumber(pl.mineBoxCount[b.getUID]);
         }
 
         return result;
@@ -413,7 +421,7 @@ export default class ProbabilityEngineService implements ServiceInterface
             totalTally += mult * pl.solutionCount;
             
             for (let i: number = 0; i < tally.length; i++) {
-                tally[i] += mult * (pl.mineBoxCount[i] / BigInt(this.boxes[i].getSquares.length));
+                tally[i] += mult * (toBigInt(pl.mineBoxCount[i]) / BigInt(this.boxes[i].getSquares.length));
                 this.hashTally[i] += pl.hashCount[i];
             }
         }
@@ -427,7 +435,7 @@ export default class ProbabilityEngineService implements ServiceInterface
                         this.mines.push(squ);
                     }
                 } else {
-                    this.boxProb[i] = 1 - (tally[i] / totalTally);
+                    this.boxProb[i] = 1 - toNumber(tally[i] / totalTally);
                 }
             } else {
                 this.boxProb[i] = 0;
@@ -454,7 +462,7 @@ export default class ProbabilityEngineService implements ServiceInterface
         this.linkedLocations.sort(LinkedLocationDto.sortByLinksDesc);
         
         if (0 !== this.squaresLeft && 0n !== totalTally) {
-            this.offEdgeProbability = 1 - (outsideTally / totalTally / this.squaresLeft);
+            this.offEdgeProbability = 1 - toNumber(outsideTally / totalTally / BigInt(this.squaresLeft));
         } else {
             this.offEdgeProbability = 0;
         }
