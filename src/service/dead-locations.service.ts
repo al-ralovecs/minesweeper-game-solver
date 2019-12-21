@@ -1,9 +1,11 @@
+import ServiceInterface from '../interface/service.interface';
+
 import BoardStateDto from '../dto/board-state.dto';
 import LocationDto from '../dto/location.dto';
 import LocationSetDto from '../dto/location-set.dto';
 import AreaDto from '../dto/area.dto';
 
-export default class DeadLocationsService
+export default class DeadLocationsService implements ServiceInterface
 {
     private readonly boardState: BoardStateDto;
     private readonly witnesses: LocationDto[];

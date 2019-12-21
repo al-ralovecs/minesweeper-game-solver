@@ -11,7 +11,8 @@ import NextWitnessDto from '../dto/next-witness.dto';
 import ProbabilityLineDto from '../dto/probability-line.dto';
 import LinkedLocationDto from '../dto/linked-location.dto';
 import LocationDto from '../dto/location.dto';
-import bigintDivide from "../routine/bigint.divide";
+
+import bigintDivide from '../routine/bigint.divide';
 
 export const SmallCombinations = [
     [ 1 ],
@@ -62,14 +63,18 @@ export default class ProbabilityEngineService implements ServiceInterface
     private readonly minTotalMines: number;
     private readonly maxTotalMines: number;
 
-    public constructor(boardState: BoardStateDto, web: WitnessWebDto, binomial: Binomial, squaresLeft: number, minesLeft: number, deadLocations: AreaDto)
+    public constructor(
+        boardState: BoardStateDto,
+        web: WitnessWebDto,
+        deadLocations: AreaDto,
+        binomial: Binomial)
     {
         this.boardState = boardState;
         this.web = web;
         this.binomial = binomial;
         
-        this.minesLeft = minesLeft;
-        this.squaresLeft = squaresLeft - web.getSquares.length;
+        this.minesLeft = this.boardState.expectedTotalMines - this.boardState.getConfirmedFlagCount;
+        this.squaresLeft = this.boardState.getTotalUnrevealedCount - web.getSquares.length;
         this.deadLocations = deadLocations;
 
         this.minTotalMines = this.minesLeft - this.squaresLeft;
@@ -82,14 +87,6 @@ export default class ProbabilityEngineService implements ServiceInterface
 
         this.boxProb = new Array<number>(this.boxCount);
         this.hashTally = new Array<bigint>(this.boxCount);
-
-        // for (const w of this.witnesses) {
-        //     w.setProcessed = false;
-        // }
-        //
-        // for (const b of this.boxes) {
-        //     b.setProcessed = false;
-        // }
     }
 
     public process(): void
@@ -271,7 +268,7 @@ export default class ProbabilityEngineService implements ServiceInterface
         // so we have processed a complete set of independent witnesses
 
         /**
-         * @note: this is exactly the place where we can find (local) clear
+         * @note: this is exactly the place where we can find (local) clears
          */
 
         this.independentGroups++;

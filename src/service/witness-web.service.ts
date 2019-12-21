@@ -1,12 +1,14 @@
-import BoardStateDto from "../dto/board-state.dto";
-import WitnessWebDto from "../dto/witness-web.dto";
-import Binomial from "../utility/binomial";
-import LocationDto from "../dto/location.dto";
-import SquareDto from "../dto/square.dto";
-import WitnessDto from "../dto/witness.dto";
-import BoxDto from "../dto/box.dto";
+import ServiceInterface from '../interface/service.interface';
 
-export default class WitnessWebService
+import BoardStateDto from '../dto/board-state.dto';
+import WitnessWebDto from '../dto/witness-web.dto';
+import Binomial from '../utility/binomial';
+import LocationDto from '../dto/location.dto';
+import SquareDto from '../dto/square.dto';
+import WitnessDto from '../dto/witness.dto';
+import BoxDto from '../dto/box.dto';
+
+export default class WitnessWebService implements ServiceInterface
 {
     private readonly boardState: BoardStateDto;
     private witnessWeb: WitnessWebDto;

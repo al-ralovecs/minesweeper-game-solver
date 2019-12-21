@@ -1,10 +1,12 @@
+import ServiceInterface from '../interface/service.interface';
+
 import ActionDto from '../dto/action.dto';
 import BoardDto from '../dto/board.dto';
 import BoardStateDto from '../dto/board-state.dto';
 import LocationDto from '../dto/location.dto';
 import MarginDto from '../dto/margin.dto';
 
-export default class BoardStateService
+export default class BoardStateService implements ServiceInterface
 {
     private board: BoardDto;
     private readonly boardState: BoardStateDto;
