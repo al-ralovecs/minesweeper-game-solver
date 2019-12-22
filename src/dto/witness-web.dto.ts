@@ -46,4 +46,15 @@ export default class WitnessWebDto {
     {
         return this.boxes;
     }
+
+    public isOnWeb(location: LocationDto): boolean
+    {
+        for (const s of this.squares) {
+            if (s.equals(location)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

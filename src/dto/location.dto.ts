@@ -25,4 +25,9 @@ export default class LocationDto {
     {
         return this.y === m.y && this.x === m.x;
     }
+
+    public get sortOrder(): number
+    {
+        return this.y + this.x * 10000;
+    }
 }

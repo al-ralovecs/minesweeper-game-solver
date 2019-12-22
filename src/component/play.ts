@@ -1,20 +1,24 @@
 import PlayInterface from '../interface/play.interface';
 
+import AreaDto from '../dto/area.dto';
 import ActionDto from '../dto/action.dto';
 import BoardDto from '../dto/board.dto';
 import BoardStateDto from '../dto/board-state.dto';
-import LocationDto from '../dto/location.dto';
 import WitnessWebDto from '../dto/witness-web.dto';
+import ProbabilityDistributionDto from '../dto/probability-distribution.dto';
 
 import Binomial from '../utility/binomial';
 import BoardStateService from '../service/board-state.service';
 import WitnessWebService from '../service/witness-web.service';
+import DeadLocationsService from '../service/dead-locations.service';
+import ProbabilityEngineService from '../service/probability-engine.service';
 
-import { AbstractStrategy, StrategyType } from '../strategy/abstract-strategy';
+import {AbstractStrategy, StrategyType} from '../strategy/abstract-strategy';
 import FirstMoveStrategy from '../strategy/first-move.strategy';
 import TrivialSearchStrategy from '../strategy/trivial-search.strategy';
-import LocalSearchStrategy from "../strategy/local-search.strategy";
+import LocalSearchStrategy from '../strategy/local-search.strategy';
 import FiftyFiftyGuessStrategy from '../strategy/fifty-fifty-guess.strategy';
+import DeadGuessStrategy from '../strategy/dead-guess.strategy';
 
 export default class Play implements PlayInterface
 {
@@ -22,8 +26,10 @@ export default class Play implements PlayInterface
     private readonly binomialEngine: Binomial;
     private readonly expectedMinesCountOnBoard: number;
 
-    private boardState: BoardStateDto;
-    private wholeEdge: WitnessWebDto;
+    private boardStateService: BoardStateService;
+    private witnessWebService: WitnessWebService;
+    private deadLocationsService: DeadLocationsService;
+    private probabilityEngine: ProbabilityEngineService;
 
     private currentStrategyType: StrategyType = StrategyType.FirstMove;
 
@@ -40,7 +46,7 @@ export default class Play implements PlayInterface
         let strategy: AbstractStrategy;
 
         while (! hasMove) {
-            this.prepareAnalysis();
+            this.processAnalysis();
 
             strategy = this.getNextStrategy;
 
@@ -56,19 +62,45 @@ export default class Play implements PlayInterface
         return strategy.getNextMove;
     }
 
+    public get getBinomialEngine(): Binomial
+    {
+        return this.binomialEngine;
+    }
+
     public get getBoardState(): BoardStateDto
     {
-        return this.boardState;
+        if (typeof this.boardStateService === 'undefined') {
+            throw Error('[Play::getBoardState] Failed on attempt to get an empty BoardState')
+        }
+
+        return this.boardStateService.getBoardState;
     }
 
     public get getWitnessWeb(): WitnessWebDto
     {
-        return this.wholeEdge;
+        if (typeof this.witnessWebService === 'undefined') {
+            throw Error('[Play::getWitnessWeb] Failed on attempt to get an empty WitnessWeb')
+        }
+
+        return this.witnessWebService.getWitnessWeb;
     }
 
-    public get getCurrentStrategyType(): StrategyType
+    public get getDeadLocations(): AreaDto
     {
-        return this.currentStrategyType;
+        if (typeof this.deadLocationsService === 'undefined') {
+            throw Error('[Play::getDeadLocations] Failed on attempt to get an empty DeadLocations')
+        }
+
+        return this.deadLocationsService.getDead;
+    }
+
+    public get getProbabilityDistribution(): ProbabilityDistributionDto
+    {
+        if (typeof this.probabilityEngine === 'undefined') {
+            throw Error('[Play::getProbabilityDistribution] Failed on attempt to get an empty ProbabilityEngine')
+        }
+
+        return this.probabilityEngine.getProbabilityDistribution;
     }
 
     private get getNextStrategy(): AbstractStrategy
@@ -77,16 +109,24 @@ export default class Play implements PlayInterface
 
         switch (this.currentStrategyType) {
             case StrategyType.FirstMove:
-                strategy = new FirstMoveStrategy(this.boardState);
+                strategy = new FirstMoveStrategy(this.getBoardState);
                 break;
             case StrategyType.TrivialSearch:
-                strategy = new TrivialSearchStrategy(this.boardState, this.wholeEdge);
+                strategy = new TrivialSearchStrategy(this.getBoardState, this.getWitnessWeb);
                 break;
             case StrategyType.LocalSearch:
-                strategy = new LocalSearchStrategy(this.boardState, this.wholeEdge);
+                strategy = new LocalSearchStrategy(this.getBoardState, this.getWitnessWeb);
                 break;
             case StrategyType.FiftyFiftyGuess:
-                strategy = new FiftyFiftyGuessStrategy(this.boardState);
+                strategy = new FiftyFiftyGuessStrategy(this.getBoardState);
+                break;
+            case StrategyType.DeadGuess:
+                strategy = new DeadGuessStrategy(
+                    this.getBoardState,
+                    this.getWitnessWeb,
+                    this.getProbabilityDistribution,
+                    this.getDeadLocations
+                );
                 break;
             default:
                 throw Error(`[Play::getNextStrategy] Invalid strategy Id [${this.currentStrategyType}] provided.`);
@@ -95,37 +135,77 @@ export default class Play implements PlayInterface
         return strategy;
     }
 
-    private prepareAnalysis(): void
+    private processAnalysis(): void
     {
         switch (this.currentStrategyType) {
             case StrategyType.FirstMove:
-                const boardStateService: BoardStateService = new BoardStateService(
-                    this.board.height,
-                    this.board.width,
-                    this.expectedMinesCountOnBoard
-                );
-
-                boardStateService.setBoard = this.board;
-                boardStateService.process();
-
-                this.boardState = boardStateService.getBoardState;
+                this.processBoardStateService();
                 break;
             case StrategyType.TrivialSearch:
-                const witnessWebService: WitnessWebService = new WitnessWebService(this.boardState, this.binomialEngine);
-
-                const allWitnesses: LocationDto[] = this.boardState.getAllLivingWitnesses;
-
-                witnessWebService.setAllWitnesses = allWitnesses;
-                witnessWebService.setAllSquares = this.boardState.getUnrevealedArea(allWitnesses).getLocations.data;
-                witnessWebService.process();
-
-                this.wholeEdge = witnessWebService.getWitnessWeb;
+                this.processWitnessWebService();
                 break;
             case StrategyType.LocalSearch:
             case StrategyType.FiftyFiftyGuess:
                 break;
+            case StrategyType.DeadGuess:
+                this.processWitnessWebService();
+                this.processDeadLocationsService();
+                this.processProbabilityEngine();
+                break;
             default:
                 throw Error(`[Play::prepareAnalysis] Invalid strategy type Id [${this.currentStrategyType}] provided.`);
         }
+    }
+
+    private processBoardStateService(): void
+    {
+        if (typeof this.boardStateService === 'undefined') {
+            this.boardStateService = new BoardStateService(
+                this.board.height,
+                this.board.width,
+                this.expectedMinesCountOnBoard
+            );
+
+            this.boardStateService.setBoard = this.board;
+        }
+
+        this.boardStateService.process();
+    }
+
+    private processWitnessWebService(): void
+    {
+        if (typeof this.witnessWebService === 'undefined') {
+            this.witnessWebService = new WitnessWebService(this.getBoardState, this.getBinomialEngine);
+        } else {
+            this.witnessWebService.setBoardState = this.getBoardState;
+        }
+
+        this.witnessWebService.process();
+    }
+
+    private processDeadLocationsService(): void
+    {
+        if (typeof this.deadLocationsService === 'undefined') {
+            this.deadLocationsService = new DeadLocationsService(
+                this.getBoardState,
+                this.getWitnessWeb.getPrunedWitnesses
+            );
+        }
+
+        this.deadLocationsService.process();
+    }
+
+    private processProbabilityEngine(): void
+    {
+        if (typeof this.probabilityEngine === 'undefined') {
+            this.probabilityEngine = new ProbabilityEngineService(
+                this.getBoardState,
+                this.getWitnessWeb,
+                this.getBinomialEngine,
+                this.getDeadLocations
+            );
+        }
+
+        this.probabilityEngine.process();
     }
 }

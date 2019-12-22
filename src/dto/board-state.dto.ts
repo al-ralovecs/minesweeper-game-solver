@@ -234,10 +234,3 @@ export default class BoardStateDto
         return new AreaDto(locationSet);
     }
 }
-
-/**
- protected Area getAdjacentUnrevealedArea(Location loc) {
-
-		return new Area(getAdjacentUnrevealedSquares(loc, 1));
-	}
- */

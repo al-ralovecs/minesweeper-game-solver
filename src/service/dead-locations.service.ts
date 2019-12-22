@@ -17,20 +17,25 @@ export default class DeadLocationsService implements ServiceInterface
         this.witnesses = witnesses;
     }
 
+    /**
+     * Look for "dead" locations.
+     *
+     * "dead" is a location, which:
+     *  - is either a mine,
+     *  - or have just one possible value
+     */
     public process(): void
     {
         let dead: LocationSetDto = new LocationSetDto();
 
         for (const loc of this.witnesses) {
-            if (this.boardState.countAdjacentUnrevealed(loc) === this.boardState.getWitnessValue(loc) - this.boardState.countAdjacentConfirmedFlags(loc) + 1) {
+            if (this.boardState.countAdjacentUnrevealed(loc) ===
+                this.boardState.getWitnessValue(loc) - this.boardState.countAdjacentConfirmedFlags(loc) + 1
+            ) {
                 const area: AreaDto = this.boardState.getAdjacentUnrevealedArea(loc);
 
                 for (let i: number = 0; i < area.size; i++) {
-                    const l: LocationDto = area.getLocations[i];
-
-                    if (typeof l === 'undefined') {
-                        continue;
-                    }
+                    const l: LocationDto = area.getLocations.data[i];
 
                     const testArea: AreaDto = this.boardState.getAdjacentUnrevealedArea(l);
                     
@@ -43,11 +48,7 @@ export default class DeadLocationsService implements ServiceInterface
             const area: AreaDto = this.boardState.getAdjacentUnrevealedArea(loc);
             
             for (let i: number = 0; i < area.size; i++) {
-                const l: LocationDto = area.getLocations[i];
-
-                if (typeof l === 'undefined') {
-                    continue;
-                }
+                const l: LocationDto = area.getLocations.data[i];
 
                 const testArea = this.boardState.getAdjacentUnrevealedArea(l);
                 

@@ -13,6 +13,7 @@ import LinkedLocationDto from '../dto/linked-location.dto';
 import LocationDto from '../dto/location.dto';
 
 import bigintDivide from '../routine/bigint.divide';
+import ProbabilityDistributionDto from "../dto/probability-distribution.dto";
 
 export const SmallCombinations = [
     [ 1 ],
@@ -28,6 +29,8 @@ export const SmallCombinations = [
 
 export default class ProbabilityEngineService implements ServiceInterface
 {
+    private probabilityDistribution: ProbabilityDistributionDto;
+
     public workingProbs: ProbabilityLineDto[] = [];
     public heldProbs: ProbabilityLineDto[] = [];
 
@@ -66,9 +69,9 @@ export default class ProbabilityEngineService implements ServiceInterface
     public constructor(
         boardState: BoardStateDto,
         web: WitnessWebDto,
-        deadLocations: AreaDto,
-        binomial: Binomial)
-    {
+        binomial: Binomial,
+        deadLocations: AreaDto
+    ) {
         this.boardState = boardState;
         this.web = web;
         this.binomial = binomial;
@@ -87,6 +90,11 @@ export default class ProbabilityEngineService implements ServiceInterface
 
         this.boxProb = new Array<number>(this.boxCount);
         this.hashTally = new Array<bigint>(this.boxCount);
+    }
+
+    public get getProbabilityDistribution(): ProbabilityDistributionDto
+    {
+        return this.probabilityDistribution;
     }
 
     public process(): void

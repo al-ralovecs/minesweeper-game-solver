@@ -9,10 +9,7 @@ export enum StrategyType
     TrivialSearch,
     LocalSearch,
     FiftyFiftyGuess,
-    FindAllMines,
-    ExposeWhenSure,
-    Deduce,
-    GuessAsDoItOrDie,
+    DeadGuess,
 }
 
 export abstract class AbstractStrategy implements PlayInterface

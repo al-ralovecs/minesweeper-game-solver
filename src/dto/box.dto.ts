@@ -1,15 +1,16 @@
 import WitnessDto from "./witness.dto";
 import SquareDto from "./square.dto";
+import LocationDto from "./location.dto";
 
 export default class BoxDto
 {
-    private adjWitnesses: WitnessDto[];
+    private readonly adjWitnesses: WitnessDto[];
     private squares: SquareDto[] = [];
 
     private maxMines: number;
     private minMines: number;
 
-    private uid: number;
+    private readonly uid: number;
 
     private processed: boolean = false;
 
@@ -102,8 +103,15 @@ export default class BoxDto
             }
         }
     }
+
+    public contains(location: LocationDto): boolean
+    {
+        for (const squ of this.squares) {
+            if (squ.equals(location)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
-
-/**
-
- */

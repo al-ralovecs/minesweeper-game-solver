@@ -1,6 +1,6 @@
-import {AbstractStrategy, StrategyType} from "./abstract-strategy";
-import LocationDto from "../dto/location.dto";
-import ActionDto, {ActionType} from "../dto/action.dto";
+import { AbstractStrategy, StrategyType } from './abstract-strategy';
+import LocationDto from '../dto/location.dto';
+import ActionDto, { ActionType } from '../dto/action.dto';
 
 export default class FirstMoveStrategy extends AbstractStrategy
 {
