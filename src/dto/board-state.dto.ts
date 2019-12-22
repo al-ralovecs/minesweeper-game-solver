@@ -44,6 +44,13 @@ export default class BoardStateDto
 
     }
 
+    public get hasNewFlagFound(): boolean
+    {
+        return 0 < this.actionList
+            .filter(a => ActionType.Flag === a.type)
+            .length;
+    }
+
     public get getTotalUnrevealedCount(): number
     {
         return this.numOfHidden;

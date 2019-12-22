@@ -28,6 +28,7 @@ export default class Play implements PlayInterface
 
     private boardStateService: BoardStateService;
     private witnessWebService: WitnessWebService;
+    private isWitnessWebProcessed: boolean;
     private deadLocationsService: DeadLocationsService;
     private probabilityEngine: ProbabilityEngineService;
 
@@ -167,6 +168,7 @@ export default class Play implements PlayInterface
             );
 
             this.boardStateService.setBoard = this.board;
+            this.isWitnessWebProcessed = false;
         }
 
         this.boardStateService.process();
@@ -176,11 +178,17 @@ export default class Play implements PlayInterface
     {
         if (typeof this.witnessWebService === 'undefined') {
             this.witnessWebService = new WitnessWebService(this.getBoardState, this.getBinomialEngine);
-        } else {
-            this.witnessWebService.setBoardState = this.getBoardState;
+
+            this.witnessWebService.process();
         }
 
-        this.witnessWebService.process();
+        else if (! this.isWitnessWebProcessed || this.getBoardState.hasNewFlagFound) {
+            this.witnessWebService.setBoardState = this.getBoardState;
+
+            this.witnessWebService.process();
+        }
+
+        this.isWitnessWebProcessed = true;
     }
 
     private processDeadLocationsService(): void

@@ -29,42 +29,24 @@ export const SmallCombinations = [
 
 export default class ProbabilityEngineService implements ServiceInterface
 {
-    private probabilityDistribution: ProbabilityDistributionDto;
+    private readonly boardState: BoardStateDto;
+    private readonly web: WitnessWebDto;
+    private readonly binomial: Binomial;
+    private readonly distribution: ProbabilityDistributionDto;
 
     public workingProbs: ProbabilityLineDto[] = [];
     public heldProbs: ProbabilityLineDto[] = [];
-
-    public boxProb: number[];               //BigDecimal
-    public hashTally: bigint[];
-    public offEdgeBest: boolean = true;
-    public offEdgeProbability: number;      //BigDecimal
-    public bestProbability: number;         //BigDecimal
-    public cutOffProbability: number;       //BigDecimal
-
+    
     public mask: boolean[];
 
     public linkedLocations: LinkedLocationDto[] = [];
     public contraLinkedLocations: LinkedLocationDto[] = [];
     public mines: LocationDto[] = [];
 
-    private boardState: BoardStateDto;
-    private web: WitnessWebDto;
-    private binomial: Binomial;
-    
-    private readonly boxCount: number;
-    private readonly witnesses: WitnessDto[];
-    private readonly boxes: BoxDto[];
-    private readonly minesLeft: number;
-    private readonly squaresLeft: number;
-    private deadLocations: AreaDto;
-
     private independentGroups: number = 0;
     private recursions: number = 0;
 
     private finalSolutionsCount: bigint;
-
-    private readonly minTotalMines: number;
-    private readonly maxTotalMines: number;
 
     public constructor(
         boardState: BoardStateDto,
@@ -76,25 +58,18 @@ export default class ProbabilityEngineService implements ServiceInterface
         this.web = web;
         this.binomial = binomial;
         
-        this.minesLeft = this.boardState.expectedTotalMines - this.boardState.getConfirmedFlagCount;
-        this.squaresLeft = this.boardState.getTotalUnrevealedCount - web.getSquares.length;
-        this.deadLocations = deadLocations;
-
-        this.minTotalMines = this.minesLeft - this.squaresLeft;
-        this.maxTotalMines = this.minesLeft;
-
-        this.witnesses = this.web.getPrunedWitnesses;
-        this.boxes = this.web.getBoxes;
-
-        this.boxCount = this.boxes.length;
-
-        this.boxProb = new Array<number>(this.boxCount);
-        this.hashTally = new Array<bigint>(this.boxCount);
+        this.distribution = new ProbabilityDistributionDto(
+            this.web.getBoxes,
+            this.web.getPrunedWitnesses,
+            this.boardState.expectedTotalMines - this.boardState.getConfirmedFlagCount,
+            this.boardState.getTotalUnrevealedCount - web.getSquares.length,
+            deadLocations
+        );
     }
 
     public get getProbabilityDistribution(): ProbabilityDistributionDto
     {
-        return this.probabilityDistribution;
+        return this.distribution;
     }
 
     public process(): void
@@ -107,16 +82,16 @@ export default class ProbabilityEngineService implements ServiceInterface
     {
         // an array showing which boxes have been processed
         // this iteration - none have to start with
-        this.mask = new Array<boolean>(this.boxCount).fill(false);
+        this.mask = new Array<boolean>(this.distribution.boxCount).fill(false);
 
         // an initial solution of no mines anywhere
-        let held: ProbabilityLineDto = new ProbabilityLineDto(this.boxCount);
+        let held: ProbabilityLineDto = new ProbabilityLineDto(this.distribution.boxCount);
         held.solutionCount = 1n;
         this.heldProbs.push(held);
 
         // an empty probability line
         // to get us started
-        this.workingProbs.push(new ProbabilityLineDto(this.boxCount));
+        this.workingProbs.push(new ProbabilityLineDto(this.distribution.boxCount));
 
         let nextWitness: NextWitnessDto = this.findFirstWitness();
 
@@ -178,7 +153,7 @@ export default class ProbabilityEngineService implements ServiceInterface
 
             // if there are too many for this game
             // then the probability can't be valid
-            if (this.maxTotalMines < pl.mineCount + missingMines) {
+            if (this.distribution.maxTotalMines < pl.mineCount + missingMines) {
                 return result;
             }
 
@@ -203,14 +178,9 @@ export default class ProbabilityEngineService implements ServiceInterface
         return result;
     }
 
-    public get getOffEdgeProb(): number
-    {
-        return this.offEdgeProbability;
-    }
-
     private findFirstWitness(): NextWitnessDto
     {
-        for (const w of this.witnesses) {
+        for (const w of this.distribution.witnesses) {
             if (! w.isProcessed) {
                 return new NextWitnessDto(w);
             }
@@ -234,7 +204,7 @@ export default class ProbabilityEngineService implements ServiceInterface
         // and find a witness
         // which is on the boundary
         // of what has already been processed
-        for (const b of this.boxes) {
+        for (const b of this.distribution.boxes) {
             if (! b.isProcessed) {
                 continue;
             }
@@ -292,9 +262,9 @@ export default class ProbabilityEngineService implements ServiceInterface
             // so we can start building up one
             // for the new set of witnesses
             this.workingProbs = [];
-            this.workingProbs.push(new ProbabilityLineDto(this.boxCount));
+            this.workingProbs.push(new ProbabilityLineDto(this.distribution.boxCount));
 
-            this.mask = new Array<boolean>(this.boxCount).fill(false);
+            this.mask = new Array<boolean>(this.distribution.boxCount).fill(false);
         }
 
         // return the next witness to process
@@ -317,10 +287,10 @@ export default class ProbabilityEngineService implements ServiceInterface
 
         for (const pl of crunched) {
             for (const epl of this.heldProbs) {
-                let npl: ProbabilityLineDto = new ProbabilityLineDto(this.boxCount);
+                let npl: ProbabilityLineDto = new ProbabilityLineDto(this.distribution.boxCount);
                 npl.mineCount = pl.mineCount + epl.mineCount;
 
-                if (this.maxTotalMines < npl.mineCount) {
+                if (this.distribution.maxTotalMines < npl.mineCount) {
                     continue;
                 }
 
@@ -349,14 +319,14 @@ export default class ProbabilityEngineService implements ServiceInterface
         }
 
         let mc: number = result[0].mineCount;
-        let npl: ProbabilityLineDto = new ProbabilityLineDto(this.boxCount);
+        let npl: ProbabilityLineDto = new ProbabilityLineDto(this.distribution.boxCount);
         npl.mineCount = mc;
 
         for (const pl of result) {
             if (pl.mineCount !== mc) {
                 this.heldProbs.push(npl);
                 mc = pl.mineCount;
-                npl = new ProbabilityLineDto(this.boxCount);
+                npl = new ProbabilityLineDto(this.distribution.boxCount);
                 npl.mineCount = mc;
             }
 
@@ -383,14 +353,14 @@ export default class ProbabilityEngineService implements ServiceInterface
         let result: ProbabilityLineDto[] = [];
 
         let mc: number = target[0].mineCount;
-        let npl: ProbabilityLineDto = new ProbabilityLineDto(this.boxCount);
+        let npl: ProbabilityLineDto = new ProbabilityLineDto(this.distribution.boxCount);
         npl.mineCount = mc;
 
         for (const pl of target) {
             if (pl.mineCount !== mc) {
                 result.push(npl);
                 mc = pl.mineCount;
-                npl = new ProbabilityLineDto(this.boxCount);
+                npl = new ProbabilityLineDto(this.distribution.boxCount);
                 npl.mineCount = mc;
             }
 
@@ -410,7 +380,7 @@ export default class ProbabilityEngineService implements ServiceInterface
 
         for (let i: number = 0; i < pl.mineBoxCount.length; i++) {
             solutions = solutions * BigInt(
-                SmallCombinations[ this.boxes[i].getSquares.length ][ Number(pl.mineBoxCount[i]) ]
+                SmallCombinations[ this.distribution.boxes[i].getSquares.length ][ Number(pl.mineBoxCount[i]) ]
             );
         }
 
@@ -424,7 +394,7 @@ export default class ProbabilityEngineService implements ServiceInterface
             npl.mineBoxCount[i] = npl.mineBoxCount[i] + pl.mineBoxCount[i] * solutions;
 
             if (0n === pl.mineBoxCount[i]) {
-                npl.hashCount[i] -= pl.hash * this.boxes[i].getSquares.length;
+                npl.hashCount[i] -= pl.hash * this.distribution.boxes[i].getSquares.length;
             } else {
                 npl.hashCount[i] = npl.hashCount[i] + Number(pl.mineBoxCount[i]) * pl.hash;
             }
@@ -446,7 +416,7 @@ export default class ProbabilityEngineService implements ServiceInterface
     // by taking the old and adding the mines to the new Box
     private extendProbabilityLine(pl: ProbabilityLineDto, newBox: BoxDto, mines: number): ProbabilityLineDto
     {
-        let result: ProbabilityLineDto = new ProbabilityLineDto(this.boxCount);
+        let result: ProbabilityLineDto = new ProbabilityLineDto(this.distribution.boxCount);
 
         result.mineCount = pl.mineCount + mines;
 
@@ -461,11 +431,11 @@ export default class ProbabilityEngineService implements ServiceInterface
     // sum them together to create a definitive probability for each box
     private calculateBoxProbabilities(): void
     {
-        let tally: bigint[] = new Array<bigint>(this.boxCount);
+        let tally: bigint[] = new Array<bigint>(this.distribution.boxCount);
 
         for (let i: number = 0; i < tally.length; i++) {
             tally[i] = 0n;
-            //this.hashTally[i] = 0n;
+            //this.distribution.hashTally[i] = 0n;
         }
 
         // total game tally
@@ -475,39 +445,39 @@ export default class ProbabilityEngineService implements ServiceInterface
         let outsideTally: bigint = 0n;
 
         for (const pl of this.heldProbs) {
-            if (this.minTotalMines > pl.mineCount) {
+            if (this.distribution.minTotalMines > pl.mineCount) {
                 continue;
             }
 
             // number of ways
             // the rest of the board can be formed
-            let mult: bigint = this.binomial.getCombination(this.minesLeft - pl.mineCount, this.squaresLeft);
+            let mult: bigint = this.binomial.getCombination(this.distribution.minesLeft - pl.mineCount, this.distribution.squaresLeft);
             
-            outsideTally += mult * BigInt(this.minesLeft - pl.mineCount) * pl.solutionCount;
+            outsideTally += mult * BigInt(this.distribution.minesLeft - pl.mineCount) * pl.solutionCount;
             
             totalTally += mult * pl.solutionCount;
             
             for (let i: number = 0; i < tally.length; i++) {
-                tally[i] += mult * pl.mineBoxCount[i] / BigInt(this.boxes[i].getSquares.length);
-                //this.hashTally[i] += BigInt(pl.hashCount[i]);
+                tally[i] += mult * pl.mineBoxCount[i] / BigInt(this.distribution.boxes[i].getSquares.length);
+                //this.distribution.hashTally[i] += BigInt(pl.hashCount[i]);
             }
         }
         
-        for (let i: number = 0; i < this.boxProb.length; i++) {
+        for (let i: number = 0; i < this.distribution.boxProb.length; i++) {
             if (0n !== totalTally) {
 
                 // a mine
                 if (tally[i] === totalTally) {
-                    this.boxProb[i] = 0;
+                    this.distribution.boxProb[i] = 0;
                     
-                    for (const squ of this.boxes[i].getSquares) {
+                    for (const squ of this.distribution.boxes[i].getSquares) {
                         this.mines.push(squ);
                     }
                 } else {
-                    this.boxProb[i] = 1 - bigintDivide(tally[i], totalTally, 6);
+                    this.distribution.boxProb[i] = 1 - bigintDivide(tally[i], totalTally, 6);
                 }
             } else {
-                this.boxProb[i] = 0;
+                this.distribution.boxProb[i] = 0;
             }
 
             /**
@@ -515,42 +485,42 @@ export default class ProbabilityEngineService implements ServiceInterface
              */
         }
 
-        // for (let i: number = 0; i < this.hashTally.length; i++) {
-        //     for (let j: number = i + 1; j < this.hashTally.length; j++) {
-        //         const hash1: bigint = this.hashTally[i] / BigInt(this.boxes[i].getSquares.length);
-        //         const hash2: bigint = this.hashTally[j] / BigInt(this.boxes[j].getSquares.length);
+        // for (let i: number = 0; i < this.distribution.hashTally.length; i++) {
+        //     for (let j: number = i + 1; j < this.distribution.hashTally.length; j++) {
+        //         const hash1: bigint = this.distribution.hashTally[i] / BigInt(this.distribution.boxes[i].getSquares.length);
+        //         const hash2: bigint = this.distribution.hashTally[j] / BigInt(this.distribution.boxes[j].getSquares.length);
         //
         //         if (0.01 >= Math.abs(Number(hash1 - hash2))) {
-        //             ProbabilityEngineService.addLinkedLocation(this.linkedLocations, this.boxes[i], this.boxes[j]);
-        //             ProbabilityEngineService.addLinkedLocation(this.linkedLocations, this.boxes[j], this.boxes[i]);
+        //             ProbabilityEngineService.addLinkedLocation(this.linkedLocations, this.distribution.boxes[i], this.distribution.boxes[j]);
+        //             ProbabilityEngineService.addLinkedLocation(this.linkedLocations, this.distribution.boxes[j], this.distribution.boxes[i]);
         //         }
         //
         //         if (0.01 >= Math.abs(Number(hash1 + hash2))) {
-        //             ProbabilityEngineService.addLinkedLocation(this.contraLinkedLocations, this.boxes[i], this.boxes[j]);
-        //             ProbabilityEngineService.addLinkedLocation(this.contraLinkedLocations, this.boxes[j], this.boxes[i]);
+        //             ProbabilityEngineService.addLinkedLocation(this.contraLinkedLocations, this.distribution.boxes[i], this.distribution.boxes[j]);
+        //             ProbabilityEngineService.addLinkedLocation(this.contraLinkedLocations, this.distribution.boxes[j], this.distribution.boxes[i]);
         //         }
         //     }
         // }
         
         this.linkedLocations.sort(LinkedLocationDto.sortByLinksDesc);
         
-        if (0 !== this.squaresLeft && 0n !== totalTally) {
-            this.offEdgeProbability = 1 - bigintDivide(outsideTally, totalTally * BigInt(this.squaresLeft), 6);
+        if (0 !== this.distribution.squaresLeft && 0n !== totalTally) {
+            this.distribution.offEdgeProbability = 1 - bigintDivide(outsideTally, totalTally * BigInt(this.distribution.squaresLeft), 6);
         } else {
-            this.offEdgeProbability = 0;
+            this.distribution.offEdgeProbability = 0;
         }
         
         this.finalSolutionsCount = totalTally;
         
-        let hwm: number = this.offEdgeProbability;
+        let hwm: number = this.distribution.offEdgeProbability;
         
-        this.offEdgeBest = true;
+        this.distribution.offEdgeBest = true;
         
-        for (const b of this.boxes) {
+        for (const b of this.distribution.boxes) {
             let living: boolean = false;
             
             for (const squ of b.getSquares) {
-                if (this.deadLocations.contains(squ)) {
+                if (this.distribution.deadLocations.contains(squ)) {
                     continue;
                 }
                 
@@ -558,22 +528,22 @@ export default class ProbabilityEngineService implements ServiceInterface
                 break;
             }
             
-            let prob: number = this.boxProb[b.getUID];
+            let prob: number = this.distribution.boxProb[b.getUID];
             
             if (living || 0.01 >= Math.abs(prob - 1)) {
                 if (hwm - prob <= 0) {
-                    this.offEdgeBest = false;
+                    this.distribution.offEdgeBest = false;
                     hwm = prob;
                 }
             }
         }
         
-        this.bestProbability = hwm;
+        this.distribution.bestProbability = hwm;
         
-        if (0.01 >= Math.abs(this.bestProbability - 1)) {
-            this.cutOffProbability = 1;
+        if (0.01 >= Math.abs(this.distribution.bestProbability - 1)) {
+            this.distribution.cutOffProbability = 1;
         } else {
-            this.cutOffProbability = this.bestProbability * 0.96;
+            this.distribution.cutOffProbability = this.distribution.bestProbability * 0.96;
         }
     }
     
@@ -592,7 +562,3 @@ export default class ProbabilityEngineService implements ServiceInterface
         }
     }
 }
-
-/**
-
- */
