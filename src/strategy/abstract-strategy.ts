@@ -13,7 +13,7 @@ export enum StrategyType
     BruteForce,
     OffEdgeEvaluation,
     CertainSolutions,
-    CompareSolutions,
+    CompareRemainingSolutions,
     FinalGuess,
 }
 

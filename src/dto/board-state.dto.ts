@@ -36,6 +36,8 @@ export default class BoardStateDto
 
     public unPlayedMoves: number[];
 
+    private testMoveBalance: number = 0;
+
     public constructor(height: number, width: number, expectedTotalMines: number)
     {
         this.height = height;
@@ -239,5 +241,40 @@ export default class BoardStateDto
         }
 
         return new AreaDto(locationSet);
+    }
+
+    public get getAllUnrevealedSquares(): LocationDto[]
+    {
+        let result: LocationDto[] = [];
+
+        for (let i: number = 0; i < this.height; i++) {
+            for (let j: number = 0; j < this.width; j++) {
+                const location: LocationDto = new LocationDto(i, j);
+
+                if (! this.isUnrevealed(location)) {
+                    continue;
+                }
+
+                result.push(location);
+            }
+        }
+
+        return result;
+    }
+
+    public setWitnessValue(l: LocationDto, value: number): void
+    {
+        this.board[l.y][l.x] = value;
+        this.revealed[l.y][l.x] = true;
+
+        this.testMoveBalance++;
+    }
+
+    public clearWitness(l: LocationDto): void
+    {
+        this.board[l.y][l.x] = -1;
+        this.revealed[l.y][l.x] = false;
+
+        this.testMoveBalance--;
     }
 }

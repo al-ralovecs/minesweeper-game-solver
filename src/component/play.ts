@@ -19,6 +19,11 @@ import TrivialSearchStrategy from '../strategy/trivial-search.strategy';
 import LocalSearchStrategy from '../strategy/local-search.strategy';
 import FiftyFiftyGuessStrategy from '../strategy/fifty-fifty-guess.strategy';
 import DeadGuessStrategy from '../strategy/dead-guess.strategy';
+import BruteForceStrategy from "../strategy/brute-force.strategy";
+import OffEdgeEvaluationStrategy from "../strategy/off-edge-evaluation.strategy";
+import CertainSolutionsStrategy from "../strategy/certain-solutions.strategy";
+import CompareSolutionsStrategy from "../strategy/compare-solutions.strategy";
+import FinalGuessStrategy from "../strategy/final-guess.strategy";
 
 export default class Play implements PlayInterface
 {
@@ -110,16 +115,26 @@ export default class Play implements PlayInterface
 
         switch (this.currentStrategyType) {
             case StrategyType.FirstMove:
-                strategy = new FirstMoveStrategy(this.getBoardState);
+                strategy = new FirstMoveStrategy(
+                    this.getBoardState
+                );
                 break;
             case StrategyType.TrivialSearch:
-                strategy = new TrivialSearchStrategy(this.getBoardState, this.getWitnessWeb);
+                strategy = new TrivialSearchStrategy(
+                    this.getBoardState,
+                    this.getWitnessWeb
+                );
                 break;
             case StrategyType.LocalSearch:
-                strategy = new LocalSearchStrategy(this.getBoardState, this.getWitnessWeb);
+                strategy = new LocalSearchStrategy(
+                    this.getBoardState,
+                    this.getWitnessWeb
+                );
                 break;
             case StrategyType.FiftyFiftyGuess:
-                strategy = new FiftyFiftyGuessStrategy(this.getBoardState);
+                strategy = new FiftyFiftyGuessStrategy(
+                    this.getBoardState
+                );
                 break;
             case StrategyType.DeadGuess:
                 strategy = new DeadGuessStrategy(
@@ -127,6 +142,40 @@ export default class Play implements PlayInterface
                     this.getWitnessWeb,
                     this.getProbabilityDistribution,
                     this.getDeadLocations
+                );
+                break;
+            case StrategyType.BruteForce:
+                strategy = new BruteForceStrategy(
+                    this.getBoardState,
+                    this.getWitnessWeb,
+                    this.getProbabilityDistribution
+                );
+                break;
+            case StrategyType.OffEdgeEvaluation:
+                strategy = new OffEdgeEvaluationStrategy(
+                    this.getBoardState,
+                    this.getProbabilityDistribution
+                );
+                break;
+            case StrategyType.CertainSolutions:
+                strategy = new CertainSolutionsStrategy(
+                    this.getBoardState,
+                    this.getWitnessWeb,
+                    this.getProbabilityDistribution
+                );
+                break;
+            case StrategyType.CompareRemainingSolutions:
+                strategy = new CompareSolutionsStrategy(
+                    this.getBoardState,
+                    this.getWitnessWeb,
+                    this.getProbabilityDistribution
+                );
+                break;
+            case StrategyType.FinalGuess:
+                strategy = new FinalGuessStrategy(
+                    this.getBoardState,
+                    this.getWitnessWeb,
+                    this.getProbabilityDistribution
                 );
                 break;
             default:
@@ -152,6 +201,8 @@ export default class Play implements PlayInterface
                 this.processWitnessWebService();
                 this.processDeadLocationsService();
                 this.processProbabilityEngine();
+                break;
+            case StrategyType.BruteForce:
                 break;
             default:
                 throw Error(`[Play::prepareAnalysis] Invalid strategy type Id [${this.currentStrategyType}] provided.`);

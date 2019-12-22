@@ -7,6 +7,7 @@ import LocationDto from '../dto/location.dto';
 import SquareDto from '../dto/square.dto';
 import WitnessDto from '../dto/witness.dto';
 import BoxDto from '../dto/box.dto';
+import AreaDto from "../dto/area.dto";
 
 export default class WitnessWebService implements ServiceInterface
 {
@@ -18,10 +19,15 @@ export default class WitnessWebService implements ServiceInterface
     private allWitnesses: LocationDto[];
     private allSquares: LocationDto[];
 
-    public constructor(boardState: BoardStateDto, binomialEngine: Binomial)
+    public constructor(boardState: BoardStateDto, binomialEngine: Binomial, init: boolean = true)
     {
         this.boardState = boardState;
         this.binomialEngine = binomialEngine;
+        this.witnessWeb = null;
+
+        if (! init) {
+            return;
+        }
 
         this.init();
     }
@@ -31,6 +37,16 @@ export default class WitnessWebService implements ServiceInterface
         this.boardState = boardState;
 
         this.init();
+    }
+
+    public set setAllWitnesses(allWitnesses: LocationDto[])
+    {
+        this.allWitnesses = allWitnesses;
+    }
+
+    public set setAllSquares(allSquares: LocationDto[])
+    {
+        this.allSquares = allSquares;
     }
 
     public get getWitnessWeb(): WitnessWebDto
@@ -179,6 +195,5 @@ export default class WitnessWebService implements ServiceInterface
     {
         this.allWitnesses = this.boardState.getAllLivingWitnesses;
         this.allSquares = this.boardState.getUnrevealedArea(this.allWitnesses).getLocations.data;
-        this.witnessWeb = null;
     }
 }

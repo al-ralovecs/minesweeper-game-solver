@@ -29,10 +29,10 @@ export const SmallCombinations = [
 
 export default class ProbabilityEngineService implements ServiceInterface
 {
-    private readonly boardState: BoardStateDto;
-    private readonly web: WitnessWebDto;
-    private readonly binomial: Binomial;
-    private readonly distribution: ProbabilityDistributionDto;
+    protected readonly boardState: BoardStateDto;
+    protected readonly web: WitnessWebDto;
+    protected readonly binomial: Binomial;
+    protected readonly distribution: ProbabilityDistributionDto;
 
     public workingProbs: ProbabilityLineDto[] = [];
     public heldProbs: ProbabilityLineDto[] = [];
@@ -76,7 +76,7 @@ export default class ProbabilityEngineService implements ServiceInterface
         this.calculateBoxProbabilities();
     }
 
-    private generateBoxProbabilities(): void
+    protected generateBoxProbabilities(): void
     {
         // an array showing which boxes have been processed
         // this iteration - none have to start with
@@ -427,14 +427,9 @@ export default class ProbabilityEngineService implements ServiceInterface
 
     // here we expand the localised solution to one across the whole board and
     // sum them together to create a definitive probability for each box
-    private calculateBoxProbabilities(): void
+    protected calculateBoxProbabilities(): void
     {
-        let tally: bigint[] = new Array<bigint>(this.distribution.boxCount);
-
-        for (let i: number = 0; i < tally.length; i++) {
-            tally[i] = 0n;
-            //this.distribution.hashTally[i] = 0n;
-        }
+        let tally: bigint[] = new Array<bigint>(this.distribution.boxCount).fill(0n);
 
         // total game tally
         let totalTally: bigint = 0n;

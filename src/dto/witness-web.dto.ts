@@ -57,4 +57,9 @@ export default class WitnessWebDto {
 
         return false;
     }
+
+    public get isWebValid(): boolean
+    {
+        return this.validWeb;
+    }
 }

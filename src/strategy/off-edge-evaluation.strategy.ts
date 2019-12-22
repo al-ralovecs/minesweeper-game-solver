@@ -1,21 +1,27 @@
 import { AbstractStrategy, StrategyType } from "./abstract-strategy";
 
 import BoardStateDto from "../dto/board-state.dto";
-import ProbabilityDistributionDto from "../dto/probability-distribution.dto";
+import ProbabilityDistributionDto, {PROBABILITY_ENGINE_TOLERANCE} from "../dto/probability-distribution.dto";
+import AreaDto from "../dto/area.dto";
+import LocationDto from "../dto/location.dto";
+import EvaluateLocationsService from "../service/evaluate-locations.service";
 
 const OFF_EDGE_TOLERANCE: number = 0.97;
 
 export default class OffEdgeEvaluationStrategy extends AbstractStrategy
 {
     private readonly probabilityDistribution: ProbabilityDistributionDto;
+    private readonly evaluateLocationsService: EvaluateLocationsService;
 
     public constructor(
         boardState: BoardStateDto,
-        probabilityDistribution: ProbabilityDistributionDto
+        probabilityDistribution: ProbabilityDistributionDto,
+        evaluateLocationsService: EvaluateLocationsService
     ) {
         super(boardState);
 
         this.probabilityDistribution = probabilityDistribution;
+        this.evaluateLocationsService = evaluateLocationsService;
     }
 
     protected get isStrategyApplicable(): boolean
@@ -27,6 +33,18 @@ export default class OffEdgeEvaluationStrategy extends AbstractStrategy
 
     protected applyStrategy(): void
     {
+        this.evaluateLocationsService.addOffEdgeCandidates(
+            this.boardState.getAllUnrevealedSquares
+        );
+        this.evaluateLocationsService.evaluateLocations(
+            this.probabilityDistribution.getBestCandidates(PROBABILITY_ENGINE_TOLERANCE)
+        );
+
+        if (! this.evaluateLocationsService.hasBestMove) {
+            return;
+        }
+
+        this.boardState.setAction = this.evaluateLocationsService.getBestMove;
     }
 
     protected get getMoveMethod(): StrategyType
@@ -35,21 +53,3 @@ export default class OffEdgeEvaluationStrategy extends AbstractStrategy
     }
 
 }
-
-/**
-
-
-        		if (allUnrevealedSquares == null) {   // defer this until we need it, can be expensive
-        			allUnrevealedSquares = boardState.getAllUnrevealedSquares();
-        		}
-
-            	evaluateLocations.addOffEgdeCandidates(allUnrevealedSquares);
-            	evaluateLocations.evaluateLocations(bestCandidates);
-
-            	evaluateLocations.showResults();
-
-        		Action[] moves = evaluateLocations.bestMove();
-        		fm = new FinalMoves(moves);
-
-        	}
- */

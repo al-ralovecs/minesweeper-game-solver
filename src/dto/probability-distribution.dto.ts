@@ -16,8 +16,8 @@ export default class ProbabilityDistributionDto
 
     public readonly witnesses: WitnessDto[];
 
-    public readonly minesLeft: number;
-    public readonly squaresLeft: number;
+    public minesLeft: number;
+    public squaresLeft: number;
     public deadLocations: AreaDto;
 
     public readonly minTotalMines: number;
@@ -29,6 +29,7 @@ export default class ProbabilityDistributionDto
     public cutOffProbability: number;
 
     public finalSolutionsCount: bigint;
+    public clearCount: number;
 
     public constructor(
         boxes: BoxDto[],

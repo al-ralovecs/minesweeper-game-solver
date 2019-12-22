@@ -30,7 +30,7 @@ export default class CompareSolutionsStrategy extends AbstractStrategy
 
     protected get getMoveMethod(): StrategyType
     {
-        return StrategyType.CompareSolutions;
+        return StrategyType.CompareRemainingSolutions;
     }
 
 }
