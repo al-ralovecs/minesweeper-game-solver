@@ -10,6 +10,11 @@ export enum StrategyType
     LocalSearch,
     FiftyFiftyGuess,
     DeadGuess,
+    BruteForce,
+    OffEdgeEvaluation,
+    CertainSolutions,
+    CompareSolutions,
+    FinalGuess,
 }
 
 export abstract class AbstractStrategy implements PlayInterface
@@ -22,7 +27,14 @@ export abstract class AbstractStrategy implements PlayInterface
         this.boardState = boardState;
     }
 
-    public abstract apply(): void;
+    public apply(): void
+    {
+        if (! this.isStrategyApplicable) {
+            return;
+        }
+
+        this.applyStrategy();
+    }
 
     public get hasNextMove(): boolean
     {
@@ -42,6 +54,13 @@ export abstract class AbstractStrategy implements PlayInterface
             })
             .shift();
     }
+
+    protected get isStrategyApplicable(): boolean
+    {
+        return true;
+    }
+
+    protected abstract applyStrategy(): void;
 
     protected abstract get getMoveMethod(): StrategyType;
 }

@@ -21,7 +21,7 @@ export default class LocalSearchStrategy extends AbstractStrategy
         this.wholeEdge = wholeEdge;
     }
 
-    apply()
+    protected applyStrategy()
     {
         let count: number = 0;
 

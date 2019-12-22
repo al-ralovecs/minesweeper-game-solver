@@ -46,8 +46,6 @@ export default class ProbabilityEngineService implements ServiceInterface
     private independentGroups: number = 0;
     private recursions: number = 0;
 
-    private finalSolutionsCount: bigint;
-
     public constructor(
         boardState: BoardStateDto,
         web: WitnessWebDto,
@@ -501,8 +499,8 @@ export default class ProbabilityEngineService implements ServiceInterface
         //         }
         //     }
         // }
-        
-        this.linkedLocations.sort(LinkedLocationDto.sortByLinksDesc);
+        //
+        //this.linkedLocations.sort(LinkedLocationDto.sortByLinksDesc);
         
         if (0 !== this.distribution.squaresLeft && 0n !== totalTally) {
             this.distribution.offEdgeProbability = 1 - bigintDivide(outsideTally, totalTally * BigInt(this.distribution.squaresLeft), 6);
@@ -510,7 +508,7 @@ export default class ProbabilityEngineService implements ServiceInterface
             this.distribution.offEdgeProbability = 0;
         }
         
-        this.finalSolutionsCount = totalTally;
+        this.distribution.finalSolutionsCount = totalTally;
         
         let hwm: number = this.distribution.offEdgeProbability;
         

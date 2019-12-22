@@ -19,6 +19,8 @@ describe('Play: Probability Engine results', () => {
         expect(play.getProbabilityDistribution.cutOffProbability).toBe(0.88858464);
         expect(play.getProbabilityDistribution.bestProbability).toBe(0.925609);
 
+        expect(play.getProbabilityDistribution.finalSolutionsCount).toBe(8007791515419721373659802075269356n);
+
         expect(play.getProbabilityDistribution.boxProb).toMatchSnapshot();
     });
 });

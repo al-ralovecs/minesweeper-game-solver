@@ -23,6 +23,8 @@ describe('ProbabilityEngineService', () => {
         expect(probabilityEngineService.getProbabilityDistribution.cutOffProbability).toBe(0.88858464);
         expect(probabilityEngineService.getProbabilityDistribution.bestProbability).toBe(0.925609);
 
+        expect(probabilityEngineService.getProbabilityDistribution.finalSolutionsCount).toBe(8007791515419721373659802075269356n);
+
         expect(probabilityEngineService.getProbabilityDistribution.boxProb).toMatchSnapshot();
     });
     test('process on adopted disposition #1', () => {
@@ -31,6 +33,8 @@ describe('ProbabilityEngineService', () => {
         expect(probabilityEngineService.getProbabilityDistribution.offEdgeProbability).toBe(0.846856);
         expect(probabilityEngineService.getProbabilityDistribution.cutOffProbability).toBe(0.8726601599999999);
         expect(probabilityEngineService.getProbabilityDistribution.bestProbability).toBe(0.909021);
+
+        expect(probabilityEngineService.getProbabilityDistribution.finalSolutionsCount).toBe(65440180405755034802956944110186053027765389n);
     });
 });
 

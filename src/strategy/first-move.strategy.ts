@@ -4,14 +4,13 @@ import ActionDto, { ActionType } from '../dto/action.dto';
 
 export default class FirstMoveStrategy extends AbstractStrategy
 {
-    apply(): void
+    protected get isStrategyApplicable(): boolean
     {
-        const totalTilesCount: number = this.boardState.height * this.boardState.width;
+        return this.boardState.getTotalUnrevealedCount === this.boardState.height * this.boardState.width
+    }
 
-        if (this.boardState.getTotalUnrevealedCount !== totalTilesCount) {
-            return;
-        }
-
+    protected applyStrategy(): void
+    {
         const y: number = Math.round(this.boardState.height / 2) - 1;
         const x: number = Math.round(this.boardState.width / 2) - 1;
 

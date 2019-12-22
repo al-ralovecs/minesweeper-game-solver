@@ -5,7 +5,7 @@ import isCoordinatesValid from '../routine/coordinate.is-valid';
 
 export default class FiftyFiftyGuessStrategy extends AbstractStrategy
 {
-    apply()
+    protected applyStrategy()
     {
         const assumedMoveProbability: number = 0.5; // Not calculated given entire board, therefore, just an assumption
 
