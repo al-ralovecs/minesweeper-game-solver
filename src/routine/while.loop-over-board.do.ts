@@ -1,7 +1,7 @@
 import BoardStateDto from '../dto/board-state.dto';
 import LocationDto from '../dto/location.dto';
 
-export const whileLoopOverBoardDo = function (
+export default function whileLoopOverBoardDo(
     boardState: BoardStateDto,
     callable: (location: LocationDto, y: number, x: number) => void
 ) {

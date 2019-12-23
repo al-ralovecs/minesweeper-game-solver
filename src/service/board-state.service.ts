@@ -4,10 +4,12 @@ import ActionDto, {ActionType} from '../dto/action.dto';
 import BoardDto from '../dto/board.dto';
 import BoardStateDto from '../dto/board-state.dto';
 import LocationDto from '../dto/location.dto';
-import {whileLoopOverBoardDo} from "../routine/while.loop-over-board.do";
+
 import {AdjacentSquaresDto} from "../dto/adjacent-squares.dto";
-import {whileLoopAroundTileDo} from "../routine/while.loop-around-tile.do";
 import {StrategyType} from "../strategy/abstract-strategy";
+
+import whileLoopOverBoardDo from "../routine/while.loop-over-board.do";
+import whileLoopAroundTileDo from "../routine/while.loop-around-tile.do";
 
 export default class BoardStateService implements ServiceInterface
 {
@@ -34,8 +36,10 @@ export default class BoardStateService implements ServiceInterface
 
     public process(): void
     {
-        this.boardState.adjFlagsOnBoard = new Array<number[]>(this.boardState.height - 1)
-            .fill(new Array<number>(this.boardState.width).fill(0));
+        this.resetAdjacentUnrevealed();
+
+        this.boardState.adjFlagsOnBoard = [...new Array<number[]>(this.boardState.height)]
+            .map(() => new Array<number>(this.boardState.width).fill(0));
 
         this.boardState.actionList = [];
 
@@ -93,20 +97,18 @@ export default class BoardStateService implements ServiceInterface
 
     private static init(boardState: BoardStateDto): void
     {
-        const height: number = boardState.height - 1;
-        const width: number = boardState.width - 1;
+        const height: number = boardState.height;
+        const width: number = boardState.width;
 
-        boardState.action = new Array<ActionDto[]>(height).fill(new Array<ActionDto>(width).fill(undefined));
-        boardState.flagOnBoard = new Array<boolean[]>(height).fill(new Array<boolean>(width).fill(false));
-        boardState.adjFlagsOnBoard = new Array<number[]>(height).fill(new Array<number>(width).fill(0));
-        boardState.flagConfirmed = new Array<boolean[]>(height).fill(new Array<boolean>(width).fill(false));
-        boardState.revealed = new Array<boolean[]>(height).fill(new Array<boolean>(width).fill(false));
-        boardState.board = new Array<number[]>(height).fill(new Array<number>(width).fill(-1));
-        boardState.adjFlagsConfirmed = new Array<number[]>(height).fill(new Array<number>(width).fill(0));
-        boardState.adjacentLocations1 = new Array<AdjacentSquaresDto[]>(height)
-            .fill(new Array<AdjacentSquaresDto>(width).fill(undefined));
-
-        BoardStateService.initAdjacentUnrevealed(boardState);
+        boardState.action = [...new Array<ActionDto[]>(height)].map(() => new Array<ActionDto>(width).fill(undefined));
+        boardState.adjacentLocations1 = [...new Array<AdjacentSquaresDto[]>(height)]
+            .map(() => new Array<AdjacentSquaresDto>(width).fill(undefined));
+        boardState.board = [...new Array<number[]>(height)].map(() => new Array<number>(width).fill(-1));
+        boardState.adjFlagsConfirmed = [...new Array<number[]>(height)].map(() => new Array<number>(width).fill(0));
+        boardState.adjFlagsOnBoard = [...new Array<number[]>(height)].map(() => new Array<number>(width).fill(0));
+        boardState.flagOnBoard = [...new Array<boolean[]>(height)].map(() => new Array<boolean>(width).fill(false));
+        boardState.flagConfirmed = [...new Array<boolean[]>(height)].map(() => new Array<boolean>(width).fill(false));
+        boardState.revealed = [...new Array<boolean[]>(height)].map(() => new Array<boolean>(width).fill(false));
     }
 
     private static leaveOnlyEdgeLivingWitnesses(boardState: BoardStateDto): void
@@ -122,16 +124,16 @@ export default class BoardStateService implements ServiceInterface
         boardState.livingWitnesses.removeAll(toRemove);
     }
 
-    private static initAdjacentUnrevealed(boardState: BoardStateDto): void
+    private resetAdjacentUnrevealed(): void
     {
-        boardState.adjUnrevealed = new Array<number[]>(boardState.height - 1)
-            .fill(new Array<number>(boardState.width - 1).fill(0));
+        this.boardState.adjUnrevealed = [...new Array<Array<number>>(this.boardState.height)]
+            .map(() => new Array<number>(this.boardState.width).fill(0));
 
-        whileLoopOverBoardDo(boardState, (location) => {
-            boardState.adjUnrevealed[location.y][location.x] = BoardStateService.getInitAdjacentCountByLocation(
+        whileLoopOverBoardDo(this.boardState, (location) => {
+            this.boardState.adjUnrevealed[location.y][location.x] = BoardStateService.getInitAdjacentCountByLocation(
                 location,
-                boardState.height,
-                boardState.width
+                this.boardState.height,
+                this.boardState.width
             );
         });
     }
