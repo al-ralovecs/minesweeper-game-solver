@@ -414,6 +414,7 @@ BoardStateDto {
       false,
     ],
   ],
+  "testMoveBalance": 0,
   "totalFlags": 2,
   "totalFlagsConfirmed": 2,
   "width": 3,

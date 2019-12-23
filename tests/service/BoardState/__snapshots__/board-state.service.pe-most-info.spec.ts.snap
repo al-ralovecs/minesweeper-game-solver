@@ -3323,6 +3323,7 @@ BoardStateDto {
       false,
     ],
   ],
+  "testMoveBalance": 0,
   "totalFlags": 1,
   "totalFlagsConfirmed": 1,
   "width": 16,

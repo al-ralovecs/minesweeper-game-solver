@@ -4852,6 +4852,7 @@ BoardStateDto {
       false,
     ],
   ],
+  "testMoveBalance": 0,
   "totalFlags": 8,
   "totalFlagsConfirmed": 8,
   "width": 16,

@@ -5,6 +5,7 @@ import BoardDto from '../dto/board.dto';
 import BoardStateDto from '../dto/board-state.dto';
 import LocationDto from '../dto/location.dto';
 import MarginDto from '../dto/margin.dto';
+import {whileLoopOverBoardDo} from "../routine/while.loop-over-board.do";
 
 export default class BoardStateService implements ServiceInterface
 {
@@ -41,68 +42,67 @@ export default class BoardStateService implements ServiceInterface
 
         this.boardState.actionList = [];
 
-        for (let i: number = 0; i < this.boardState.height; i++) {
-            for (let j: number = 0; j < this.boardState.width; j++) {
-                const location: LocationDto = new LocationDto(i, j);
-                this.boardState.flagOnBoard[i][j] = false;
-                let info: number = this.board.data[i][j];
-                let act: ActionDto = this.boardState.action[i][j];
+        whileLoopOverBoardDo(this.boardState, (location, i, j) => {
+            this.boardState.flagOnBoard[i][j] = false;
+            let info: number = this.board.data[i][j];
+            let act: ActionDto = this.boardState.action[i][j];
 
-                // if (typeof act === 'undefined' && (
-                //     ! act.isCertainty
-                //     || MoveMethodEnum.BOOK === act.getMoveMethod
-                // )) {
-                //     this.boardState[i][j] = undefined;
-                //     act = undefined;
+            // if (typeof act === 'undefined' && (
+            //     ! act.isCertainty
+            //     || MoveMethodEnum.BOOK === act.getMoveMethod
+            // )) {
+            //     this.boardState[i][j] = undefined;
+            //     act = undefined;
+            // }
+
+            if (-1 !== info) {
+                // if (9 === info) {
+                //     this.boardState.totalFlags++;
+                //     this.boardState.flagOnBoard[i][j] = true;
+                //
+                //     let m: MarginDto = new MarginDto(i, j, this.boardState.height, this.boardState.width);
+                //
+                //     for (let k: number = i + m.top; k <= i + m.bottom; k++) {
+                //         for (let l: number = j + m.left; l <= j + m.right; l++) {
+                //             this.boardState.adjFlagsOnBoard[k][m]++;
+                //         }
+                //     }
                 // }
-
-                if (-1 !== info) {
-                    // if (9 === info) {
-                    //     this.boardState.totalFlags++;
-                    //     this.boardState.flagOnBoard[i][j] = true;
-                    //
-                    //     let m: MarginDto = new MarginDto(i, j, this.boardState.height, this.boardState.width);
-                    //
-                    //     for (let k: number = i + m.top; k <= i + m.bottom; k++) {
-                    //         for (let l: number = j + m.left; l <= j + m.right; l++) {
-                    //             this.boardState.adjFlagsOnBoard[k][m]++;
-                    //         }
-                    //     }
-                    // }
-                    if (! this.boardState.revealed[i][j]) {
-                        this.boardState.livingWitnesses.add(location);
-
-                        this.boardState.revealed[i][j] = true;
-                        this.boardState.board[i][j] = info;
-
-                        let m: MarginDto = new MarginDto(i, j, this.boardState.height, this.boardState.width);
-
-                        for (let k: number = m.top; k <= m.bottom; k++) {
-                            for (let l: number = m.left; l <= m.right; l++) {
-                                if (k === i && l === j) {
-                                    continue;
-                                }
-
-                                this.boardState.adjUnrevealed[k][l]--;
-                            }
-                        }
-                    }
-                } else {
-                    if (this.boardState.flagConfirmed[i][j]) {
-                        this.boardState.totalFlagsConfirmed++;
-                        this.boardState.totalFlags++;
-                    } else {
-                        this.boardState.numOfHidden++;
-                    }
-
-                    // if (typeof act !== 'undefined' && null !== act && act.isCertainty) {
-                    //     if (act.getAction !== ActionEnum.FLAG) {
-                    //         this.boardState.actionList.push(act);
-                    //     }
-                    // }
+                if (this.boardState.revealed[i][j]) {
+                    return;
                 }
+
+                this.boardState.livingWitnesses.add(location);
+
+                this.boardState.revealed[i][j] = true;
+                this.boardState.board[i][j] = info;
+
+                let m: MarginDto = new MarginDto(i, j, this.boardState.height, this.boardState.width);
+
+                for (let k: number = m.top; k <= m.bottom; k++) {
+                    for (let l: number = m.left; l <= m.right; l++) {
+                        if (k === i && l === j) {
+                            continue;
+                        }
+
+                        this.boardState.adjUnrevealed[k][l]--;
+                    }
+                }
+            } else {
+                if (this.boardState.flagConfirmed[i][j]) {
+                    this.boardState.totalFlagsConfirmed++;
+                    this.boardState.totalFlags++;
+                } else {
+                    this.boardState.numOfHidden++;
+                }
+
+                // if (typeof act !== 'undefined' && null !== act && act.isCertainty) {
+                //     if (act.getAction !== ActionEnum.FLAG) {
+                //         this.boardState.actionList.push(act);
+                //     }
+                // }
             }
-        }
+        });
 
         let toRemove: LocationDto[] = [];
         this.boardState.livingWitnesses.data.forEach(l => {
