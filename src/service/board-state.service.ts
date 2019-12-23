@@ -1,11 +1,13 @@
 import ServiceInterface from '../interface/service.interface';
 
-import ActionDto from '../dto/action.dto';
+import ActionDto, {ActionType} from '../dto/action.dto';
 import BoardDto from '../dto/board.dto';
 import BoardStateDto from '../dto/board-state.dto';
 import LocationDto from '../dto/location.dto';
-import MarginDto from '../dto/margin.dto';
 import {whileLoopOverBoardDo} from "../routine/while.loop-over-board.do";
+import {AdjacentSquaresDto} from "../dto/adjacent-squares.dto";
+import {whileLoopAroundTileDo} from "../routine/while.loop-around-tile.do";
+import {StrategyType} from "../strategy/abstract-strategy";
 
 export default class BoardStateService implements ServiceInterface
 {
@@ -32,63 +34,29 @@ export default class BoardStateService implements ServiceInterface
 
     public process(): void
     {
-        for (let i: number = 0; i < this.boardState.height; i++) {
-            this.boardState.adjFlagsOnBoard[i] = [];
-
-            for (let j: number = 0; j < this.boardState.width; j++) {
-                this.boardState.adjFlagsOnBoard[i][j] = 0;
-            }
-        }
+        this.boardState.adjFlagsOnBoard = new Array<number[]>(this.boardState.height - 1)
+            .fill(new Array<number>(this.boardState.width).fill(0));
 
         this.boardState.actionList = [];
 
         whileLoopOverBoardDo(this.boardState, (location, i, j) => {
             this.boardState.flagOnBoard[i][j] = false;
+
             let info: number = this.board.data[i][j];
-            let act: ActionDto = this.boardState.action[i][j];
+            let action: ActionDto = this.boardState.action[i][j];
 
-            // if (typeof act === 'undefined' && (
-            //     ! act.isCertainty
-            //     || MoveMethodEnum.BOOK === act.getMoveMethod
-            // )) {
-            //     this.boardState[i][j] = undefined;
-            //     act = undefined;
-            // }
+            if (typeof action !== 'undefined'
+                && null !== action
+                && (
+                    ! action.isCertainty
+                    || StrategyType.FirstMove === action.moveMethod
+                )
+            ) {
+                this.boardState.action[i][j] = null;
+                action = null;
+            }
 
-            if (-1 !== info) {
-                // if (9 === info) {
-                //     this.boardState.totalFlags++;
-                //     this.boardState.flagOnBoard[i][j] = true;
-                //
-                //     let m: MarginDto = new MarginDto(i, j, this.boardState.height, this.boardState.width);
-                //
-                //     for (let k: number = i + m.top; k <= i + m.bottom; k++) {
-                //         for (let l: number = j + m.left; l <= j + m.right; l++) {
-                //             this.boardState.adjFlagsOnBoard[k][m]++;
-                //         }
-                //     }
-                // }
-                if (this.boardState.revealed[i][j]) {
-                    return;
-                }
-
-                this.boardState.livingWitnesses.add(location);
-
-                this.boardState.revealed[i][j] = true;
-                this.boardState.board[i][j] = info;
-
-                let m: MarginDto = new MarginDto(i, j, this.boardState.height, this.boardState.width);
-
-                for (let k: number = m.top; k <= m.bottom; k++) {
-                    for (let l: number = m.left; l <= m.right; l++) {
-                        if (k === i && l === j) {
-                            continue;
-                        }
-
-                        this.boardState.adjUnrevealed[k][l]--;
-                    }
-                }
-            } else {
+            if (-1 === info) {
                 if (this.boardState.flagConfirmed[i][j]) {
                     this.boardState.totalFlagsConfirmed++;
                     this.boardState.totalFlags++;
@@ -96,78 +64,99 @@ export default class BoardStateService implements ServiceInterface
                     this.boardState.numOfHidden++;
                 }
 
-                // if (typeof act !== 'undefined' && null !== act && act.isCertainty) {
-                //     if (act.getAction !== ActionEnum.FLAG) {
-                //         this.boardState.actionList.push(act);
-                //     }
-                // }
+                if (typeof action !== 'undefined'
+                    && null !== action
+                    && action.isCertainty
+                    && ActionType.Flag !== action.getAction
+                ) {
+                    this.boardState.actionList.push(action);
+                }
+
+                return;
             }
+
+            if (this.boardState.revealed[i][j]) {
+                return;
+            }
+
+            this.boardState.livingWitnesses.add(location);
+            this.boardState.revealed[i][j] = true;
+            this.boardState.board[i][j] = info;
+
+            whileLoopAroundTileDo(i, j, this.boardState.height, this.boardState.width, (y, x) => {
+                this.boardState.adjUnrevealed[y][x]--;
+            });
         });
 
-        let toRemove: LocationDto[] = [];
-        this.boardState.livingWitnesses.data.forEach(l => {
-            if (0 === this.boardState.countAdjacentUnrevealed(l)) {
-                toRemove.push(l);
-            }
-        });
-        this.boardState.livingWitnesses.removeAll(toRemove);
-
-        // this.boardState.actionList.forEach(a => {
-        //    this.boardState.unPlayedMoves[a.getMoveMethod]++;
-        // });
+        BoardStateService.leaveOnlyEdgeLivingWitnesses(this.boardState);
     }
 
     private static init(boardState: BoardStateDto): void
     {
-        boardState.action = [];
-        boardState.flagOnBoard = [];
-        boardState.adjFlagsOnBoard = [];
-        boardState.adjUnrevealed = [];
-        boardState.flagConfirmed = [];
-        boardState.revealed = [];
-        boardState.board = [];
-        boardState.adjFlagsConfirmed = [];
-        boardState.adjacentLocations1 = [];
+        const height: number = boardState.height - 1;
+        const width: number = boardState.width - 1;
 
-        for (let i: number = 0; i < boardState.height; i++) {
-            boardState.action[i] = [];
-            boardState.flagOnBoard[i] = [];
-            boardState.adjFlagsOnBoard[i] = [];
-            boardState.adjUnrevealed[i] = [];
-            boardState.flagConfirmed[i] = [];
-            boardState.revealed[i] = [];
-            boardState.board[i] = [];
-            boardState.adjFlagsConfirmed[i] = [];
-            boardState.adjacentLocations1[i] = [];
+        boardState.action = new Array<ActionDto[]>(height).fill(new Array<ActionDto>(width).fill(undefined));
+        boardState.flagOnBoard = new Array<boolean[]>(height).fill(new Array<boolean>(width).fill(false));
+        boardState.adjFlagsOnBoard = new Array<number[]>(height).fill(new Array<number>(width).fill(0));
+        boardState.flagConfirmed = new Array<boolean[]>(height).fill(new Array<boolean>(width).fill(false));
+        boardState.revealed = new Array<boolean[]>(height).fill(new Array<boolean>(width).fill(false));
+        boardState.board = new Array<number[]>(height).fill(new Array<number>(width).fill(-1));
+        boardState.adjFlagsConfirmed = new Array<number[]>(height).fill(new Array<number>(width).fill(0));
+        boardState.adjacentLocations1 = new Array<AdjacentSquaresDto[]>(height)
+            .fill(new Array<AdjacentSquaresDto>(width).fill(undefined));
 
-            for (let j: number = 0; j < boardState.width; j++) {
-                boardState.action[i][j] = undefined;
-                boardState.flagOnBoard[i][j] = false;
-                boardState.adjFlagsOnBoard[i][j] = 0;
-                boardState.flagConfirmed[i][j] = false;
-                boardState.revealed[i][j] = false;
-                boardState.board[i][j] = -1;
-                boardState.adjFlagsConfirmed[i][j] = 0;
-                boardState.adjacentLocations1[i][j] = undefined;
+        BoardStateService.initAdjacentUnrevealed(boardState);
+    }
 
-                let adjacent: number = 8;
+    private static leaveOnlyEdgeLivingWitnesses(boardState: BoardStateDto): void
+    {
+        let toRemove: LocationDto[] = [];
 
-                if (0 === i && 0 === j
-                    || 0 === i && boardState.width - 1 === j
-                    || boardState.height - 1 === i && 0 === j
-                    || boardState.height - 1 === i && boardState.width - 1 === j
-                ) {
-                    adjacent = 3;
-                } else if (0 === i
-                    || 0 === j
-                    || boardState.height - 1 === i
-                    || boardState.width - 1 === j
-                ) {
-                    adjacent = 5;
-                }
-
-                boardState.adjUnrevealed[i][j] = adjacent;
+        boardState.livingWitnesses.data.forEach(l => {
+            if (0 === boardState.countAdjacentUnrevealed(l)) {
+                toRemove.push(l);
             }
+        });
+
+        boardState.livingWitnesses.removeAll(toRemove);
+    }
+
+    private static initAdjacentUnrevealed(boardState: BoardStateDto): void
+    {
+        boardState.adjUnrevealed = new Array<number[]>(boardState.height - 1)
+            .fill(new Array<number>(boardState.width - 1).fill(0));
+
+        whileLoopOverBoardDo(boardState, (location) => {
+            boardState.adjUnrevealed[location.y][location.x] = BoardStateService.getInitAdjacentCountByLocation(
+                location,
+                boardState.height,
+                boardState.width
+            );
+        });
+    }
+
+    private static getInitAdjacentCountByLocation(location: LocationDto, height: number, width: number): number
+    {
+        const y: number = location.y;
+        const x: number = location.x;
+
+        if (0 === y && 0 === x
+            || 0 === y && width - 1 === x
+            || height - 1 === y && 0 === x
+            || height - 1 === y && width - 1 === x
+        ) {
+            return 3;
         }
+
+        if (0 === y
+            || 0 === x
+            || height - 1 === y
+            || width - 1 === x
+        ) {
+            return 5;
+        }
+
+        return 8;
     }
 }
