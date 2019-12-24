@@ -224,7 +224,7 @@ export default class ProbabilityEngineService implements ServiceInterface
 
     private getBestCandidates(threshold: number): CandidateLocationDto[]
     {
-        let best: CandidateLocationDto[] = new Array<CandidateLocationDto>;
+        let best: CandidateLocationDto[] = new Array<CandidateLocationDto>();
         let test: number = this.data.bestProbability;
 
         if (0 < 1 - this.data.bestProbability) {

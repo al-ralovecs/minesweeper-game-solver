@@ -282,7 +282,7 @@ export default class EvaluateLocationsService
 
         if (null !== linkedLocation) {
             top:
-            for (const link of linkedLocation.getLinkedLocations) {
+            for (const link of linkedLocation.getLinkedLocations.data) {
                 for (const e of this.evaluated) {
                     if (e.equals(link)) {
                         e.merge(result);

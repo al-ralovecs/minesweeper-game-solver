@@ -47,8 +47,9 @@ export default class EvaluatedLocationDto extends LocationDto
 
         return 0;
     }
+
+    public merge(link: EvaluatedLocationDto): void
+    {
+        this.expectedClears += link.expectedClears;
+    }
 }
-
-/**
-
- */
