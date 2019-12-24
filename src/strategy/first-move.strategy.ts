@@ -15,14 +15,14 @@ export default class FirstMoveStrategy extends AbstractStrategy
         const x: number = Math.round(this.boardState.width / 2) - 1;
 
         if (0 > y || 0 > x || this.boardState.height <= y || this.boardState.width <= x) {
-            throw Error(`[FirstMoveStrategy] Proposed first move (${x}, ${y}) is out of board`);
+            throw Error(`[FirstMoveStrategy] Proposed first move (${x}, ${y}) is out of board bounds`);
         }
 
         this.boardState.setAction = new ActionDto(
             new LocationDto(y, x),
             ActionType.Clear,
             StrategyType.FirstMove,
-            1.0
+            1
         );
     }
 

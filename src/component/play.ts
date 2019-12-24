@@ -50,8 +50,12 @@ export default class Play implements PlayInterface
 
     public get getNextMove(): ActionDto
     {
-        let hasMove: boolean = false;
         let strategy: AbstractStrategy;
+
+        this.resetStrategySequence();
+
+        this.processBoardStateService();
+        let hasMove: boolean = this.getBoardState.hasNextMove;
 
         while (! hasMove) {
             this.processAnalysis();
@@ -63,11 +67,13 @@ export default class Play implements PlayInterface
             hasMove = strategy.hasNextMove;
 
             if (! hasMove) {
-                this.currentStrategyType++;
+                this.moveToNextStrategy();
             }
         }
 
-        return strategy.getNextMove;
+        this.resetStrategySequence();
+
+        return null === strategy ? this.getBoardState.getNextMove : strategy.getNextMove;
     }
 
     public get getBinomialEngine(): Binomial
@@ -122,6 +128,22 @@ export default class Play implements PlayInterface
         }
 
         return this.evaluateLocationsService;
+    }
+
+    private moveToNextStrategy(): void
+    {
+        this.currentStrategyType++;
+    }
+
+    private resetStrategySequence(): void
+    {
+        if (StrategyType.BruteForce === this.currentStrategyType) {
+            // @todo: when BruteForce implemented; measure, if next move can be based on preceding analysis
+
+            // return;
+        }
+
+        this.currentStrategyType = 0;
     }
 
     private get getNextStrategy(): AbstractStrategy
@@ -183,8 +205,8 @@ export default class Play implements PlayInterface
             case StrategyType.CompareRemainingSolutions:
                 strategy = new CompareSolutionsStrategy(
                     this.getBoardState,
-                    this.getWitnessWeb,
-                    this.getProbabilityDistribution
+                    this.getProbabilityDistribution,
+                    this.getEvaluateLocationsService
                 );
                 break;
             case StrategyType.FinalGuess:
@@ -205,7 +227,6 @@ export default class Play implements PlayInterface
     {
         switch (this.currentStrategyType) {
             case StrategyType.FirstMove:
-                this.processBoardStateService();
                 break;
             case StrategyType.TrivialSearch:
                 this.processWitnessWebService();
@@ -221,6 +242,9 @@ export default class Play implements PlayInterface
             case StrategyType.BruteForce:
                 break;
             case StrategyType.OffEdgeEvaluation:
+            case StrategyType.CertainSolutions:
+            case StrategyType.CompareRemainingSolutions:
+            case StrategyType.FinalGuess:
                 break;
             default:
                 throw Error(`[Play::prepareAnalysis] Invalid strategy type Id [${this.currentStrategyType}] provided.`);
@@ -284,5 +308,6 @@ export default class Play implements PlayInterface
         }
 
         this.probabilityEngine.process();
+        this.probabilityEngine.processBestCandidates();
     }
 }

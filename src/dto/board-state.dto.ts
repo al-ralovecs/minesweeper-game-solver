@@ -4,8 +4,9 @@ import LocationSetDto from "./location-set.dto";
 import AreaDto from "./area.dto";
 import {AdjacentSquaresDto} from "./adjacent-squares.dto";
 import ChordLocationDto from "./chord-location.dto";
+import PlayInterface from "../interface/play.interface";
 
-export default class BoardStateDto
+export default class BoardStateDto implements PlayInterface
 {
     public readonly height: number;
     public readonly width: number;
@@ -44,6 +45,20 @@ export default class BoardStateDto
         this.width = width;
         this.expectedTotalMines = expectedTotalMines;
 
+    }
+
+    public get hasNextMove(): boolean
+    {
+        return 0 < this.actionList
+            .filter(a => ActionType.Clear === a.type && a.isCertainty)
+            .length;
+    }
+
+    public get getNextMove(): ActionDto
+    {
+        return this.getActions
+            .filter(a => ActionType.Clear === a.type && a.isCertainty)
+            .shift();
     }
 
     public get hasNewFlagFound(): boolean
