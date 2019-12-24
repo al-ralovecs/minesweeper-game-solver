@@ -3,6 +3,7 @@ import BoxDto from './box.dto';
 import LinkedLocationDto from './linked-location.dto';
 import LocationDto from './location.dto';
 import WitnessDto from './witness.dto';
+import CandidateLocationDto from "./candidate-location.dto";
 
 export const PROBABILITY_ENGINE_TOLERANCE: number = 0.96;
 
@@ -10,11 +11,11 @@ export default class ProbabilityDistributionDto
 {
     public readonly boxes: BoxDto[];
     public readonly boxCount: number;
+    public readonly witnesses: WitnessDto[];
+
     public boxProb: number[];
 
     public hashTally: bigint[];
-
-    public readonly witnesses: WitnessDto[];
 
     public minesLeft: number;
     public squaresLeft: number;
@@ -22,11 +23,13 @@ export default class ProbabilityDistributionDto
 
     public readonly minTotalMines: number;
     public readonly maxTotalMines: number;
+    public mines: LocationDto[] = [];
 
     public offEdgeBest: boolean = true;
     public offEdgeProbability: number;
     public bestProbability: number;
     public cutOffProbability: number;
+    public bestCandidates: CandidateLocationDto[];
 
     public finalSolutionsCount: bigint;
     public clearCount: number;

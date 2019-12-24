@@ -7,9 +7,9 @@ export default function whileLoopAroundTileDo(
     height: number,
     width: number,
     callable: (i: number, j: number, location: LocationDto) => void,
-    size: number = 1
+    margin: number = 1
 ) {
-    const m: MarginDto = new MarginDto(y, x, height, width, size);
+    const m: MarginDto = new MarginDto(y, x, height, width, margin);
 
     for (let i: number = m.top; i <= m.bottom; i++) {
         for (let j: number = m.left; j <= m.right; j++) {

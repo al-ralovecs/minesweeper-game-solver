@@ -32,17 +32,8 @@ export default class OffEdgeEvaluationStrategy extends AbstractStrategy
 
     protected applyStrategy(): void
     {
-        this.evaluateLocationsService.addOffEdgeCandidates(
-            this.boardState.getAllUnrevealedSquares
-        );
-
-        this.evaluateLocationsService.evaluateLocations(
-            ProbabilityEngineService.getBestCandidates(
-                this.boardState,
-                this.probabilityDistribution,
-                PROBABILITY_ENGINE_TOLERANCE
-            )
-        );
+        this.evaluateLocationsService.addOffEdgeCandidates(this.boardState.getAllUnrevealedSquares);
+        this.evaluateLocationsService.evaluateLocations(this.probabilityDistribution.bestCandidates);
 
         if (! this.evaluateLocationsService.hasBestMove) {
             return;

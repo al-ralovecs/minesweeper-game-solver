@@ -24,6 +24,7 @@ import OffEdgeEvaluationStrategy from "../strategy/off-edge-evaluation.strategy"
 import CertainSolutionsStrategy from "../strategy/certain-solutions.strategy";
 import CompareSolutionsStrategy from "../strategy/compare-solutions.strategy";
 import FinalGuessStrategy from "../strategy/final-guess.strategy";
+import EvaluateLocationsService from "../service/evaluate-locations.service";
 
 export default class Play implements PlayInterface
 {
@@ -36,6 +37,7 @@ export default class Play implements PlayInterface
     private isWitnessWebProcessed: boolean;
     private deadLocationsService: DeadLocationsService;
     private probabilityEngine: ProbabilityEngineService;
+    private evaluateLocationsService: EvaluateLocationsService;
 
     private currentStrategyType: StrategyType = StrategyType.FirstMove;
 
@@ -109,6 +111,19 @@ export default class Play implements PlayInterface
         return this.probabilityEngine.getProbabilityDistribution;
     }
 
+    public get getEvaluateLocationsService(): EvaluateLocationsService
+    {
+        if (typeof this.evaluateLocationsService === 'undefined') {
+            this.evaluateLocationsService = new EvaluateLocationsService(
+                this.getBoardState,
+                this.getWitnessWeb,
+                this.getProbabilityDistribution
+            );
+        }
+
+        return this.evaluateLocationsService;
+    }
+
     private get getNextStrategy(): AbstractStrategy
     {
         let strategy: AbstractStrategy;
@@ -154,7 +169,8 @@ export default class Play implements PlayInterface
             case StrategyType.OffEdgeEvaluation:
                 strategy = new OffEdgeEvaluationStrategy(
                     this.getBoardState,
-                    this.getProbabilityDistribution
+                    this.getProbabilityDistribution,
+                    this.getEvaluateLocationsService
                 );
                 break;
             case StrategyType.CertainSolutions:
@@ -203,6 +219,8 @@ export default class Play implements PlayInterface
                 this.processProbabilityEngine();
                 break;
             case StrategyType.BruteForce:
+                break;
+            case StrategyType.OffEdgeEvaluation:
                 break;
             default:
                 throw Error(`[Play::prepareAnalysis] Invalid strategy type Id [${this.currentStrategyType}] provided.`);

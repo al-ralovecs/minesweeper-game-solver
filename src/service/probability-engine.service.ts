@@ -10,10 +10,9 @@ import AreaDto from '../dto/area.dto';
 import NextWitnessDto from '../dto/next-witness.dto';
 import ProbabilityLineDto from '../dto/probability-line.dto';
 import LinkedLocationDto from '../dto/linked-location.dto';
-import LocationDto from '../dto/location.dto';
 
 import bigintDivide from '../routine/bigint.divide';
-import ProbabilityDistributionDto from "../dto/probability-distribution.dto";
+import ProbabilityDistributionDto, {PROBABILITY_ENGINE_TOLERANCE} from "../dto/probability-distribution.dto";
 import CandidateLocationDto from "../dto/candidate-location.dto";
 
 export const SmallCombinations = [
@@ -39,8 +38,6 @@ export default class ProbabilityEngineService implements ServiceInterface
     public heldProbs: ProbabilityLineDto[] = [];
     
     public mask: boolean[];
-
-    public mines: LocationDto[] = [];
 
     private independentGroups: number = 0;
     private recursions: number = 0;
@@ -69,47 +66,15 @@ export default class ProbabilityEngineService implements ServiceInterface
         return this.data;
     }
 
-    public static getBestCandidates(
-        boardState: BoardStateDto,
-        distribution: ProbabilityDistributionDto,
-        threshold: number
-    ): CandidateLocationDto[] {
-        let best: CandidateLocationDto[] = new Array<CandidateLocationDto>;
-        let test: number = distribution.bestProbability;
-
-        if (0 < 1 - distribution.bestProbability) {
-            test *= threshold;
-        }
-
-        for (let i: number = 0; i < distribution.boxProb.length; i++) {
-            if (0 > distribution.boxProb[i] - test) {
-                continue;
-            }
-
-            for (const squ of distribution.boxes[i].getSquares) {
-                if (distribution.deadLocations.contains(squ)) {
-                    continue;
-                }
-
-                best.push(new CandidateLocationDto(
-                    squ.y,
-                    squ.x,
-                    distribution.boxProb[i],
-                    boardState.countAdjacentUnrevealed(squ),
-                    boardState.countAdjacentConfirmedFlags(squ)
-                ))
-            }
-        }
-
-        best.sort(CandidateLocationDto.sortByProbabilityFlagFree);
-
-        return best;
-    }
-
     public process(): void
     {
         this.generateBoxProbabilities();
         this.calculateBoxProbabilities();
+    }
+
+    public processBestCandidates(): void
+    {
+        this.getProbabilityDistribution.bestCandidates = this.getBestCandidates(PROBABILITY_ENGINE_TOLERANCE);
     }
 
     protected generateBoxProbabilities(): void
@@ -181,7 +146,7 @@ export default class ProbabilityEngineService implements ServiceInterface
                     this.data.boxProb[i] = 0;
 
                     for (const squ of this.data.boxes[i].getSquares) {
-                        this.mines.push(squ);
+                        this.data.mines.push(squ);
                     }
                 } else {
                     this.data.boxProb[i] = 1 - bigintDivide(tally[i], totalTally, 6);
@@ -255,6 +220,40 @@ export default class ProbabilityEngineService implements ServiceInterface
         } else {
             this.data.cutOffProbability = this.data.bestProbability * 0.96;
         }
+    }
+
+    private getBestCandidates(threshold: number): CandidateLocationDto[]
+    {
+        let best: CandidateLocationDto[] = new Array<CandidateLocationDto>;
+        let test: number = this.data.bestProbability;
+
+        if (0 < 1 - this.data.bestProbability) {
+            test *= threshold;
+        }
+
+        for (let i: number = 0; i < this.data.boxProb.length; i++) {
+            if (0 > this.data.boxProb[i] - test) {
+                continue;
+            }
+
+            for (const squ of this.data.boxes[i].getSquares) {
+                if (this.data.deadLocations.contains(squ)) {
+                    continue;
+                }
+
+                best.push(new CandidateLocationDto(
+                    squ.y,
+                    squ.x,
+                    this.data.boxProb[i],
+                    this.boardState.countAdjacentUnrevealed(squ),
+                    this.boardState.countAdjacentConfirmedFlags(squ)
+                ))
+            }
+        }
+
+        best.sort(CandidateLocationDto.sortByProbabilityFlagFree);
+
+        return best;
     }
 
     private mergeProbabilitiesWithWitness(nw: NextWitnessDto): ProbabilityLineDto[]
