@@ -103,6 +103,8 @@ export default class BoardStateService implements ServiceInterface
         boardState.action = [...new Array<ActionDto[]>(height)].map(() => new Array<ActionDto>(width).fill(undefined));
         boardState.adjacentLocations1 = [...new Array<AdjacentSquaresDto[]>(height)]
             .map(() => new Array<AdjacentSquaresDto>(width).fill(undefined));
+        boardState.adjacentLocations2 = [...new Array<AdjacentSquaresDto[]>(height)]
+            .map(() => new Array<AdjacentSquaresDto>(width).fill(undefined));
         boardState.board = [...new Array<number[]>(height)].map(() => new Array<number>(width).fill(-1));
         boardState.adjFlagsConfirmed = [...new Array<number[]>(height)].map(() => new Array<number>(width).fill(0));
         boardState.adjFlagsOnBoard = [...new Array<number[]>(height)].map(() => new Array<number>(width).fill(0));

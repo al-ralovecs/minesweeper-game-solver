@@ -93,6 +93,12 @@ export default class BoardStateDto implements PlayInterface
         let work: LocationSetDto = new LocationSetDto();
 
         for (const l of witnesses) {
+            // this turned out necessary
+            // for generically constructed arrays with empty items
+            if (typeof l === 'undefined') {
+                continue;
+            }
+
             for (const adj of this.getAdjacentSquaresIterable(l)) {
                 if (this.isUnrevealed(adj)) {
                     work.add(adj);

@@ -121,6 +121,7 @@ export default class Play implements PlayInterface
             this.evaluateLocationsService = new EvaluateLocationsService(
                 this.getBoardState,
                 this.getWitnessWeb,
+                this.getBinomialEngine,
                 this.getProbabilityDistribution
             );
         }

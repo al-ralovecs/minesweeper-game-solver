@@ -1,5 +1,6 @@
 import BoardStateDto from "../dto/board-state.dto";
 import WitnessWebDto from "../dto/witness-web.dto";
+import Binomial from "../utility/binomial";
 import ProbabilityDistributionDto from "../dto/probability-distribution.dto";
 import EvaluatedLocationDto from "../dto/evaluated-location.dto";
 import ActionDto, {ActionType} from "../dto/action.dto";
@@ -7,9 +8,11 @@ import {StrategyType} from "../strategy/abstract-strategy";
 import LocationDto from "../dto/location.dto";
 import LocationSetDto from "../dto/location-set.dto";
 import isCoordinatesValid from '../routine/coordinate.is-valid';
-import solutionCounterValidateLocation from "../routine/solution-counter.validate-location";
 import bigintDivide from '../routine/bigint.divide';
 import LinkedLocationDto from "../dto/linked-location.dto";
+import AreaDto from "../dto/area.dto";
+import WitnessWebService from "./witness-web.service";
+import SolutionCounterService from "./solution-counter.service";
 
 const OFFSETS = [
     [  2,  0 ],
@@ -24,6 +27,7 @@ export default class EvaluateLocationsService
 {
     private readonly boardState: BoardStateDto;
     private readonly wholeEdge: WitnessWebDto;
+    private readonly binomialEngine: Binomial;
     private readonly probabilityDistribution: ProbabilityDistributionDto;
 
     private moveMethod: StrategyType;
@@ -33,10 +37,12 @@ export default class EvaluateLocationsService
     public constructor(
         boardState: BoardStateDto,
         wholeEdge: WitnessWebDto,
+        binomialEngine: Binomial,
         probabilityDistribution: ProbabilityDistributionDto
     ) {
         this.boardState = boardState;
         this.wholeEdge  = wholeEdge;
+        this.binomialEngine = binomialEngine;
         this.probabilityDistribution = probabilityDistribution;
     }
 
@@ -113,7 +119,7 @@ export default class EvaluateLocationsService
                 continue;
             }
 
-            const counter: ProbabilityDistributionDto = solutionCounterValidateLocation(tile, adjMines);
+            const counter: ProbabilityDistributionDto = this.validateLocation(tile, adjMines);
 
             const solutions: bigint = counter.finalSolutionsCount;
 
@@ -248,7 +254,7 @@ export default class EvaluateLocationsService
         for (let i: number = minMines; i < maxMines + 1; i++) {
             let clears: number = 1;
 
-            const counter: ProbabilityDistributionDto = solutionCounterValidateLocation(tile, i);
+            const counter: ProbabilityDistributionDto = this.validateLocation(tile, i);
             const sol: bigint = counter.finalSolutionsCount;
             clears = counter.clearCount;
 
@@ -295,8 +301,43 @@ export default class EvaluateLocationsService
 
         return result;
     }
+
+    private validateLocation(superLocation: LocationDto, value: number): ProbabilityDistributionDto
+    {
+        this.boardState.setWitnessValue(superLocation, value);
+
+        let witnesses: LocationDto[] = new Array<LocationDto>(this.boardState.getAllLivingWitnesses.length + 1);
+        witnesses.push(...this.wholeEdge.getPrunedWitnesses);
+        witnesses.push(superLocation);
+
+        let witnessed: AreaDto = this.boardState.getUnrevealedArea(witnesses);
+
+        const edgeService: WitnessWebService = new WitnessWebService(this.boardState, this.binomialEngine);
+        edgeService.setAllWitnesses = witnesses;
+        edgeService.setAllSquares = witnessed.getLocations.data;
+
+        edgeService.process();
+
+        const unrevealed: number = this.boardState.getTotalUnrevealedCount - 1;         // this is one less,
+                                                                                        // because we have added a witness
+
+        const minesLeft: number = this.boardState.expectedTotalMines - this.boardState.getConfirmedFlagCount;
+
+        const counter: SolutionCounterService = new SolutionCounterService(
+            this.boardState,
+            edgeService.getWitnessWeb,
+            this.binomialEngine,
+            new AreaDto(new LocationSetDto())
+        );
+        counter.getProbabilityDistribution
+            .minesLeft = minesLeft;
+        counter.getProbabilityDistribution
+            .squaresLeft = unrevealed - edgeService.getWitnessWeb.getSquares.length;
+
+        counter.process();
+
+        this.boardState.clearWitness(superLocation);
+
+        return counter.getProbabilityDistribution;
+    }
 }
-
-/**
-
- */
