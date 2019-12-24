@@ -17,7 +17,7 @@ export default function whileLoopAroundTileDo(
                 continue;
             }
 
-            const location: LocationDto = new LocationDto(y, x);
+            const location: LocationDto = new LocationDto(i, j);
 
             callable(i, j, location);
         }

@@ -120,7 +120,11 @@ export default class BoardStateDto implements PlayInterface
 
     public getAdjacentSquaresIterable(location: LocationDto, size: number = 1): Iterable<LocationDto>
     {
-        if (undefined === this.adjacentLocations1[location.y][location.x]) {
+        if (1 !== size && 2 !== size) {
+            throw Error(`[BoardState::getAdjacentSquaresIterable()] Invalid size [${size}] specified.`);
+        }
+
+        if (1 === size && undefined === this.adjacentLocations1[location.y][location.x]) {
             this.adjacentLocations1[location.y][location.x] = new AdjacentSquaresDto(
                 location,
                 this.height,
@@ -129,7 +133,18 @@ export default class BoardStateDto implements PlayInterface
             );
         }
 
-        return this.adjacentLocations1[location.y][location.x].locations;
+        if (2 === size && undefined === this.adjacentLocations2[location.y][location.x]) {
+            this.adjacentLocations2[location.y][location.x] = new AdjacentSquaresDto(
+                location,
+                this.height,
+                this.width,
+                size
+            );
+        }
+
+        return 1 === size
+            ? this.adjacentLocations1[location.y][location.x].locations
+            : this.adjacentLocations2[location.y][location.x].locations;
     }
 
     public getWitnessValue(location: LocationDto): number

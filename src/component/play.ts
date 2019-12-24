@@ -71,8 +71,6 @@ export default class Play implements PlayInterface
             }
         }
 
-        this.resetStrategySequence();
-
         return null === strategy ? this.getBoardState.getNextMove : strategy.getNextMove;
     }
 
@@ -137,13 +135,19 @@ export default class Play implements PlayInterface
 
     private resetStrategySequence(): void
     {
+        if (StrategyType.FirstMove === this.currentStrategyType) {
+            return;
+        }
+
         if (StrategyType.BruteForce === this.currentStrategyType) {
-            // @todo: when BruteForce implemented; measure, if next move can be based on preceding analysis
+            // @todo: when BruteForce implemented; measure, if the next move can be based on preceding analysis
 
             // return;
         }
 
-        this.currentStrategyType = 0;
+        // there is no reason to implement FirstMove strategy
+        // on any subsequent iteration
+        this.currentStrategyType = StrategyType.TrivialSearch;
     }
 
     private get getNextStrategy(): AbstractStrategy

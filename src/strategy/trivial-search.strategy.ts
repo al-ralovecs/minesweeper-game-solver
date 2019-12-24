@@ -17,33 +17,21 @@ export default class TrivialSearchStrategy extends AbstractStrategy
 
     protected applyStrategy()
     {
-        let count: number = 0;
-
-        for (const location of this.wholeEdge.getPrunedWitnesses) {
-            if (this.isObviousFlag(location)) {
-                for (const l of this.boardState.getAdjacentSquaresIterable(location)) {
-                    if (this.boardState.isUnrevealed(l)) {
-                        if (! this.boardState.alreadyActioned(l)) {
-                            count++;
-                            this.boardState.setAction = new ActionDto(l, ActionType.Flag, StrategyType.TrivialSearch, 1);
-                        }
-                    }
-                }
+        this.wholeEdge.getPrunedWitnesses.forEach((location) => {
+            if (! this.isObviousFlag(location)) {
+                return;
             }
-        }
 
-        for (const location of this.wholeEdge.getPrunedWitnesses) {
-            if (this.isObviousClear(location)) {
-                for (const l of this.boardState.getAdjacentSquaresIterable(location)) {
-                    if (this.boardState.isUnrevealed(l)) {
-                        if (! this.boardState.alreadyActioned(l)) {
-                            count++;
-                            this.boardState.setAction = new ActionDto(l, ActionType.Clear, StrategyType.TrivialSearch, 1);
-                        }
-                    }
-                }
+            this.markAdjacentLocations(location, ActionType.Flag);
+        });
+
+        this.wholeEdge.getPrunedWitnesses.forEach((location) => {
+            if (! this.isObviousClear(location)) {
+                return;
             }
-        }
+
+            this.markAdjacentLocations(location, ActionType.Clear);
+        });
     }
 
     protected get getMoveMethod(): StrategyType
@@ -53,17 +41,34 @@ export default class TrivialSearchStrategy extends AbstractStrategy
 
     private isObviousClear(location: LocationDto): boolean
     {
-        const flags: number = this.boardState.countAdjacentConfirmedFlags(location);
+        const tileValue: number = this.boardState.getWitnessValue(location);
+        const flagsCount: number = this.boardState.countAdjacentConfirmedFlags(location);
+        const unrevealedCount = this.boardState.countAdjacentUnrevealed(location);
 
-        return this.boardState.getWitnessValue(location) === flags
-            && 0 < this.boardState.countAdjacentUnrevealed(location);
+        return tileValue === flagsCount
+            && 0 < unrevealedCount;
     }
 
     private isObviousFlag(location: LocationDto): boolean
     {
-        const flags: number = this.boardState.countAdjacentConfirmedFlags(location);
-        const free = this.boardState.countAdjacentUnrevealed(location);
+        const tileValue: number = this.boardState.getWitnessValue(location);
+        const flagsCount: number = this.boardState.countAdjacentConfirmedFlags(location);
+        const unrevealedCount = this.boardState.countAdjacentUnrevealed(location);
 
-        return this.boardState.getWitnessValue(location) === flags + free && 0 < free;
+        return tileValue === flagsCount + unrevealedCount
+            && 0 < unrevealedCount;
+    }
+
+    private markAdjacentLocations(location: LocationDto, actionType: ActionType): void
+    {
+        for (const adjacentLocation of this.boardState.getAdjacentSquaresIterable(location)) {
+            if (! this.boardState.isUnrevealed(adjacentLocation)) {
+                continue;
+            }
+
+            if (! this.boardState.alreadyActioned(adjacentLocation)) {
+                this.boardState.setAction = new ActionDto(adjacentLocation, actionType, this.getMoveMethod, 1);
+            }
+        }
     }
 }

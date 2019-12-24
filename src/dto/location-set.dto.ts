@@ -10,7 +10,7 @@ export default class LocationSetDto {
 
     public contains(location: LocationDto): boolean
     {
-        return  (0 !== this.data.filter(l => l.value === location.value).length);
+        return  (0 !== this.data.filter(l => l.equals(location)).length);
     }
 
     public add(location: LocationDto): boolean

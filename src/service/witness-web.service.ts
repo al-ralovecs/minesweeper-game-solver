@@ -90,7 +90,7 @@ export default class WitnessWebService implements ServiceInterface
         for (const wit of this.witnessWeb.prunedWitnesses) {
             for (const squ of this.witnessWeb.squares) {
                 if (squ.isAdjacent(wit)) {
-                    squ.addWitness= wit;
+                    squ.addWitness = wit;
                 }
             }
         }
@@ -163,6 +163,7 @@ export default class WitnessWebService implements ServiceInterface
                 }
 
                 this.witnessWeb.pruned++;
+
                 return;
             }
         }
