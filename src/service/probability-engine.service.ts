@@ -450,7 +450,7 @@ export default class ProbabilityEngineService implements ServiceInterface
                     const w2: bigint = epl.mineBoxCount[i] * pl.solutionCount;
                     npl.mineBoxCount[i] = w1 + w2;
 
-                    //npl.hashCount[i] = epl.hashCount[i] + pl.hashCount[i];
+                    npl.hashCount[i] = epl.hashCount[i] + pl.hashCount[i];
                 }
 
                 result.push(npl);
@@ -481,8 +481,8 @@ export default class ProbabilityEngineService implements ServiceInterface
             npl.solutionCount = npl.solutionCount + pl.solutionCount;
 
             for (let i: number = 0; i < pl.mineBoxCount.length; i++) {
-                npl.mineBoxCount[i] = npl.mineBoxCount[i] + pl.mineBoxCount[i];
-                //npl.hashCount[i] = npl.hashCount[i] + pl.hashCount[i];
+                npl.mineBoxCount[i] += pl.mineBoxCount[i];
+                npl.hashCount[i] += pl.hashCount[i];
             }
         }
 

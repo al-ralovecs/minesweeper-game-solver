@@ -7,12 +7,13 @@ export default class ProbabilityLineDto
     public solutionCount: bigint = 0n;
     public mineBoxCount: bigint[];
 
-    public hashCount: number[] = [];
+    public hashCount: number[];
     public hash: number = ProbabilityLineDto.getRandomHash;
 
     public constructor(boxCount: number)
     {
-        this.mineBoxCount = Array<bigint>(boxCount).fill(0n);
+        this.mineBoxCount = new Array<bigint>(boxCount).fill(0n);
+        this.hashCount = new Array<number>(boxCount).fill(0);
     }
 
     public static sortByMineCount(o1: ProbabilityLineDto, o2: ProbabilityLineDto): number

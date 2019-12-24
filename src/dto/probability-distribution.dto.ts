@@ -46,8 +46,8 @@ export default class ProbabilityDistributionDto
     ) {
         this.boxes = boxes;
         this.boxCount = this.boxes.length;
-        this.boxProb = new Array<number>(this.boxCount);
-        this.hashTally = new Array<bigint>(this.boxCount);
+        this.boxProb = new Array<number>(this.boxCount).fill(0);
+        this.hashTally = new Array<bigint>(this.boxCount).fill(0n);
         
         this.witnesses = witnesses;
 
