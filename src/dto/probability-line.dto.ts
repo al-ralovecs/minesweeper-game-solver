@@ -20,11 +20,6 @@ export default class ProbabilityLineDto
         return o2.mineCount - o1.mineCount;
     }
 
-    public compareTo(o: ProbabilityLineDto): number
-    {
-        return this.mineCount - o.mineCount;
-    }
-
     private static get getRandomHash(): number
     {
         // Java: new BigInteger(20                         , new Random())

@@ -1,8 +1,8 @@
 import AreaDto from './area.dto';
 import BoxDto from './box.dto';
+import LinkedLocationDto from './linked-location.dto';
 import LocationDto from './location.dto';
 import WitnessDto from './witness.dto';
-import CandidateLocationDto from "./candidate-location.dto";
 
 export const PROBABILITY_ENGINE_TOLERANCE: number = 0.96;
 
@@ -30,6 +30,9 @@ export default class ProbabilityDistributionDto
 
     public finalSolutionsCount: bigint;
     public clearCount: number;
+
+    public linkedLocations: LinkedLocationDto[] = [];
+    public contraLinkedLocations: LinkedLocationDto[] = [];
 
     public constructor(
         boxes: BoxDto[],
@@ -67,55 +70,18 @@ export default class ProbabilityDistributionDto
 
     public get foundCertainty(): boolean
     {
-        return 0.01 >= Math.abs(this.bestProbability - 1);
+        return 0 === 1 - this.bestProbability;
     }
 
-    public getBestCandidates(threshold: number): CandidateLocationDto[]
+    public getLinkedLocation(tile: LocationDto): LinkedLocationDto
     {
+        for (const ll of this.linkedLocations) {
+            if (ll.equals(tile)) {
+                return ll;
+            }
+        }
 
+        return null;
     }
 }
 
-
-/**
- protected List<CandidateLocation> getBestCandidates(BigDecimal freshhold) {
-
-		List<CandidateLocation> best = new ArrayList<>();
-
-		//solver.display("Squares left " + this.squaresLeft + " squares analysed " + web.getSquares().size());
-
-		// if the outside probability is the best then return an empty list
-		BigDecimal test;
-		//if (offEdgeBest) {
-		//	solver.display("Best probability is off the edge " + bestProbability + " but will look for options on the edge only slightly worse");
-		//	//test = bestProbability.multiply(Solver.EDGE_TOLERENCE);
-		//	test = bestProbability.multiply(freshhold);
-		//} else
-
-		if (bestProbability.compareTo(BigDecimal.ONE) == 0){  // if we have a probability of one then don't allow lesser probs to get a look in
-			test = bestProbability;
-		} else {
-			test = bestProbability.multiply(freshhold);
-		}
-
-		boardState.display("Best probability is " + bestProbability + " freshhold is " + test);
-
-		for (int i=0; i < boxProb.length; i++) {
-			if (boxProb[i].compareTo(test) >= 0) {
-				for (Square squ: boxes.get(i).getSquares()) {
-					if (!deadLocations.contains(squ) || boxProb[i].compareTo(BigDecimal.ONE) == 0) {  // if not a dead location or 100% safe then use it
-						best.add(new CandidateLocation(squ.x, squ.y, boxProb[i], boardState.countAdjacentUnrevealed(squ), boardState.countAdjacentConfirmedFlags(squ)));
-					} else {
-						boardState.display("Location " + squ.display() + " is ignored because it is dead");
-					}
-				}
-			}
-		}
-
-		// sort in to best order
-		best.sort(CandidateLocation.SORT_BY_PROB_FLAG_FREE);
-
-		return best;
-
-	}
- */

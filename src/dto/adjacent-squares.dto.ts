@@ -1,5 +1,5 @@
 import LocationDto from './location.dto';
-import MarginDto from './margin.dto';
+import whileLoopAroundTileDo from '../routine/while.loop-around-tile.do';
 
 export class AdjacentSquaresDto {
     private readonly location: LocationDto;
@@ -21,16 +21,8 @@ export class AdjacentSquaresDto {
 
     private init(): void
     {
-        const m: MarginDto = new MarginDto(this.location.y, this.location.x, this.height, this.width, this.size);
-
-        for (let i: number = m.top; i <= m.bottom; i++) {
-            for (let j: number = m.left; j <= m.right; j++) {
-                if (i === this.location.y && j === this.location.x) {
-                    continue;
-                }
-
-                this.locations.push(new LocationDto(i, j));
-            }
-        }
+        whileLoopAroundTileDo(this.location.y, this.location.x, this.height, this.width, (y, x, location) => {
+            this.locations.push(location);
+        }, this.size);
     }
 }

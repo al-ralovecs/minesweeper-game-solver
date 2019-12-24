@@ -2,6 +2,7 @@ import {AbstractStrategy, StrategyType} from "./abstract-strategy";
 import WitnessWebDto from "../dto/witness-web.dto";
 import ProbabilityDistributionDto, { PROBABILITY_ENGINE_TOLERANCE } from "../dto/probability-distribution.dto";
 import BoardStateDto from "../dto/board-state.dto";
+import ProbabilityEngineService from "../service/probability-engine.service";
 
 export default class CertainSolutionsStrategy extends AbstractStrategy
 {
@@ -23,7 +24,11 @@ export default class CertainSolutionsStrategy extends AbstractStrategy
 	// or the solutions are certainties
 	protected get isStrategyApplicable(): boolean
 	{
-		return 1 === this.probabilityDistribution.getBestCandidates(PROBABILITY_ENGINE_TOLERANCE).length
+		return 1 === ProbabilityEngineService.getBestCandidates(
+				this.boardState,
+				this.probabilityDistribution,
+				PROBABILITY_ENGINE_TOLERANCE
+			).length
 			|| this.probabilityDistribution.foundCertainty;
 	}
 

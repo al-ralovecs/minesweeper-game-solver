@@ -2,6 +2,7 @@ import {AbstractStrategy, StrategyType} from "./abstract-strategy";
 import ProbabilityDistributionDto, {PROBABILITY_ENGINE_TOLERANCE} from "../dto/probability-distribution.dto";
 import WitnessWebDto from "../dto/witness-web.dto";
 import BoardStateDto from "../dto/board-state.dto";
+import ProbabilityEngineService from "../service/probability-engine.service";
 
 export default class CompareSolutionsStrategy extends AbstractStrategy
 {
@@ -21,7 +22,11 @@ export default class CompareSolutionsStrategy extends AbstractStrategy
 
     protected get isStrategyApplicable(): boolean
     {
-        return 1 < this.probabilityDistribution.getBestCandidates(PROBABILITY_ENGINE_TOLERANCE).length
+        return 1 < ProbabilityEngineService.getBestCandidates(
+                this.boardState,
+                this.probabilityDistribution,
+                PROBABILITY_ENGINE_TOLERANCE
+            ).length
     }
 
     protected applyStrategy(): void

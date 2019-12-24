@@ -103,14 +103,14 @@ export default class BoardStateDto
         return typeof this.action[location.y][location.x] !== 'undefined';
     }
 
-    public getAdjacentSquaresIterable(location: LocationDto): Iterable<LocationDto>
+    public getAdjacentSquaresIterable(location: LocationDto, size: number = 1): Iterable<LocationDto>
     {
         if (undefined === this.adjacentLocations1[location.y][location.x]) {
             this.adjacentLocations1[location.y][location.x] = new AdjacentSquaresDto(
                 location,
                 this.height,
                 this.width,
-                1
+                size
             );
         }
 
@@ -276,5 +276,11 @@ export default class BoardStateDto
         this.revealed[l.y][l.x] = false;
 
         this.testMoveBalance--;
+    }
+
+    public isCorner(y: number, x: number): boolean
+    {
+        return (y === 0 || y === this.height - 1)
+            && (x === 0 || x === this.width - 1);
     }
 }

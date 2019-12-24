@@ -24,10 +24,10 @@ export default class SolutionCounterService extends ProbabilityEngineService
         // outside a box tally
         let outsideTally: bigint = 0n;
 
-        let emptyBox: boolean[] = new Array<boolean>(this.distribution.boxCount).fill(true);
+        let emptyBox: boolean[] = new Array<boolean>(this.data.boxCount).fill(true);
 
         for (const pl of this.heldProbs) {
-            if (this.distribution.minTotalMines > pl.mineCount) {
+            if (this.data.minTotalMines > pl.mineCount) {
                 continue;
             }
 
@@ -35,9 +35,9 @@ export default class SolutionCounterService extends ProbabilityEngineService
 
             // number of ways
             // the rest of the board can be formed
-            let mult: bigint = this.binomial.getCombination(this.distribution.minesLeft - pl.mineCount, this.distribution.squaresLeft);
+            let mult: bigint = this.binomial.getCombination(this.data.minesLeft - pl.mineCount, this.data.squaresLeft);
 
-            outsideTally += mult * BigInt(this.distribution.minesLeft - pl.mineCount) * pl.solutionCount;
+            outsideTally += mult * BigInt(this.data.minesLeft - pl.mineCount) * pl.solutionCount;
 
             totalTally += mult * pl.solutionCount;
 
@@ -52,11 +52,11 @@ export default class SolutionCounterService extends ProbabilityEngineService
         if (0 < totalTally) {
             for (let i: number = 0; i < emptyBox.length; i++) {
                 if (emptyBox[i]) {
-                    this.distribution.clearCount += this.distribution.boxes[i].getSquares.length;
+                    this.data.clearCount += this.data.boxes[i].getSquares.length;
                 }
             }
         }
 
-        this.distribution.finalSolutionsCount = totalTally;
+        this.data.finalSolutionsCount = totalTally;
     }
 }

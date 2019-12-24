@@ -1,10 +1,9 @@
 import { AbstractStrategy, StrategyType } from "./abstract-strategy";
 
 import BoardStateDto from "../dto/board-state.dto";
-import ProbabilityDistributionDto, {PROBABILITY_ENGINE_TOLERANCE} from "../dto/probability-distribution.dto";
-import AreaDto from "../dto/area.dto";
-import LocationDto from "../dto/location.dto";
+import ProbabilityDistributionDto, { PROBABILITY_ENGINE_TOLERANCE } from "../dto/probability-distribution.dto";
 import EvaluateLocationsService from "../service/evaluate-locations.service";
+import ProbabilityEngineService from "../service/probability-engine.service";
 
 const OFF_EDGE_TOLERANCE: number = 0.97;
 
@@ -26,7 +25,7 @@ export default class OffEdgeEvaluationStrategy extends AbstractStrategy
 
     protected get isStrategyApplicable(): boolean
     {
-        // are clears off the edge within the permitted cut-off
+        // are clears off the edge within the permitted cut-off ?
         return 0 < this.probabilityDistribution.offEdgeProbability - this.probabilityDistribution.bestProbability * OFF_EDGE_TOLERANCE
             && ! this.probabilityDistribution.foundCertainty;
     }
@@ -36,14 +35,20 @@ export default class OffEdgeEvaluationStrategy extends AbstractStrategy
         this.evaluateLocationsService.addOffEdgeCandidates(
             this.boardState.getAllUnrevealedSquares
         );
+
         this.evaluateLocationsService.evaluateLocations(
-            this.probabilityDistribution.getBestCandidates(PROBABILITY_ENGINE_TOLERANCE)
+            ProbabilityEngineService.getBestCandidates(
+                this.boardState,
+                this.probabilityDistribution,
+                PROBABILITY_ENGINE_TOLERANCE
+            )
         );
 
         if (! this.evaluateLocationsService.hasBestMove) {
             return;
         }
 
+        this.evaluateLocationsService.setMoveMethod = this.getMoveMethod;
         this.boardState.setAction = this.evaluateLocationsService.getBestMove;
     }
 
@@ -51,5 +56,4 @@ export default class OffEdgeEvaluationStrategy extends AbstractStrategy
     {
         return StrategyType.OffEdgeEvaluation;
     }
-
 }
