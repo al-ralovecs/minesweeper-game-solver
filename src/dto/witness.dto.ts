@@ -1,14 +1,14 @@
-import LocationDto from "./location.dto";
-import SquareDto from "./square.dto";
-import BoxDto from "./box.dto";
-import Binomial from "../utility/binomial";
+import LocationDto from './location.dto';
+import SquareDto from './square.dto';
+import BoxDto from './box.dto';
+import Binomial from '../utility/binomial';
 
 export default class WitnessDto extends LocationDto {
     private readonly mines: number;
     public readonly iterations: bigint;
-    private webNum: number = 0;
+    private readonly squares: SquareDto[];
 
-    private squares: SquareDto[];
+    private webNum: number = 0;
     private boxes: BoxDto[] = [];
 
     private processed: boolean = false;

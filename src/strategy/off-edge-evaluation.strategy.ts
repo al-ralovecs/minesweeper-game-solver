@@ -1,9 +1,8 @@
-import { AbstractStrategy, StrategyType } from "./abstract-strategy";
+import { AbstractStrategy, StrategyType } from './abstract-strategy';
 
-import BoardStateDto from "../dto/board-state.dto";
-import ProbabilityDistributionDto, { PROBABILITY_ENGINE_TOLERANCE } from "../dto/probability-distribution.dto";
-import EvaluateLocationsService from "../service/evaluate-locations.service";
-import ProbabilityEngineService from "../service/probability-engine.service";
+import BoardStateDto from '../dto/board-state.dto';
+import ProbabilityDistributionDto from '../dto/probability-distribution.dto';
+import EvaluateLocationsService from '../service/evaluate-locations.service';
 
 const OFF_EDGE_TOLERANCE: number = 0.97;
 

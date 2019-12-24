@@ -1,18 +1,18 @@
-import BoardStateDto from "../dto/board-state.dto";
-import WitnessWebDto from "../dto/witness-web.dto";
-import Binomial from "../utility/binomial";
-import ProbabilityDistributionDto from "../dto/probability-distribution.dto";
-import EvaluatedLocationDto from "../dto/evaluated-location.dto";
-import ActionDto, {ActionType} from "../dto/action.dto";
-import {StrategyType} from "../strategy/abstract-strategy";
-import LocationDto from "../dto/location.dto";
-import LocationSetDto from "../dto/location-set.dto";
+import BoardStateDto from '../dto/board-state.dto';
+import WitnessWebDto from '../dto/witness-web.dto';
+import Binomial from '../utility/binomial';
+import ProbabilityDistributionDto from '../dto/probability-distribution.dto';
+import EvaluatedLocationDto from '../dto/evaluated-location.dto';
+import ActionDto, {ActionType} from '../dto/action.dto';
+import {StrategyType} from '../strategy/abstract-strategy';
+import LocationDto from '../dto/location.dto';
+import LocationSetDto from '../dto/location-set.dto';
 import isCoordinatesValid from '../routine/coordinate.is-valid';
 import bigintDivide from '../routine/bigint.divide';
-import LinkedLocationDto from "../dto/linked-location.dto";
-import AreaDto from "../dto/area.dto";
-import WitnessWebService from "./witness-web.service";
-import SolutionCounterService from "./solution-counter.service";
+import LinkedLocationDto from '../dto/linked-location.dto';
+import AreaDto from '../dto/area.dto';
+import WitnessWebService from './witness-web.service';
+import SolutionCounterService from './solution-counter.service';
 
 const OFFSETS = [
     [  2,  0 ],

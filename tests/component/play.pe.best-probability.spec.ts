@@ -2,9 +2,9 @@ import {disposition} from '../__fixtures__/state/16x16x40.pe.best-probability.js
 import BoardDto from '../../src/dto/board.dto';
 import Play from '../../src/component/play';
 import Binomial from '../../src/utility/binomial';
-import ActionDto, {ActionType} from "../../src/dto/action.dto";
-import LocationDto from "../../src/dto/location.dto";
-import {StrategyType} from "../../src/strategy/abstract-strategy";
+import ActionDto, {ActionType} from '../../src/dto/action.dto';
+import LocationDto from '../../src/dto/location.dto';
+import {StrategyType} from '../../src/strategy/abstract-strategy';
 
 describe('Play: Probability Engine results', () => {
     test('check if probability distribution matches', () => {

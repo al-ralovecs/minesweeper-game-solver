@@ -8,7 +8,7 @@ import getBoardStateService from '../composite/function.get-board-state.service'
 import getWitnessWebService from '../composite/function.get-witness-web.service';
 import applyTrivialSearchStrategy from '../composite/function.apply-trivial-search.strategy';
 import applyLocalSearchStrategy from '../composite/function.apply-local-search.strategy';
-import {StrategyType} from "../../../src/strategy/abstract-strategy";
+import {StrategyType} from '../../../src/strategy/abstract-strategy';
 
 export default function getService(
     disposition: number[][],

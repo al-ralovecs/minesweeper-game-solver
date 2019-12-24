@@ -1,7 +1,7 @@
 import { AbstractStrategy, StrategyType } from './abstract-strategy';
-import BoardStateDto from "../dto/board-state.dto";
-import WitnessWebDto from "../dto/witness-web.dto";
-import ProbabilityDistributionDto from "../dto/probability-distribution.dto";
+import BoardStateDto from '../dto/board-state.dto';
+import WitnessWebDto from '../dto/witness-web.dto';
+import ProbabilityDistributionDto from '../dto/probability-distribution.dto';
 
 const preferences = {
     ALLOWABLE_SOLUTIONS_MAXIMUM: 4000,

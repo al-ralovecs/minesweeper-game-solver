@@ -1,5 +1,5 @@
-import LocationSetDto from "./location-set.dto";
-import LocationDto from "./location.dto";
+import LocationSetDto from './location-set.dto';
+import LocationDto from './location.dto';
 
 export default class AreaDto {
     public area: LocationSetDto;

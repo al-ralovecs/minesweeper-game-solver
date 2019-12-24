@@ -12,8 +12,8 @@ import ProbabilityLineDto from '../dto/probability-line.dto';
 import LinkedLocationDto from '../dto/linked-location.dto';
 
 import bigintDivide from '../routine/bigint.divide';
-import ProbabilityDistributionDto, {PROBABILITY_ENGINE_TOLERANCE} from "../dto/probability-distribution.dto";
-import CandidateLocationDto from "../dto/candidate-location.dto";
+import ProbabilityDistributionDto, {PROBABILITY_ENGINE_TOLERANCE} from '../dto/probability-distribution.dto';
+import CandidateLocationDto from '../dto/candidate-location.dto';
 
 export const SmallCombinations = [
     [ 1 ],

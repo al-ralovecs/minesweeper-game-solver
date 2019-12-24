@@ -7,7 +7,7 @@ import ProbabilityDistributionDto from '../dto/probability-distribution.dto';
 import AreaDto from '../dto/area.dto';
 import LocationDto from '../dto/location.dto';
 
-import guess from "./guess-methods/chose-guess.method";
+import guess from './guess-methods/chose-guess.method';
 
 export default class DeadGuessStrategy extends AbstractStrategy
 {

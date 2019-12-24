@@ -5,11 +5,11 @@ import BoardDto from '../dto/board.dto';
 import BoardStateDto from '../dto/board-state.dto';
 import LocationDto from '../dto/location.dto';
 
-import {AdjacentSquaresDto} from "../dto/adjacent-squares.dto";
-import {StrategyType} from "../strategy/abstract-strategy";
+import {AdjacentSquaresDto} from '../dto/adjacent-squares.dto';
+import {StrategyType} from '../strategy/abstract-strategy';
 
-import whileLoopOverBoardDo from "../routine/while.loop-over-board.do";
-import whileLoopAroundTileDo from "../routine/while.loop-around-tile.do";
+import whileLoopOverBoardDo from '../routine/while.loop-over-board.do';
+import whileLoopAroundTileDo from '../routine/while.loop-around-tile.do';
 
 export default class BoardStateService implements ServiceInterface
 {

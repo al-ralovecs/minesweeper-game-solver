@@ -7,7 +7,6 @@ import LocationDto from '../dto/location.dto';
 import SquareDto from '../dto/square.dto';
 import WitnessDto from '../dto/witness.dto';
 import BoxDto from '../dto/box.dto';
-import AreaDto from "../dto/area.dto";
 
 export default class WitnessWebService implements ServiceInterface
 {

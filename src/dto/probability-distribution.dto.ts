@@ -3,7 +3,7 @@ import BoxDto from './box.dto';
 import LinkedLocationDto from './linked-location.dto';
 import LocationDto from './location.dto';
 import WitnessDto from './witness.dto';
-import CandidateLocationDto from "./candidate-location.dto";
+import CandidateLocationDto from './candidate-location.dto';
 
 export const PROBABILITY_ENGINE_TOLERANCE: number = 0.96;
 

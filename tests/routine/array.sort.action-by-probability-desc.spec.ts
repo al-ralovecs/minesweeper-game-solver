@@ -1,6 +1,6 @@
-import ActionDto, {ActionType} from "../../src/dto/action.dto";
-import LocationDto from "../../src/dto/location.dto";
-import {StrategyType} from "../../src/strategy/abstract-strategy";
+import ActionDto, {ActionType} from '../../src/dto/action.dto';
+import LocationDto from '../../src/dto/location.dto';
+import {StrategyType} from '../../src/strategy/abstract-strategy';
 
 describe('Array<ActionDto>()', () => {
     test('try to sort by probability desc', () => {

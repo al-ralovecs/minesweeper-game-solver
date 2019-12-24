@@ -1,9 +1,9 @@
 export default class Primes implements IterableIterator<number>
 {
     private readonly composite: boolean[];
+    private readonly stop: number;
 
     private index: number = 0;
-    private stop: number;
 
     private nextPrime: number;
 

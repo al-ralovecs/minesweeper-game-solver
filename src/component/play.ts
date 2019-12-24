@@ -19,12 +19,12 @@ import TrivialSearchStrategy from '../strategy/trivial-search.strategy';
 import LocalSearchStrategy from '../strategy/local-search.strategy';
 import FiftyFiftyGuessStrategy from '../strategy/fifty-fifty-guess.strategy';
 import DeadGuessStrategy from '../strategy/dead-guess.strategy';
-import BruteForceStrategy from "../strategy/brute-force.strategy";
-import OffEdgeEvaluationStrategy from "../strategy/off-edge-evaluation.strategy";
-import CertainSolutionsStrategy from "../strategy/certain-solutions.strategy";
-import CompareSolutionsStrategy from "../strategy/compare-solutions.strategy";
-import FinalGuessStrategy from "../strategy/final-guess.strategy";
-import EvaluateLocationsService from "../service/evaluate-locations.service";
+import BruteForceStrategy from '../strategy/brute-force.strategy';
+import OffEdgeEvaluationStrategy from '../strategy/off-edge-evaluation.strategy';
+import CertainSolutionsStrategy from '../strategy/certain-solutions.strategy';
+import CompareSolutionsStrategy from '../strategy/compare-solutions.strategy';
+import FinalGuessStrategy from '../strategy/final-guess.strategy';
+import EvaluateLocationsService from '../service/evaluate-locations.service';
 
 export default class Play implements PlayInterface
 {

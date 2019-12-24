@@ -5,7 +5,7 @@ export default abstract class MyAbstractIterator
     protected readonly numberBalls: number;
     protected readonly numberHoles: number;
 
-    public constructor(n: number, m: number)
+    protected constructor(n: number, m: number)
     {
         this.numberBalls = n;
         this.numberHoles = m;

@@ -1,6 +1,6 @@
-import WitnessDto from "./witness.dto";
-import SquareDto from "./square.dto";
-import LocationDto from "./location.dto";
+import WitnessDto from './witness.dto';
+import SquareDto from './square.dto';
+import LocationDto from './location.dto';
 
 export default class BoxDto
 {

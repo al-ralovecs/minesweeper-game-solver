@@ -2,11 +2,11 @@ import PrimeSieve from './prime-sieve';
 
 export default class Binomial
 {
+    private readonly lookupLimit: number;
     private readonly max: number;
     private readonly ps: PrimeSieve;
 
     private binomialLookup: bigint[][] = [];
-    private lookupLimit: number;
 
     public constructor(max: number, lookup: number)
     {

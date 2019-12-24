@@ -1,5 +1,5 @@
-import LocationDto from "./location.dto";
-import WitnessDto from "./witness.dto";
+import LocationDto from './location.dto';
+import WitnessDto from './witness.dto';
 
 export default  class SquareDto extends LocationDto{
     private witnesses: WitnessDto[] = [];

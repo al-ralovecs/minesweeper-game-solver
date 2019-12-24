@@ -1,10 +1,10 @@
-import ActionDto, {ActionType} from "./action.dto";
+import ActionDto, {ActionType} from './action.dto';
 import LocationDto from './location.dto';
-import LocationSetDto from "./location-set.dto";
-import AreaDto from "./area.dto";
-import {AdjacentSquaresDto} from "./adjacent-squares.dto";
-import ChordLocationDto from "./chord-location.dto";
-import PlayInterface from "../interface/play.interface";
+import LocationSetDto from './location-set.dto';
+import AreaDto from './area.dto';
+import {AdjacentSquaresDto} from './adjacent-squares.dto';
+import ChordLocationDto from './chord-location.dto';
+import PlayInterface from '../interface/play.interface';
 
 export default class BoardStateDto implements PlayInterface
 {
@@ -156,7 +156,7 @@ export default class BoardStateDto implements PlayInterface
     public getWitnessValue(location: LocationDto): number
     {
         if (this.isUnrevealed(location)) {
-            throw Error(`[BoardState] Failed when trying to get a witness (${location.x}, ${location.y}) valuu for an unrevealed square`);
+            throw Error(`[BoardState] Failed when trying to get a witness (${location.x}, ${location.y}) value for an unrevealed square`);
         }
 
         return this.board[location.y][location.x];
