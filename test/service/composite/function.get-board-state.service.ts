@@ -1,5 +1,5 @@
-import BoardDto from '../../../src/dto/board.dto';
-import BoardStateService from '../../../src/service/board-state.service';
+import BoardDto from '../../../src/minesweeper/dto/board.dto';
+import BoardStateService from '../../../src/minesweeper/service/board-state.service';
 
 export default function getBoardStateService(disposition: number[][], minesTotal: number): BoardStateService
 {

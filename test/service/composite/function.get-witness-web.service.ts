@@ -1,6 +1,6 @@
-import BoardStateService from '../../../src/service/board-state.service';
-import WitnessWebService from '../../../src/service/witness-web.service';
-import Binomial from '../../../src/utility/binomial';
+import BoardStateService from '../../../src/minesweeper/service/board-state.service';
+import WitnessWebService from '../../../src/minesweeper/service/witness-web.service';
+import Binomial from '../../../src/minesweeper/utility/binomial';
 
 export default function getWitnessWebService(
     boardStateService: BoardStateService,

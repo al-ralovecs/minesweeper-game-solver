@@ -1,8 +1,8 @@
-import Binomial from '../../../src/utility/binomial';
-import WitnessWebService from '../../../src/service/witness-web.service';
-import DeadLocationsService from '../../../src/service/dead-locations.service';
+import Binomial from '../../../src/minesweeper/utility/binomial';
+import WitnessWebService from '../../../src/minesweeper/service/witness-web.service';
+import DeadLocationsService from '../../../src/minesweeper/service/dead-locations.service';
 
-import { ActionType } from '../../../src/dto/action.dto';
+import { ActionType } from '../../../src/minesweeper/dto/action.dto';
 
 import getBoardStateService from '../composite/function.get-board-state.service';
 import getWitnessWebService from '../composite/function.get-witness-web.service';

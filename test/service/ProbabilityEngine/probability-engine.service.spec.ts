@@ -1,12 +1,12 @@
 import { disposition as d1 } from '../../__fixtures__/state/16x16x40.pe.best-probability.json';
 import { disposition as d2} from '../../__fixtures__/state/16x16x40.pe.most-info.json';
 
-import Binomial from '../../../src/utility/binomial';
-import WitnessWebService from '../../../src/service/witness-web.service';
-import DeadLocationsService from '../../../src/service/dead-locations.service';
-import ProbabilityEngineService from '../../../src/service/probability-engine.service';
+import Binomial from '../../../src/minesweeper/utility/binomial';
+import WitnessWebService from '../../../src/minesweeper/service/witness-web.service';
+import DeadLocationsService from '../../../src/minesweeper/service/dead-locations.service';
+import ProbabilityEngineService from '../../../src/minesweeper/service/probability-engine.service';
 
-import { ActionType } from '../../../src/dto/action.dto';
+import { ActionType } from '../../../src/minesweeper/dto/action.dto';
 
 import getBoardStateService from '../composite/function.get-board-state.service';
 import getWitnessWebService from '../composite/function.get-witness-web.service';

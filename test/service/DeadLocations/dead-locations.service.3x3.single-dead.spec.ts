@@ -1,6 +1,6 @@
 import { disposition } from '../../__fixtures__/state/3x3.single-dead.json';
 
-import DeadLocationsService from '../../../src/service/dead-locations.service';
+import DeadLocationsService from '../../../src/minesweeper/service/dead-locations.service';
 import getService from './function.get.service';
 
 describe('DeadLocationsService', () => {

@@ -1,5 +1,5 @@
 import { disposition } from '../../__fixtures__/state/16x16x40.pe.most-info.json';
-import BoardStateService from '../../../src/service/board-state.service';
+import BoardStateService from '../../../src/minesweeper/service/board-state.service';
 import getService from './function.get.service';
 
 describe('BoardStateService', () => {
