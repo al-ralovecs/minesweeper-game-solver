@@ -13,7 +13,7 @@ export default class CrunchResultDto {
     public alwaysSatisfied: boolean[];
 
     private weight: bigint;
-    public bigGoodCandidates: bigint = 0n;
+    public bigGoodCandidates: bigint = BigInt(0);
 
     public bigTally: Array<bigint>;
 

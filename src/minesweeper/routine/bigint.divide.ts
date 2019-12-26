@@ -1,4 +1,12 @@
-export const power10n = [ 1n, 10n, 100n, 1000n, 10000n, 100000n, 1000000n ];
+export const power10n = [
+    BigInt(1),
+    BigInt(10),
+    BigInt(100),
+    BigInt(1000),
+    BigInt(10000),
+    BigInt(100000),
+    BigInt(1000000),
+];
 export const power10 = [ 1, 10, 100, 1000, 10000, 100000, 1000000 ];
 
 export default function bigintDivide(numerator: bigint, denominator: bigint, dp: number): number {

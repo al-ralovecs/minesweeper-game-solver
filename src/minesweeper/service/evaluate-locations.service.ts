@@ -121,7 +121,7 @@ export default class EvaluateLocationsService {
 
             const solutions: bigint = counter.finalSolutionsCount;
 
-            if (0n === solutions) {
+            if (BigInt(0) === solutions) {
                 continue;
             }
 
@@ -253,11 +253,11 @@ export default class EvaluateLocationsService {
             const sol: bigint = counter.finalSolutionsCount;
             clears = counter.clearCount;
 
-            if (0n < sol && clears > linkedTiles) {
+            if (BigInt(0) < sol && clears > linkedTiles) {
                 const prob: number = bigintDivide(sol, this.probabilityDistribution.finalSolutionsCount, 6);
                 expectedClears += (clears - linkedTiles) * prob;
                 progressProb += prob;
-            } else if (0n === sol) {
+            } else if (BigInt(0) === sol) {
                 // if we are only checking one value
                 // and it has no chance
                 // then try one more

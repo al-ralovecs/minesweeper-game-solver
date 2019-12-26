@@ -3,14 +3,14 @@
  */
 export default class ProbabilityLineDto {
     public mineCount: number = 0;
-    public solutionCount: bigint = 0n;
+    public solutionCount: bigint = BigInt(0);
     public mineBoxCount: Array<bigint>;
 
     public hashCount: number[];
     public hash: number = ProbabilityLineDto.getRandomHash;
 
     public constructor(boxCount: number) {
-        this.mineBoxCount = new Array<bigint>(boxCount).fill(0n);
+        this.mineBoxCount = new Array<bigint>(boxCount).fill(BigInt(0));
         this.hashCount = new Array<number>(boxCount).fill(0);
     }
 

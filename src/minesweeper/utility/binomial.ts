@@ -121,7 +121,7 @@ export default class Binomial {
             let r: number = 0;
             let N: bigint = BigInt(n);
             let K: bigint = BigInt(k);
-            let p: bigint = 1n;
+            let p: bigint = BigInt(1);
 
             while (N > 0) {
                 r = (N % biPrime) < (k % prime + r) ? 1 : 0;

@@ -104,7 +104,7 @@ export default class LocalSearchStrategy extends AbstractStrategy {
         const bigTally: Array<bigint> = new Array<bigint>(square.length);
 
         for (let i: number = 0; i < square.length; i++) {
-            bigTally[i] = ! isNaN(tally[i]) ? BigInt(tally[i]) : 0n;
+            bigTally[i] = ! isNaN(tally[i]) ? BigInt(tally[i]) : BigInt(0);
         }
 
         bign = BigInt(candidates);
@@ -227,7 +227,7 @@ export default class LocalSearchStrategy extends AbstractStrategy {
     private checkBigTally(output: CrunchResultDto, method: StrategyType): number {
         let result: number = 0;
 
-        if (0n === output.bigGoodCandidates) {
+        if (BigInt(0) === output.bigGoodCandidates) {
             return 0;
         }
 
@@ -240,7 +240,7 @@ export default class LocalSearchStrategy extends AbstractStrategy {
 
                     this.boardState.setAction = new ActionDto(l, ActionType.Flag, method, 1);
                 }
-            } else if (0n === output.bigTally[i]) {
+            } else if (BigInt(0) === output.bigTally[i]) {
                 const l: LocationDto = output.getSquare[i];
 
                 if (! this.boardState.alreadyActioned(l)) {

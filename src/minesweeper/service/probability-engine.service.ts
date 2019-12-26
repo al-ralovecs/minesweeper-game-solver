@@ -78,7 +78,7 @@ export default class ProbabilityEngineService implements ServiceInterface {
 
         // an initial solution of no mines anywhere
         const held: ProbabilityLineDto = new ProbabilityLineDto(this.data.boxCount);
-        held.solutionCount = 1n;
+        held.solutionCount = BigInt(1);
         this.heldProbs.push(held);
 
         // an empty probability line
@@ -103,13 +103,13 @@ export default class ProbabilityEngineService implements ServiceInterface {
     // here we expand the localised solution to one across the whole board and
     // sum them together to create a definitive probability for each box
     protected calculateBoxProbabilities(): void {
-        const tally: Array<bigint> = new Array<bigint>(this.data.boxCount).fill(0n);
+        const tally: Array<bigint> = new Array<bigint>(this.data.boxCount).fill(BigInt(0));
 
         // total game tally
-        let totalTally: bigint = 0n;
+        let totalTally: bigint = BigInt(0);
 
         // outside a box tally
-        let outsideTally: bigint = 0n;
+        let outsideTally: bigint = BigInt(0);
 
         for (const pl of this.heldProbs) {
             if (this.data.minTotalMines > pl.mineCount) {
@@ -131,7 +131,7 @@ export default class ProbabilityEngineService implements ServiceInterface {
         }
 
         for (let i: number = 0; i < this.data.boxProb.length; i++) {
-            if (0n !== totalTally) {
+            if (BigInt(0) !== totalTally) {
 
                 // a mine
                 if (tally[i] === totalTally) {
@@ -171,7 +171,7 @@ export default class ProbabilityEngineService implements ServiceInterface {
 
         this.data.linkedLocations.sort(LinkedLocationDto.sortByLinksDesc);
 
-        if (0 !== this.data.squaresLeft && 0n !== totalTally) {
+        if (0 !== this.data.squaresLeft && BigInt(0) !== totalTally) {
             this.data.offEdgeProbability = 1 - bigintDivide(outsideTally, totalTally * BigInt(this.data.squaresLeft), 6);
         } else {
             this.data.offEdgeProbability = 0;
@@ -513,7 +513,7 @@ export default class ProbabilityEngineService implements ServiceInterface {
     // calculate how many ways this solution can be generated
     // and roll them into one
     private mergeProbabilities(npl: ProbabilityLineDto, pl: ProbabilityLineDto): void {
-        let solutions: bigint = 1n;
+        let solutions: bigint = BigInt(1);
 
         for (let i: number = 0; i < pl.mineBoxCount.length; i++) {
             solutions = solutions * BigInt(
@@ -530,7 +530,7 @@ export default class ProbabilityEngineService implements ServiceInterface {
 
             npl.mineBoxCount[i] = npl.mineBoxCount[i] + pl.mineBoxCount[i] * solutions;
 
-            if (0n === pl.mineBoxCount[i]) {
+            if (BigInt(0) === pl.mineBoxCount[i]) {
                 npl.hashCount[i] -= pl.hash * this.data.boxes[i].getSquares.length;
             } else {
                 npl.hashCount[i] += Number(pl.mineBoxCount[i]) * pl.hash;
@@ -539,7 +539,7 @@ export default class ProbabilityEngineService implements ServiceInterface {
     }
 
     private static countPlacedMines(pl: ProbabilityLineDto, nw: NextWitnessDto): number {
-        let result: bigint = 0n;
+        let result: bigint = BigInt(0);
 
         for (const b of nw.oldBoxes) {
             result += pl.mineBoxCount[b.getUID];

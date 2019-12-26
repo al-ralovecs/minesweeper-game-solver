@@ -5,7 +5,7 @@ export default class SolutionCounterService extends ProbabilityEngineService {
 
     public process(): void {
         if (! this.web.isWebValid) {
-            this.getProbabilityDistribution.finalSolutionsCount = 0n;
+            this.getProbabilityDistribution.finalSolutionsCount = BigInt(0);
             return;
         }
 
@@ -15,10 +15,10 @@ export default class SolutionCounterService extends ProbabilityEngineService {
 
     protected calculateBoxProbabilities(): void {
         // total game tally
-        let totalTally: bigint = 0n;
+        let totalTally: bigint = BigInt(0);
 
         // outside a box tally
-        let outsideTally: bigint = 0n;
+        let outsideTally: bigint = BigInt(0);
 
         const emptyBox: boolean[] = new Array<boolean>(this.data.boxCount).fill(true);
 

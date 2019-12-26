@@ -13,7 +13,7 @@ export default class WitnessWebDto {
 
     public independentWitnesses: WitnessDto[] = [];
     public independentMines: number;
-    public independentIterations: bigint = 1n;
+    public independentIterations: bigint = BigInt(1);
     public remainingSquares: number;
 
     public pruned: number = 0;
