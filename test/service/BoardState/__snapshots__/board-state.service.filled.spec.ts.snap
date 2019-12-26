@@ -1,0 +1,422 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BoardStateService check how computes filled board 1`] = `
+BoardStateDto {
+  "action": Array [
+    Array [
+      ActionDto {
+        "bigProbability": 1,
+        "certainty": true,
+        "moveMethod": 1,
+        "type": 0,
+        "x": 0,
+        "y": 0,
+      },
+      undefined,
+      ActionDto {
+        "bigProbability": 1,
+        "certainty": true,
+        "moveMethod": 1,
+        "type": 0,
+        "x": 2,
+        "y": 0,
+      },
+    ],
+    Array [
+      undefined,
+      ActionDto {
+        "bigProbability": 1,
+        "certainty": true,
+        "moveMethod": 1,
+        "type": 1,
+        "x": 1,
+        "y": 1,
+      },
+      ActionDto {
+        "bigProbability": 1,
+        "certainty": true,
+        "moveMethod": 1,
+        "type": 0,
+        "x": 2,
+        "y": 1,
+      },
+    ],
+    Array [
+      undefined,
+      ActionDto {
+        "bigProbability": 1,
+        "certainty": true,
+        "moveMethod": 1,
+        "type": 1,
+        "x": 1,
+        "y": 2,
+      },
+      undefined,
+    ],
+  ],
+  "actionList": Array [
+    ActionDto {
+      "bigProbability": 1,
+      "certainty": true,
+      "moveMethod": 1,
+      "type": 1,
+      "x": 1,
+      "y": 1,
+    },
+    ActionDto {
+      "bigProbability": 1,
+      "certainty": true,
+      "moveMethod": 1,
+      "type": 1,
+      "x": 1,
+      "y": 2,
+    },
+    ActionDto {
+      "bigProbability": 1,
+      "certainty": true,
+      "moveMethod": 1,
+      "type": 0,
+      "x": 0,
+      "y": 0,
+    },
+    ActionDto {
+      "bigProbability": 1,
+      "certainty": true,
+      "moveMethod": 1,
+      "type": 0,
+      "x": 2,
+      "y": 0,
+    },
+    ActionDto {
+      "bigProbability": 1,
+      "certainty": true,
+      "moveMethod": 1,
+      "type": 0,
+      "x": 2,
+      "y": 1,
+    },
+  ],
+  "adjFlagsConfirmed": Array [
+    Array [
+      1,
+      1,
+      1,
+    ],
+    Array [
+      2,
+      1,
+      2,
+    ],
+    Array [
+      2,
+      1,
+      2,
+    ],
+  ],
+  "adjFlagsOnBoard": Array [
+    Array [
+      0,
+      0,
+      0,
+    ],
+    Array [
+      0,
+      0,
+      0,
+    ],
+    Array [
+      0,
+      0,
+      0,
+    ],
+  ],
+  "adjUnrevealed": Array [
+    Array [
+      0,
+      3,
+      1,
+    ],
+    Array [
+      1,
+      4,
+      2,
+    ],
+    Array [
+      0,
+      2,
+      1,
+    ],
+  ],
+  "adjacentLocations1": Array [
+    Array [
+      undefined,
+      AdjacentSquaresDto {
+        "height": 3,
+        "location": LocationDto {
+          "x": 1,
+          "y": 0,
+        },
+        "locations": Array [
+          LocationDto {
+            "x": 0,
+            "y": 0,
+          },
+          LocationDto {
+            "x": 2,
+            "y": 0,
+          },
+          LocationDto {
+            "x": 0,
+            "y": 1,
+          },
+          LocationDto {
+            "x": 1,
+            "y": 1,
+          },
+          LocationDto {
+            "x": 2,
+            "y": 1,
+          },
+        ],
+        "size": 1,
+        "width": 3,
+      },
+      undefined,
+    ],
+    Array [
+      AdjacentSquaresDto {
+        "height": 3,
+        "location": LocationDto {
+          "x": 0,
+          "y": 1,
+        },
+        "locations": Array [
+          LocationDto {
+            "x": 0,
+            "y": 0,
+          },
+          LocationDto {
+            "x": 1,
+            "y": 0,
+          },
+          LocationDto {
+            "x": 1,
+            "y": 1,
+          },
+          LocationDto {
+            "x": 0,
+            "y": 2,
+          },
+          LocationDto {
+            "x": 1,
+            "y": 2,
+          },
+        ],
+        "size": 1,
+        "width": 3,
+      },
+      AdjacentSquaresDto {
+        "height": 3,
+        "location": ActionDto {
+          "bigProbability": 1,
+          "certainty": true,
+          "moveMethod": 1,
+          "type": 1,
+          "x": 1,
+          "y": 1,
+        },
+        "locations": Array [
+          LocationDto {
+            "x": 0,
+            "y": 0,
+          },
+          LocationDto {
+            "x": 1,
+            "y": 0,
+          },
+          LocationDto {
+            "x": 2,
+            "y": 0,
+          },
+          LocationDto {
+            "x": 0,
+            "y": 1,
+          },
+          LocationDto {
+            "x": 2,
+            "y": 1,
+          },
+          LocationDto {
+            "x": 0,
+            "y": 2,
+          },
+          LocationDto {
+            "x": 1,
+            "y": 2,
+          },
+          LocationDto {
+            "x": 2,
+            "y": 2,
+          },
+        ],
+        "size": 1,
+        "width": 3,
+      },
+      undefined,
+    ],
+    Array [
+      AdjacentSquaresDto {
+        "height": 3,
+        "location": LocationDto {
+          "x": 0,
+          "y": 2,
+        },
+        "locations": Array [
+          LocationDto {
+            "x": 0,
+            "y": 1,
+          },
+          LocationDto {
+            "x": 1,
+            "y": 1,
+          },
+          LocationDto {
+            "x": 1,
+            "y": 2,
+          },
+        ],
+        "size": 1,
+        "width": 3,
+      },
+      AdjacentSquaresDto {
+        "height": 3,
+        "location": ActionDto {
+          "bigProbability": 1,
+          "certainty": true,
+          "moveMethod": 1,
+          "type": 1,
+          "x": 1,
+          "y": 2,
+        },
+        "locations": Array [
+          LocationDto {
+            "x": 0,
+            "y": 1,
+          },
+          LocationDto {
+            "x": 1,
+            "y": 1,
+          },
+          LocationDto {
+            "x": 2,
+            "y": 1,
+          },
+          LocationDto {
+            "x": 0,
+            "y": 2,
+          },
+          LocationDto {
+            "x": 2,
+            "y": 2,
+          },
+        ],
+        "size": 1,
+        "width": 3,
+      },
+      undefined,
+    ],
+  ],
+  "board": Array [
+    Array [
+      -1,
+      1,
+      -1,
+    ],
+    Array [
+      2,
+      -1,
+      -1,
+    ],
+    Array [
+      2,
+      -1,
+      -1,
+    ],
+  ],
+  "chordLocations": Array [],
+  "expectedTotalMines": 3,
+  "flagConfirmed": Array [
+    Array [
+      false,
+      false,
+      false,
+    ],
+    Array [
+      false,
+      true,
+      false,
+    ],
+    Array [
+      false,
+      true,
+      false,
+    ],
+  ],
+  "flagOnBoard": Array [
+    Array [
+      false,
+      false,
+      false,
+    ],
+    Array [
+      false,
+      false,
+      false,
+    ],
+    Array [
+      false,
+      false,
+      false,
+    ],
+  ],
+  "height": 3,
+  "livingWitnesses": LocationSetDto {
+    "data": Array [
+      LocationDto {
+        "x": 1,
+        "y": 0,
+      },
+      LocationDto {
+        "x": 0,
+        "y": 1,
+      },
+      LocationDto {
+        "x": 0,
+        "y": 2,
+      },
+    ],
+  },
+  "numOfHidden": 6,
+  "revealed": Array [
+    Array [
+      false,
+      true,
+      false,
+    ],
+    Array [
+      true,
+      false,
+      false,
+    ],
+    Array [
+      true,
+      false,
+      false,
+    ],
+  ],
+  "testMoveBalance": 0,
+  "totalFlags": 2,
+  "totalFlagsConfirmed": 2,
+  "width": 3,
+}
+`;
