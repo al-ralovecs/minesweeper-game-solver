@@ -5,7 +5,7 @@ import getService from './function.get.service';
 describe('WitnessWebService', () => {
     test('process on filled disposition', () => {
         expect(
-            getService(disposition, 40).getWitnessWeb.getPrunedWitnesses
-        ).toMatchSnapshot();
+            getService(disposition, 40).getWitnessWeb.isWebValid
+        ).toBe(true);
     });
 });

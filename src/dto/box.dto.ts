@@ -2,8 +2,7 @@ import WitnessDto from './witness.dto';
 import SquareDto from './square.dto';
 import LocationDto from './location.dto';
 
-export default class BoxDto
-{
+export default class BoxDto {
     private readonly adjWitnesses: WitnessDto[];
     private squares: SquareDto[] = [];
 
@@ -14,8 +13,7 @@ export default class BoxDto
 
     private processed: boolean = false;
 
-    public constructor(square: SquareDto, uid: number)
-    {
+    public constructor(square: SquareDto, uid: number) {
         this.uid = uid;
 
         this.adjWitnesses = square.getWitnesses;
@@ -26,8 +24,7 @@ export default class BoxDto
         });
     }
 
-    public fitsBox(square: SquareDto): boolean
-    {
+    public fitsBox(square: SquareDto): boolean {
         if (this.adjWitnesses.length !== square.getWitnesses.length) {
             return false;
         }
@@ -52,48 +49,39 @@ export default class BoxDto
         return true;
     }
 
-    public get isProcessed(): boolean
-    {
+    public get isProcessed(): boolean {
         return this.processed;
     }
 
-    public set setProcessed(processed: boolean)
-    {
+    public set setProcessed(processed: boolean) {
         this.processed = processed;
     }
 
-    public get getUID(): number
-    {
+    public get getUID(): number {
         return this.uid;
     }
 
-    public get getSquares(): SquareDto[]
-    {
+    public get getSquares(): SquareDto[] {
         return this.squares;
     }
 
-    public set addSquare(square: SquareDto)
-    {
+    public set addSquare(square: SquareDto) {
         this.squares.push(square);
     }
 
-    public get getWitnesses(): WitnessDto[]
-    {
+    public get getWitnesses(): WitnessDto[] {
         return this.adjWitnesses;
     }
 
-    public get getMaxMines(): number
-    {
+    public get getMaxMines(): number {
         return this.maxMines;
     }
 
-    public get getMinMines(): number
-    {
+    public get getMinMines(): number {
         return this.minMines;
     }
 
-    public calculate(minesLeft: number): void
-    {
+    public calculate(minesLeft: number): void {
         this.maxMines = Math.min(this.squares.length, minesLeft);
         this.minMines = 0;
 
@@ -104,8 +92,7 @@ export default class BoxDto
         }
     }
 
-    public contains(location: LocationDto): boolean
-    {
+    public contains(location: LocationDto): boolean {
         for (const squ of this.squares) {
             if (squ.equals(location)) {
                 return true;

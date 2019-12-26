@@ -1,4 +1,4 @@
-import {AbstractStrategy, StrategyType} from './abstract-strategy';
+import { AbstractStrategy, StrategyType } from './abstract-strategy';
 
 import BoardStateDto from '../dto/board-state.dto';
 import WitnessWebDto from '../dto/witness-web.dto';
@@ -9,8 +9,7 @@ import LocationDto from '../dto/location.dto';
 
 import guess from './guess-methods/chose-guess.method';
 
-export default class DeadGuessStrategy extends AbstractStrategy
-{
+export default class DeadGuessStrategy extends AbstractStrategy {
     private readonly wholeEdge: WitnessWebDto;
     private readonly probabilityDistribution: ProbabilityDistributionDto;
 
@@ -20,7 +19,7 @@ export default class DeadGuessStrategy extends AbstractStrategy
         boardState: BoardStateDto,
         wholeEdge: WitnessWebDto,
         probabilityDistribution: ProbabilityDistributionDto,
-        deadLocations: AreaDto
+        deadLocations: AreaDto,
     ) {
         super(boardState);
 
@@ -31,8 +30,7 @@ export default class DeadGuessStrategy extends AbstractStrategy
     }
 
     // if all the locations are dead
-    protected get isStrategyApplicable(): boolean
-    {
+    protected get isStrategyApplicable(): boolean {
         const allWitnesses: LocationDto[] = this.boardState.getAllLivingWitnesses;
         const allWitnessedSquares: AreaDto = this.boardState.getUnrevealedArea(allWitnesses);
 
@@ -41,13 +39,11 @@ export default class DeadGuessStrategy extends AbstractStrategy
     }
 
     // then just use any one
-    protected applyStrategy(): void
-    {
+    protected applyStrategy(): void {
         guess(this.boardState, this.wholeEdge, this.probabilityDistribution, this.getMoveMethod);
     }
 
-    protected get getMoveMethod(): StrategyType
-    {
+    protected get getMoveMethod(): StrategyType {
         return StrategyType.DeadGuess;
     }
 }

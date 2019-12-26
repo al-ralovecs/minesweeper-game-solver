@@ -6,15 +6,14 @@ import ProbabilityDistributionDto from '../dto/probability-distribution.dto';
 
 import guess from './guess-methods/chose-guess.method';
 
-export default class FinalGuessStrategy extends AbstractStrategy
-{
+export default class FinalGuessStrategy extends AbstractStrategy {
     private readonly wholeEdge: WitnessWebDto;
     private readonly probabilityDistribution: ProbabilityDistributionDto;
 
     public constructor(
         boardState: BoardStateDto,
         wholeEdge: WitnessWebDto,
-        probabilityDistribution: ProbabilityDistributionDto
+        probabilityDistribution: ProbabilityDistributionDto,
     ) {
         super(boardState);
 
@@ -22,13 +21,11 @@ export default class FinalGuessStrategy extends AbstractStrategy
         this.probabilityDistribution = probabilityDistribution;
     }
     
-    protected applyStrategy(): void
-    {
+    protected applyStrategy(): void {
         guess(this.boardState, this.wholeEdge, this.probabilityDistribution, this.getMoveMethod);
     }
 
-    protected get getMoveMethod(): StrategyType
-    {
+    protected get getMoveMethod(): StrategyType {
         return StrategyType.FinalGuess;
     }
 }

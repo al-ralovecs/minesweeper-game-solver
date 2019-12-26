@@ -6,15 +6,14 @@ import EvaluateLocationsService from '../service/evaluate-locations.service';
 
 const OFF_EDGE_TOLERANCE: number = 0.97;
 
-export default class OffEdgeEvaluationStrategy extends AbstractStrategy
-{
+export default class OffEdgeEvaluationStrategy extends AbstractStrategy {
     private readonly probabilityDistribution: ProbabilityDistributionDto;
     private readonly evaluateLocationsService: EvaluateLocationsService;
 
     public constructor(
         boardState: BoardStateDto,
         probabilityDistribution: ProbabilityDistributionDto,
-        evaluateLocationsService: EvaluateLocationsService
+        evaluateLocationsService: EvaluateLocationsService,
     ) {
         super(boardState);
 
@@ -22,15 +21,13 @@ export default class OffEdgeEvaluationStrategy extends AbstractStrategy
         this.evaluateLocationsService = evaluateLocationsService;
     }
 
-    protected get isStrategyApplicable(): boolean
-    {
+    protected get isStrategyApplicable(): boolean {
         // are clears off the edge within the permitted cut-off ?
         return 0 < this.probabilityDistribution.offEdgeProbability - this.probabilityDistribution.bestProbability * OFF_EDGE_TOLERANCE
             && ! this.probabilityDistribution.foundCertainty;
     }
 
-    protected applyStrategy(): void
-    {
+    protected applyStrategy(): void {
         this.evaluateLocationsService.addOffEdgeCandidates(this.boardState.getAllUnrevealedSquares);
         this.evaluateLocationsService.evaluateLocations(this.probabilityDistribution.bestCandidates);
 
@@ -42,8 +39,7 @@ export default class OffEdgeEvaluationStrategy extends AbstractStrategy
         this.boardState.setAction = this.evaluateLocationsService.getBestMove;
     }
 
-    protected get getMoveMethod(): StrategyType
-    {
+    protected get getMoveMethod(): StrategyType {
         return StrategyType.OffEdgeEvaluation;
     }
 }

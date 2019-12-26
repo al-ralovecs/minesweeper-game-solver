@@ -1,4 +1,3 @@
-export default interface ServiceInterface
-{
+export default interface ServiceInterface {
     process(): void;
 }

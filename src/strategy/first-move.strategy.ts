@@ -2,15 +2,12 @@ import { AbstractStrategy, StrategyType } from './abstract-strategy';
 import LocationDto from '../dto/location.dto';
 import ActionDto, { ActionType } from '../dto/action.dto';
 
-export default class FirstMoveStrategy extends AbstractStrategy
-{
-    protected get isStrategyApplicable(): boolean
-    {
-        return this.boardState.getTotalUnrevealedCount === this.boardState.height * this.boardState.width
+export default class FirstMoveStrategy extends AbstractStrategy {
+    protected get isStrategyApplicable(): boolean {
+        return this.boardState.getTotalUnrevealedCount === this.boardState.height * this.boardState.width;
     }
 
-    protected applyStrategy(): void
-    {
+    protected applyStrategy(): void {
         const y: number = Math.round(this.boardState.height / 2) - 1;
         const x: number = Math.round(this.boardState.width / 2) - 1;
 
@@ -22,12 +19,11 @@ export default class FirstMoveStrategy extends AbstractStrategy
             new LocationDto(y, x),
             ActionType.Clear,
             StrategyType.FirstMove,
-            1
+            1,
         );
     }
 
-    protected get getMoveMethod(): StrategyType
-    {
+    protected get getMoveMethod(): StrategyType {
         return StrategyType.FirstMove;
     }
 }

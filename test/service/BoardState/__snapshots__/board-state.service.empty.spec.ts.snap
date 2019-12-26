@@ -88,6 +88,23 @@ BoardStateDto {
       undefined,
     ],
   ],
+  "adjacentLocations2": Array [
+    Array [
+      undefined,
+      undefined,
+      undefined,
+    ],
+    Array [
+      undefined,
+      undefined,
+      undefined,
+    ],
+    Array [
+      undefined,
+      undefined,
+      undefined,
+    ],
+  ],
   "board": Array [
     Array [
       -1,

@@ -1,7 +1,6 @@
 import LocationDto from './location.dto';
 
-export default class EvaluatedLocationDto extends LocationDto
-{
+export default class EvaluatedLocationDto extends LocationDto {
     public readonly clearProbability: number;
     public readonly progressProbability: number;
     public readonly fixedClears: number;            // number of tiles which are clears
@@ -16,7 +15,7 @@ export default class EvaluatedLocationDto extends LocationDto
         progressProbability: number,
         expectedClears: number,
         fixedClears: number,
-        isCorner: boolean
+        isCorner: boolean,
     ) {
         super(y, x);
 
@@ -27,8 +26,7 @@ export default class EvaluatedLocationDto extends LocationDto
         this.isCorner = isCorner;
     }
 
-    public static sortByProgressProbability(o1: EvaluatedLocationDto, o2: EvaluatedLocationDto): number
-    {
+    public static sortByProgressProbability(o1: EvaluatedLocationDto, o2: EvaluatedLocationDto): number {
         if (0 !== o1.progressProbability - o2.progressProbability) {
             return - (o1.progressProbability - o2.progressProbability);
         }
@@ -48,8 +46,7 @@ export default class EvaluatedLocationDto extends LocationDto
         return 0;
     }
 
-    public merge(link: EvaluatedLocationDto): void
-    {
+    public merge(link: EvaluatedLocationDto): void {
         this.expectedClears += link.expectedClears;
     }
 }

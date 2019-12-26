@@ -1,9 +1,8 @@
-export default function (matrix: any[][]): boolean
-{
-    let width: number = matrix[0].length;
+export default function matrixIsValid(matrix: any[][]): boolean {
+    const width: number = matrix[0].length;
 
-    for (let i: number = 0; i < matrix.length; i++) {
-        if (matrix[i].length === width) {
+    for (const row of matrix) {
+        if (row.length === width) {
             continue;
         }
 

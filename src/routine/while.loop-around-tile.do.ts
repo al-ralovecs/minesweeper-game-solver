@@ -7,7 +7,7 @@ export default function whileLoopAroundTileDo(
     height: number,
     width: number,
     callable: (i: number, j: number, location: LocationDto) => void,
-    margin: number = 1
+    margin: number = 1,
 ) {
     const m: MarginDto = new MarginDto(y, x, height, width, margin);
 
@@ -22,4 +22,4 @@ export default function whileLoopAroundTileDo(
             callable(i, j, location);
         }
     }
-};
+}

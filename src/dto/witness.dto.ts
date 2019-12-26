@@ -21,52 +21,47 @@ export default class WitnessDto extends LocationDto {
         this.iterations = binomialEngine.getCombination(this.mines, this.squares.length);
     }
 
+    public static sortByIterationsDesc(o1: WitnessDto, o2: WitnessDto): number {
+        return Number(-(o1.iterations - o2.iterations));
+    }
+
     public get getSquares(): SquareDto[] {
         return this.squares;
     }
 
-    public set addSquare(square: SquareDto)
-    {
+    public set addSquare(square: SquareDto) {
         this.squares.push(square);
     }
 
-    public get getBoxes(): BoxDto[]
-    {
+    public get getBoxes(): BoxDto[] {
         return this.boxes;
     }
 
-    public set addBox(box: BoxDto)
-    {
+    public set addBox(box: BoxDto) {
         this.boxes.push(box);
     }
 
-    public get getMines(): number
-    {
+    public get getMines(): number {
         return this.mines;
     }
 
-    public get getWebNum(): number
-    {
+    public get getWebNum(): number {
         return this.webNum;
     }
 
-    public set setWebNum(num: number)
-    {
+    public set setWebNum(num: number) {
         this.webNum = num;
     }
 
-    public get isProcessed(): boolean
-    {
+    public get isProcessed(): boolean {
         return this.processed;
     }
 
-    public set setProcessed(processed: boolean)
-    {
+    public set setProcessed(processed: boolean) {
         this.processed = processed;
     }
 
-    public equivalent(wit: WitnessDto): boolean
-    {
+    public equivalent(wit: WitnessDto): boolean {
         if (this.squares.length !== wit.getSquares.length) {
             return false;
         }
@@ -93,8 +88,7 @@ export default class WitnessDto extends LocationDto {
         return true;
     }
 
-    public overlap(w: WitnessDto): boolean
-    {
+    public overlap(w: WitnessDto): boolean {
         if (2 < Math.abs(w.y - this.y) || 2 < Math.abs(w.x - this.x)) {
             return false;
         }
@@ -113,13 +107,4 @@ export default class WitnessDto extends LocationDto {
 
         return result;
     }
-
-    public static sortByIterationsDesc(o1: WitnessDto, o2: WitnessDto): number
-    {
-        return Number(-(o1.iterations - o2.iterations));
-    }
 }
-
-/**
-
- */

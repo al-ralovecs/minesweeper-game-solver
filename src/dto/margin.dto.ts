@@ -1,5 +1,4 @@
-export default class MarginDto
-{
+export default class MarginDto {
     public readonly top: number;
     public readonly bottom: number;
     public readonly left: number;
@@ -7,8 +6,7 @@ export default class MarginDto
 
     public readonly size: number;
 
-    public constructor(y: number, x: number, height: number, width: number, size: number = 1)
-    {
+    public constructor(y: number, x: number, height: number, width: number, size: number = 1) {
         this.size = size;
 
         this.top = Math.max(0, y - size);

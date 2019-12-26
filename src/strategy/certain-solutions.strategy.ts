@@ -4,15 +4,14 @@ import WitnessWebDto from '../dto/witness-web.dto';
 import ProbabilityDistributionDto from '../dto/probability-distribution.dto';
 import ActionDto, { ActionType } from '../dto/action.dto';
 
-export default class CertainSolutionsStrategy extends AbstractStrategy
-{
+export default class CertainSolutionsStrategy extends AbstractStrategy {
 	private readonly wholeEdge: WitnessWebDto;
 	private readonly probabilityDistribution: ProbabilityDistributionDto;
 
 	public constructor(
 		boardState: BoardStateDto,
 		wholeEdge: WitnessWebDto,
-		probabilityDistribution: ProbabilityDistributionDto
+		probabilityDistribution: ProbabilityDistributionDto,
 	) {
 		super(boardState);
 
@@ -22,8 +21,7 @@ export default class CertainSolutionsStrategy extends AbstractStrategy
 
 	// there is only one solution
 	// or the solutions are certainties
-	protected get isStrategyApplicable(): boolean
-	{
+	protected get isStrategyApplicable(): boolean {
 		return 1 === this.probabilityDistribution.bestCandidates.length
 			|| this.probabilityDistribution.foundCertainty;
 	}
@@ -40,8 +38,7 @@ export default class CertainSolutionsStrategy extends AbstractStrategy
 		}
 	}
 
-	protected get getMoveMethod(): StrategyType
-	{
+	protected get getMoveMethod(): StrategyType {
 		return StrategyType.CertainSolutions;
 	}
 }

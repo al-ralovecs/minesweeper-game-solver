@@ -1,30 +1,33 @@
-import BoardStateDto from '../dto/board-state.dto';
-import WitnessWebDto from '../dto/witness-web.dto';
+import { StrategyType } from '../strategy/abstract-strategy';
+
 import Binomial from '../utility/binomial';
-import ProbabilityDistributionDto from '../dto/probability-distribution.dto';
-import EvaluatedLocationDto from '../dto/evaluated-location.dto';
-import ActionDto, {ActionType} from '../dto/action.dto';
-import {StrategyType} from '../strategy/abstract-strategy';
-import LocationDto from '../dto/location.dto';
-import LocationSetDto from '../dto/location-set.dto';
-import isCoordinatesValid from '../routine/coordinate.is-valid';
-import bigintDivide from '../routine/bigint.divide';
-import LinkedLocationDto from '../dto/linked-location.dto';
-import AreaDto from '../dto/area.dto';
 import WitnessWebService from './witness-web.service';
 import SolutionCounterService from './solution-counter.service';
+
+import BoardStateDto from '../dto/board-state.dto';
+import WitnessWebDto from '../dto/witness-web.dto';
+import ProbabilityDistributionDto from '../dto/probability-distribution.dto';
+import EvaluatedLocationDto from '../dto/evaluated-location.dto';
+
+import ActionDto, { ActionType } from '../dto/action.dto';
+import LocationDto from '../dto/location.dto';
+import LocationSetDto from '../dto/location-set.dto';
+import LinkedLocationDto from '../dto/linked-location.dto';
+import AreaDto from '../dto/area.dto';
+
+import isCoordinateValid from '../routine/coordinate.is-valid';
+import bigintDivide from '../routine/bigint.divide';
 
 const OFFSETS = [
     [  2,  0 ],
     [ -2,  0 ],
     [  0,  2 ],
-    [  0, -2 ]
+    [  0, -2 ],
 ];
 
 const SORT_ORDER = EvaluatedLocationDto.sortByProgressProbability;
 
-export default class EvaluateLocationsService
-{
+export default class EvaluateLocationsService {
     private readonly boardState: BoardStateDto;
     private readonly wholeEdge: WitnessWebDto;
     private readonly binomialEngine: Binomial;
@@ -38,7 +41,7 @@ export default class EvaluateLocationsService
         boardState: BoardStateDto,
         wholeEdge: WitnessWebDto,
         binomialEngine: Binomial,
-        probabilityDistribution: ProbabilityDistributionDto
+        probabilityDistribution: ProbabilityDistributionDto,
     ) {
         this.boardState = boardState;
         this.wholeEdge  = wholeEdge;
@@ -46,18 +49,15 @@ export default class EvaluateLocationsService
         this.probabilityDistribution = probabilityDistribution;
     }
 
-    public get hasBestMove(): boolean
-    {
+    public get hasBestMove(): boolean {
         return 0 < this.evaluated.length;
     }
 
-    public set setMoveMethod(moveMethod: StrategyType)
-    {
+    public set setMoveMethod(moveMethod: StrategyType) {
         this.moveMethod = moveMethod;
     }
 
-    public get getMoveMethod(): StrategyType
-    {
+    public get getMoveMethod(): StrategyType {
         if (typeof this.moveMethod === 'undefined') {
             throw Error('[EvaluateLocationsService::getMoveMethod] Calling get method before set method was called');
         }
@@ -65,8 +65,7 @@ export default class EvaluateLocationsService
         return this.moveMethod;
     }
 
-    public get getBestMove(): ActionDto
-    {
+    public get getBestMove(): ActionDto {
         if (! this.hasBestMove) {
             throw Error('[EvaluateLocationsService::getBestMove] Calling method when none best move exists');
         }
@@ -79,20 +78,19 @@ export default class EvaluateLocationsService
             evaluatedLocation,
             ActionType.Clear,
             this.getMoveMethod,
-            evaluatedLocation.clearProbability
-        )
+            evaluatedLocation.clearProbability,
+        );
     }
 
-    public addOffEdgeCandidates(allUnrevealedSquares: LocationDto[]): void
-    {
-        let tileOfInterest: LocationSetDto = new LocationSetDto();
+    public addOffEdgeCandidates(allUnrevealedSquares: LocationDto[]): void {
+        const tileOfInterest: LocationSetDto = new LocationSetDto();
 
         for (const tile of this.wholeEdge.originalWitnesses) {
             for (const offset of OFFSETS) {
                 const y1 = tile.y + offset[1];
                 const x1 = tile.x + offset[0];
 
-                if (! isCoordinatesValid(y1, x1, this.boardState.height, this.boardState.width)) {
+                if (! isCoordinateValid(y1, x1, this.boardState.height, this.boardState.width)) {
                     continue;
                 }
 
@@ -142,7 +140,7 @@ export default class EvaluateLocationsService
                 prob,
                 expectedClears,
                 0,
-                this.boardState.isCorner(tile.y, tile.x)
+                this.boardState.isCorner(tile.y, tile.x),
             );
 
             this.evaluated.push(evalTile);
@@ -156,8 +154,7 @@ export default class EvaluateLocationsService
      *
      * @param tiles LocationDto[]
      */
-    public evaluateLocations(tiles: LocationDto[]): void
-    {
+    public evaluateLocations(tiles: LocationDto[]): void {
         for (const tile of tiles) {
             this.evaluateLocation(tile);
         }
@@ -170,8 +167,7 @@ export default class EvaluateLocationsService
      *
      * @param tile
      */
-    private evaluateLocation(tile: LocationDto): void
-    {
+    private evaluateLocation(tile: LocationDto): void {
         const evalTile: EvaluatedLocationDto = this.doEvaluateTile(tile);
 
         if (null !== evalTile) {
@@ -179,8 +175,7 @@ export default class EvaluateLocationsService
         }
     }
 
-    private doEvaluateTile(tile: LocationDto): EvaluatedLocationDto
-    {
+    private doEvaluateTile(tile: LocationDto): EvaluatedLocationDto {
         let result: EvaluatedLocationDto;
 
         const superset: LocationDto[] = this.boardState.getAdjacentUnrevealedSquares(tile);
@@ -225,8 +220,8 @@ export default class EvaluateLocationsService
             if (supersetOkay) {
                 hits++;
 
-                let minesNeeded: number = this.boardState.getWitnessValue(loc) - this.boardState.countAdjacentConfirmedFlags(loc);
-                let value: number = minesNeeded - minesGot;
+                const minesNeeded: number = this.boardState.getWitnessValue(loc) - this.boardState.countAdjacentConfirmedFlags(loc);
+                const value: number = minesNeeded - minesGot;
 
                 if (minMines < value) {
                     minMines = value;
@@ -283,7 +278,7 @@ export default class EvaluateLocationsService
             progressProb,
             expectedClears,
             linkedTiles,
-            this.boardState.isCorner(tile.y, tile.x)
+            this.boardState.isCorner(tile.y, tile.x),
         );
 
         if (null !== linkedLocation) {
@@ -302,15 +297,14 @@ export default class EvaluateLocationsService
         return result;
     }
 
-    private validateLocation(superLocation: LocationDto, value: number): ProbabilityDistributionDto
-    {
+    private validateLocation(superLocation: LocationDto, value: number): ProbabilityDistributionDto {
         this.boardState.setWitnessValue(superLocation, value);
 
-        let witnesses: LocationDto[] = new Array<LocationDto>(this.boardState.getAllLivingWitnesses.length + 1);
+        const witnesses: LocationDto[] = new Array<LocationDto>(this.boardState.getAllLivingWitnesses.length + 1);
         witnesses.push(...this.wholeEdge.getPrunedWitnesses);
         witnesses.push(superLocation);
 
-        let witnessed: AreaDto = this.boardState.getUnrevealedArea(witnesses);
+        const witnessed: AreaDto = this.boardState.getUnrevealedArea(witnesses);
 
         const edgeService: WitnessWebService = new WitnessWebService(this.boardState, this.binomialEngine);
         edgeService.setAllWitnesses = witnesses;
@@ -327,7 +321,7 @@ export default class EvaluateLocationsService
             this.boardState,
             edgeService.getWitnessWeb,
             this.binomialEngine,
-            new AreaDto(new LocationSetDto())
+            new AreaDto(new LocationSetDto()),
         );
         counter.getProbabilityDistribution
             .minesLeft = minesLeft;

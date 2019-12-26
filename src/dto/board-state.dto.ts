@@ -1,13 +1,13 @@
-import ActionDto, {ActionType} from './action.dto';
+import PlayInterface from '../interface/play.interface';
+
+import ActionDto, { ActionType } from './action.dto';
 import LocationDto from './location.dto';
 import LocationSetDto from './location-set.dto';
 import AreaDto from './area.dto';
-import {AdjacentSquaresDto} from './adjacent-squares.dto';
+import AdjacentSquaresDto from './adjacent-squares.dto';
 import ChordLocationDto from './chord-location.dto';
-import PlayInterface from '../interface/play.interface';
 
-export default class BoardStateDto implements PlayInterface
-{
+export default class BoardStateDto implements PlayInterface {
     public readonly height: number;
     public readonly width: number;
     public readonly expectedTotalMines: number;
@@ -39,58 +39,49 @@ export default class BoardStateDto implements PlayInterface
 
     private testMoveBalance: number = 0;
 
-    public constructor(height: number, width: number, expectedTotalMines: number)
-    {
+    public constructor(height: number, width: number, expectedTotalMines: number) {
         this.height = height;
         this.width = width;
         this.expectedTotalMines = expectedTotalMines;
 
     }
 
-    public get hasNextMove(): boolean
-    {
+    public get hasNextMove(): boolean {
         return 0 < this.actionList
             .filter(a => ActionType.Clear === a.type && a.isCertainty)
             .length;
     }
 
-    public get getNextMove(): ActionDto
-    {
+    public get getNextMove(): ActionDto {
         return this.getActions
             .filter(a => ActionType.Clear === a.type && a.isCertainty)
             .shift();
     }
 
-    public get hasNewFlagFound(): boolean
-    {
+    public get hasNewFlagFound(): boolean {
         return 0 < this.actionList
             .filter(a => ActionType.Flag === a.type)
             .length;
     }
 
-    public get getTotalUnrevealedCount(): number
-    {
+    public get getTotalUnrevealedCount(): number {
         return this.numOfHidden;
     }
 
-    public get getAllLivingWitnesses(): LocationDto[]
-    {
+    public get getAllLivingWitnesses(): LocationDto[] {
         return this.livingWitnesses.data;
     }
 
-    public countAdjacentUnrevealed(location: LocationDto): number
-    {
+    public countAdjacentUnrevealed(location: LocationDto): number {
         return this.adjUnrevealed[location.y][location.x];
     }
 
-    public getUnrevealedArea(witnesses: LocationDto[]): AreaDto
-    {
+    public getUnrevealedArea(witnesses: LocationDto[]): AreaDto {
         return new AreaDto(this.getUnrevealedSquaresDo(witnesses));
     }
 
-    private getUnrevealedSquaresDo(witnesses: LocationDto[]): LocationSetDto
-    {
-        let work: LocationSetDto = new LocationSetDto();
+    private getUnrevealedSquaresDo(witnesses: LocationDto[]): LocationSetDto {
+        const work: LocationSetDto = new LocationSetDto();
 
         for (const l of witnesses) {
             // this turned out necessary
@@ -109,23 +100,19 @@ export default class BoardStateDto implements PlayInterface
         return work;
     }
 
-    public isRevealed(location: LocationDto): boolean
-    {
+    public isRevealed(location: LocationDto): boolean {
         return this.revealed[location.y][location.x];
     }
 
-    public isUnrevealed(location: LocationDto): boolean
-    {
+    public isUnrevealed(location: LocationDto): boolean {
         return ! this.flagConfirmed[location.y][location.x] && ! this.revealed[location.y][location.x];
     }
 
-    public alreadyActioned(location: LocationDto): boolean
-    {
+    public alreadyActioned(location: LocationDto): boolean {
         return typeof this.action[location.y][location.x] !== 'undefined';
     }
 
-    public getAdjacentSquaresIterable(location: LocationDto, size: number = 1): Iterable<LocationDto>
-    {
+    public getAdjacentSquaresIterable(location: LocationDto, size: number = 1): Iterable<LocationDto> {
         if (1 !== size && 2 !== size) {
             throw Error(`[BoardState::getAdjacentSquaresIterable()] Invalid size [${size}] specified.`);
         }
@@ -135,7 +122,7 @@ export default class BoardStateDto implements PlayInterface
                 location,
                 this.height,
                 this.width,
-                size
+                size,
             );
         }
 
@@ -144,7 +131,7 @@ export default class BoardStateDto implements PlayInterface
                 location,
                 this.height,
                 this.width,
-                size
+                size,
             );
         }
 
@@ -153,8 +140,7 @@ export default class BoardStateDto implements PlayInterface
             : this.adjacentLocations2[location.y][location.x].locations;
     }
 
-    public getWitnessValue(location: LocationDto): number
-    {
+    public getWitnessValue(location: LocationDto): number {
         if (this.isUnrevealed(location)) {
             throw Error(`[BoardState] Failed when trying to get a witness (${location.x}, ${location.y}) value for an unrevealed square`);
         }
@@ -162,28 +148,23 @@ export default class BoardStateDto implements PlayInterface
         return this.board[location.y][location.x];
     }
 
-    public countAdjacentConfirmedFlags(location: LocationDto): number
-    {
+    public countAdjacentConfirmedFlags(location: LocationDto): number {
         return this.adjFlagsConfirmed[location.y][location.x];
     }
 
-    public get getMines(): number
-    {
+    public get getMines(): number {
         return this.expectedTotalMines;
     }
 
-    public get getConfirmedFlagCount(): number
-    {
+    public get getConfirmedFlagCount(): number {
         return this.totalFlagsConfirmed;
     }
 
-    public countAdjacentFlagsOnBoard(location: LocationDto): number
-    {
+    public countAdjacentFlagsOnBoard(location: LocationDto): number {
         return this.adjFlagsOnBoard[location.y][location.x];
     }
 
-    public setChordLocation(location: LocationDto): boolean
-    {
+    public setChordLocation(location: LocationDto): boolean {
         let accepted: boolean = false;
         const benefit: number = this.countAdjacentUnrevealed(location);
         const cost: number = this.getWitnessValue(location) - this.countAdjacentFlagsOnBoard(location);
@@ -196,8 +177,7 @@ export default class BoardStateDto implements PlayInterface
         return accepted;
     }
 
-    public set setAction(action: ActionDto)
-    {
+    public set setAction(action: ActionDto) {
         if (typeof this.action[action.y][action.x] !== 'undefined') {
             return;
         }
@@ -211,18 +191,15 @@ export default class BoardStateDto implements PlayInterface
         this.actionList.push(action);
     }
 
-    public get getActions(): ActionDto[]
-    {
+    public get getActions(): ActionDto[] {
         return this.actionList;
     }
 
-    public isConfirmedFlag(l: LocationDto): boolean
-    {
+    public isConfirmedFlag(l: LocationDto): boolean {
         return this.flagConfirmed[l.y][l.x];
     }
 
-    private set setFlagConfirmed(loc: LocationDto)
-    {
+    private set setFlagConfirmed(loc: LocationDto) {
         if (this.isConfirmedFlag(loc)) {
             return;
         }
@@ -240,9 +217,8 @@ export default class BoardStateDto implements PlayInterface
         }
     }
 
-    public getAdjacentUnrevealedSquares(location: LocationDto): LocationDto[]
-    {
-        let work: LocationDto[] = [];
+    public getAdjacentUnrevealedSquares(location: LocationDto): LocationDto[] {
+        const work: LocationDto[] = [];
 
         for (const a of this.getAdjacentSquaresIterable(location)) {
             if (this.isUnrevealed(a)) {
@@ -253,9 +229,8 @@ export default class BoardStateDto implements PlayInterface
         return work;
     }
 
-    public getWitnesses(square: LocationDto[]): LocationDto[]
-    {
-        let work: LocationSetDto = new LocationSetDto();
+    public getWitnesses(square: LocationDto[]): LocationDto[] {
+        const work: LocationSetDto = new LocationSetDto();
 
         for (const loc of square) {
             for (const adj of this.getAdjacentSquaresIterable(loc)) {
@@ -268,9 +243,8 @@ export default class BoardStateDto implements PlayInterface
         return work.data;
     }
 
-    public getAdjacentUnrevealedArea(location: LocationDto): AreaDto
-    {
-        let locationSet: LocationSetDto = new LocationSetDto();
+    public getAdjacentUnrevealedArea(location: LocationDto): AreaDto {
+        const locationSet: LocationSetDto = new LocationSetDto();
 
         for (const l of this.getAdjacentUnrevealedSquares(location)) {
             locationSet.add(l);
@@ -279,9 +253,8 @@ export default class BoardStateDto implements PlayInterface
         return new AreaDto(locationSet);
     }
 
-    public get getAllUnrevealedSquares(): LocationDto[]
-    {
-        let result: LocationDto[] = [];
+    public get getAllUnrevealedSquares(): LocationDto[] {
+        const result: LocationDto[] = [];
 
         for (let i: number = 0; i < this.height; i++) {
             for (let j: number = 0; j < this.width; j++) {
@@ -298,24 +271,21 @@ export default class BoardStateDto implements PlayInterface
         return result;
     }
 
-    public setWitnessValue(l: LocationDto, value: number): void
-    {
+    public setWitnessValue(l: LocationDto, value: number): void {
         this.board[l.y][l.x] = value;
         this.revealed[l.y][l.x] = true;
 
         this.testMoveBalance++;
     }
 
-    public clearWitness(l: LocationDto): void
-    {
+    public clearWitness(l: LocationDto): void {
         this.board[l.y][l.x] = -1;
         this.revealed[l.y][l.x] = false;
 
         this.testMoveBalance--;
     }
 
-    public isCorner(y: number, x: number): boolean
-    {
+    public isCorner(y: number, x: number): boolean {
         return (y === 0 || y === this.height - 1)
             && (x === 0 || x === this.width - 1);
     }

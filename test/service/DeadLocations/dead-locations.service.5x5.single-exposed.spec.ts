@@ -5,6 +5,6 @@ import getService from './function.get.service';
 
 describe('DeadLocationsService', () => {
     test('test if finds on a disposition', () => {
-        expect(getService(disposition, 7).getDead).toMatchSnapshot();
+        expect(getService(disposition, 7).getData).toMatchSnapshot();
     });
 });

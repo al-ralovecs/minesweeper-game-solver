@@ -1,8 +1,8 @@
+import { StrategyType } from '../abstract-strategy';
+
 import BoardStateDto from '../../dto/board-state.dto';
 import WitnessWebDto from '../../dto/witness-web.dto';
 import ProbabilityDistributionDto from '../../dto/probability-distribution.dto';
-
-import { StrategyType } from '../abstract-strategy';
 
 import LocationDto from '../../dto/location.dto';
 import AreaDto from '../../dto/area.dto';
@@ -14,7 +14,7 @@ export default function guess(
     boardState: BoardStateDto,
     wholeEdge: WitnessWebDto,
     probabilityDistribution: ProbabilityDistributionDto,
-    moveMethod: StrategyType
+    moveMethod: StrategyType,
 ) {
     const allWitnesses: LocationDto[] = boardState.getAllLivingWitnesses;
     const allWitnessedSquares: AreaDto = boardState.getUnrevealedArea(allWitnesses);

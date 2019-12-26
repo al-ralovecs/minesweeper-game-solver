@@ -3,7 +3,7 @@ import LocationDto from '../dto/location.dto';
 
 export default function whileLoopOverBoardDo(
     boardState: BoardStateDto,
-    callable: (location: LocationDto, y: number, x: number) => void
+    callable: (location: LocationDto, y: number, x: number) => void,
 ) {
     for (let y: number = 0; y < boardState.height; y++) {
         for (let x: number = 0; x < boardState.width; x++) {
@@ -12,4 +12,4 @@ export default function whileLoopOverBoardDo(
             callable(location, y, x);
         }
     }
-};
+}

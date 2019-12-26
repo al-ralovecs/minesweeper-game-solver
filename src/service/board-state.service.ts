@@ -1,41 +1,36 @@
 import ServiceInterface from '../interface/service.interface';
 
+import { StrategyType } from '../strategy/abstract-strategy';
+
 import ActionDto, {ActionType} from '../dto/action.dto';
 import BoardDto from '../dto/board.dto';
 import BoardStateDto from '../dto/board-state.dto';
 import LocationDto from '../dto/location.dto';
-
-import {AdjacentSquaresDto} from '../dto/adjacent-squares.dto';
-import {StrategyType} from '../strategy/abstract-strategy';
+import AdjacentSquaresDto from '../dto/adjacent-squares.dto';
 
 import whileLoopOverBoardDo from '../routine/while.loop-over-board.do';
 import whileLoopAroundTileDo from '../routine/while.loop-around-tile.do';
 
-export default class BoardStateService implements ServiceInterface
-{
+export default class BoardStateService implements ServiceInterface {
     private board: BoardDto;
     private readonly boardState: BoardStateDto;
 
-    public constructor(height: number, width: number, expectedMinesCountOnBoard: number)
-    {
+    public constructor(height: number, width: number, expectedMinesCountOnBoard: number) {
         const boardState = new BoardStateDto(height, width, expectedMinesCountOnBoard);
         BoardStateService.init(boardState);
 
         this.boardState = boardState;
     }
 
-    public set setBoard(board: BoardDto)
-    {
+    public set setBoard(board: BoardDto) {
         this.board = board;
     }
 
-    public get getBoardState(): BoardStateDto
-    {
+    public get getBoardState(): BoardStateDto {
         return this.boardState;
     }
 
-    public process(): void
-    {
+    public process(): void {
         this.resetAdjacentUnrevealed();
 
         this.boardState.adjFlagsOnBoard = [...new Array<number[]>(this.boardState.height)]
@@ -46,7 +41,7 @@ export default class BoardStateService implements ServiceInterface
         whileLoopOverBoardDo(this.boardState, (location, i, j) => {
             this.boardState.flagOnBoard[i][j] = false;
 
-            let info: number = this.board.data[i][j];
+            const info: number = this.board.data[i][j];
             let action: ActionDto = this.boardState.action[i][j];
 
             if (typeof action !== 'undefined'
@@ -95,8 +90,7 @@ export default class BoardStateService implements ServiceInterface
         BoardStateService.leaveOnlyEdgeLivingWitnesses(this.boardState);
     }
 
-    private static init(boardState: BoardStateDto): void
-    {
+    private static init(boardState: BoardStateDto): void {
         const height: number = boardState.height;
         const width: number = boardState.width;
 
@@ -113,9 +107,8 @@ export default class BoardStateService implements ServiceInterface
         boardState.revealed = [...new Array<boolean[]>(height)].map(() => new Array<boolean>(width).fill(false));
     }
 
-    private static leaveOnlyEdgeLivingWitnesses(boardState: BoardStateDto): void
-    {
-        let toRemove: LocationDto[] = [];
+    private static leaveOnlyEdgeLivingWitnesses(boardState: BoardStateDto): void {
+        const toRemove: LocationDto[] = [];
 
         boardState.livingWitnesses.data.forEach(l => {
             if (0 === boardState.countAdjacentUnrevealed(l)) {
@@ -126,8 +119,8 @@ export default class BoardStateService implements ServiceInterface
         boardState.livingWitnesses.removeAll(toRemove);
     }
 
-    private resetAdjacentUnrevealed(): void
-    {
+    private resetAdjacentUnrevealed(): void {
+        // eslint-disable-next-line
         this.boardState.adjUnrevealed = [...new Array<Array<number>>(this.boardState.height)]
             .map(() => new Array<number>(this.boardState.width).fill(0));
 
@@ -135,13 +128,12 @@ export default class BoardStateService implements ServiceInterface
             this.boardState.adjUnrevealed[location.y][location.x] = BoardStateService.getInitAdjacentCountByLocation(
                 location,
                 this.boardState.height,
-                this.boardState.width
+                this.boardState.width,
             );
         });
     }
 
-    private static getInitAdjacentCountByLocation(location: LocationDto, height: number, width: number): number
-    {
+    private static getInitAdjacentCountByLocation(location: LocationDto, height: number, width: number): number {
         const y: number = location.y;
         const x: number = location.x;
 

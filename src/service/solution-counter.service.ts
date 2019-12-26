@@ -1,11 +1,9 @@
 import ProbabilityEngineService from './probability-engine.service';
 
-export default class SolutionCounterService extends ProbabilityEngineService
-{
+export default class SolutionCounterService extends ProbabilityEngineService {
     private mineCounts: Map<number, bigint> = new Map<number, bigint>();
 
-    public process(): void
-    {
+    public process(): void {
         if (! this.web.isWebValid) {
             this.getProbabilityDistribution.finalSolutionsCount = 0n;
             return;
@@ -15,15 +13,14 @@ export default class SolutionCounterService extends ProbabilityEngineService
         this.calculateBoxProbabilities();
     }
 
-    protected calculateBoxProbabilities(): void
-    {
+    protected calculateBoxProbabilities(): void {
         // total game tally
         let totalTally: bigint = 0n;
 
         // outside a box tally
         let outsideTally: bigint = 0n;
 
-        let emptyBox: boolean[] = new Array<boolean>(this.data.boxCount).fill(true);
+        const emptyBox: boolean[] = new Array<boolean>(this.data.boxCount).fill(true);
 
         for (const pl of this.heldProbs) {
             if (this.data.minTotalMines > pl.mineCount) {
@@ -34,7 +31,7 @@ export default class SolutionCounterService extends ProbabilityEngineService
 
             // number of ways
             // the rest of the board can be formed
-            let mult: bigint = this.binomial.getCombination(this.data.minesLeft - pl.mineCount, this.data.squaresLeft);
+            const mult: bigint = this.binomial.getCombination(this.data.minesLeft - pl.mineCount, this.data.squaresLeft);
 
             outsideTally += mult * BigInt(this.data.minesLeft - pl.mineCount) * pl.solutionCount;
 

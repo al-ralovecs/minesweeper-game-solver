@@ -1,16 +1,16 @@
+import { StrategyType } from '../abstract-strategy';
+
 import BoardStateDto from '../../dto/board-state.dto';
 import ProbabilityDistributionDto from '../../dto/probability-distribution.dto';
 
-import { StrategyType } from '../abstract-strategy';
 import ActionDto, { ActionType } from '../../dto/action.dto';
-
 import LocationDto from '../../dto/location.dto';
 import AreaDto from '../../dto/area.dto';
 
 export default function pickOnEdgeMethod(
-    boardState: BoardStateDto, 
+    boardState: BoardStateDto,
     probabilityDistribution: ProbabilityDistributionDto,
-    moveMethod: StrategyType
+    moveMethod: StrategyType,
 ): void {
     const allWitnesses: LocationDto[] = boardState.getAllLivingWitnesses;
     const allWitnessedSquares: AreaDto = boardState.getUnrevealedArea(allWitnesses);
@@ -24,6 +24,6 @@ export default function pickOnEdgeMethod(
         picked,
         ActionType.Clear,
         moveMethod,
-        probabilityDistribution.getProbability(picked)
+        probabilityDistribution.getProbability(picked),
     );
 }

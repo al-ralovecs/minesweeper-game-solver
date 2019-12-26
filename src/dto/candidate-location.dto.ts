@@ -2,8 +2,7 @@ import LocationDto from './location.dto';
 import { StrategyType } from '../strategy/abstract-strategy';
 import ActionDto, { ActionType } from './action.dto';
 
-export default class CandidateLocationDto extends LocationDto
-{
+export default class CandidateLocationDto extends LocationDto {
     public readonly probability: number;
     public readonly adjSquares: number;
     public readonly adjFlags: number;
@@ -15,7 +14,7 @@ export default class CandidateLocationDto extends LocationDto
         probability: number,
         adjSquares: number,
         adjFlags: number,
-        count: number = 0
+        count: number = 0,
     ) {
         super(y, x);
 
@@ -25,28 +24,16 @@ export default class CandidateLocationDto extends LocationDto
         this.count = count;
     }
 
-    public buildAction(moveMethod: StrategyType): ActionDto
-    {
+    public buildAction(moveMethod: StrategyType): ActionDto {
         return new ActionDto(
             new LocationDto(this.y, this.x),
             ActionType.Clear,
             moveMethod,
-            this.probability
+            this.probability,
         );
     }
 
-    /**
-     * This sorts
-     * by highest probability of not being a mine,
-     * then the number of adjacent flags,
-     * unrevealed squares,
-     * and finally location order
-     *
-     * @param o1 CandidateLocationDto
-     * @param o2 CandidateLocationDto
-     */
-    public static sortByProbabilityFlagFree(o1: CandidateLocationDto, o2: CandidateLocationDto): number
-    {
+    public static sortByProbabilityFlagFree(o1: CandidateLocationDto, o2: CandidateLocationDto): number {
         // highest probability first
         if (0 !== o1.probability - o2.probability) {
             return -(o1.probability - o2.probability);
@@ -71,18 +58,7 @@ export default class CandidateLocationDto extends LocationDto
         return o1.sortOrder - o2.sortOrder;
     }
 
-    /**
-     * This sorts
-     * by highest probability of not being a mine
-     * then the number unrevealed squares (lowest first),
-     * then of adjacent flags (highest first),
-     * and finally location order
-     *
-     * @param o1 CandidateLocationDto
-     * @param o2 CandidateLocationDto
-     */
-    public static sortByProbabilityFreeFlag(o1: CandidateLocationDto, o2: CandidateLocationDto): number
-    {
+    public static sortByProbabilityFreeFlag(o1: CandidateLocationDto, o2: CandidateLocationDto): number {
         // highest probability first
         if (0 !== o1.probability - o2.probability) {
             return -(o1.probability - o2.probability);
@@ -103,8 +79,7 @@ export default class CandidateLocationDto extends LocationDto
         return o1.sortOrder - o2.sortOrder;
     }
 
-    private static getZeroBiasedAdjSquares(adjSquares: number): number
-    {
+    private static getZeroBiasedAdjSquares(adjSquares: number): number {
         return 0 === adjSquares ? 9 : adjSquares;
     }
 }

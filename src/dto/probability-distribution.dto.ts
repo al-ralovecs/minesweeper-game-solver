@@ -7,15 +7,14 @@ import CandidateLocationDto from './candidate-location.dto';
 
 export const PROBABILITY_ENGINE_TOLERANCE: number = 0.96;
 
-export default class ProbabilityDistributionDto
-{
+export default class ProbabilityDistributionDto {
     public readonly boxes: BoxDto[];
     public readonly boxCount: number;
     public readonly witnesses: WitnessDto[];
 
     public boxProb: number[];
 
-    public hashTally: bigint[];
+    public hashTally: Array<bigint>;
 
     public minesLeft: number;
     public squaresLeft: number;
@@ -42,26 +41,21 @@ export default class ProbabilityDistributionDto
         witnesses: WitnessDto[],
         minesLeft: number,
         squaresLeft: number,
-        deadLocations: AreaDto
+        deadLocations: AreaDto,
     ) {
         this.boxes = boxes;
         this.boxCount = this.boxes.length;
         this.boxProb = new Array<number>(this.boxCount).fill(0);
         this.hashTally = new Array<bigint>(this.boxCount).fill(0n);
-        
         this.witnesses = witnesses;
-
         this.minesLeft = minesLeft;
         this.squaresLeft = squaresLeft;
-        
         this.deadLocations = deadLocations;
-
         this.minTotalMines = this.minesLeft - this.squaresLeft;
         this.maxTotalMines = this.minesLeft;
     }
 
-    public getProbability(location: LocationDto): number
-    {
+    public getProbability(location: LocationDto): number {
         for (const b of this.boxes) {
             if (b.contains(location)) {
                 return this.boxProb[b.getUID];
@@ -71,13 +65,11 @@ export default class ProbabilityDistributionDto
         return this.offEdgeProbability;
     }
 
-    public get foundCertainty(): boolean
-    {
+    public get foundCertainty(): boolean {
         return 0 === 1 - this.bestProbability;
     }
 
-    public getLinkedLocation(tile: LocationDto): LinkedLocationDto
-    {
+    public getLinkedLocation(tile: LocationDto): LinkedLocationDto {
         for (const ll of this.linkedLocations) {
             if (ll.equals(tile)) {
                 return ll;
@@ -87,4 +79,3 @@ export default class ProbabilityDistributionDto
         return null;
     }
 }
-

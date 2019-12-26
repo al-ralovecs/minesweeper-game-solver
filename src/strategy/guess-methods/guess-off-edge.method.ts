@@ -1,8 +1,8 @@
+import { StrategyType } from '../abstract-strategy';
+
 import BoardStateDto from '../../dto/board-state.dto';
 import WitnessWebDto from '../../dto/witness-web.dto';
 import ProbabilityDistributionDto from '../../dto/probability-distribution.dto';
-
-import { StrategyType } from '../abstract-strategy';
 
 import CandidateLocationDto from '../../dto/candidate-location.dto';
 import LocationDto from '../../dto/location.dto';
@@ -11,9 +11,9 @@ export default function guessOffEdgeMethod(
     boardState: BoardStateDto,
     wholeEdge: WitnessWebDto,
     probabilityDistribution: ProbabilityDistributionDto,
-    moveMethod: StrategyType
+    moveMethod: StrategyType,
 ) {
-    let candidateList: CandidateLocationDto[] = [];
+    const candidateList: CandidateLocationDto[] = [];
 
     for (let i: number = 0; i < boardState.height; i++) {
         for (let j: number = 0; j < boardState.width; j++) {
@@ -33,8 +33,8 @@ export default function guessOffEdgeMethod(
                     location.x,
                     probabilityDistribution.offEdgeProbability,
                     boardState.countAdjacentUnrevealed(location),
-                    boardState.countAdjacentConfirmedFlags(location)
-                )
+                    boardState.countAdjacentConfirmedFlags(location),
+                ),
             );
         }
     }

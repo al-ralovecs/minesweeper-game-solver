@@ -1,12 +1,11 @@
 import { AbstractStrategy, StrategyType } from './abstract-strategy';
 import LocationDto from '../dto/location.dto';
 import ActionDto, { ActionType } from '../dto/action.dto';
-import isCoordinatesValid from '../routine/coordinate.is-valid';
+import isCoordinateValid from '../routine/coordinate.is-valid';
 
-export default class FiftyFiftyGuessStrategy extends AbstractStrategy
-{
-    protected applyStrategy()
-    {
+export default class FiftyFiftyGuessStrategy extends AbstractStrategy {
+
+    protected applyStrategy() {
         const assumedMoveProbability: number = 0.5; // Not calculated given entire board, therefore, just an assumption
 
         for (let i: number = 0; i < this.boardState.width - 1; i++) {
@@ -34,7 +33,7 @@ export default class FiftyFiftyGuessStrategy extends AbstractStrategy
                         new LocationDto(j, i),
                         ActionType.Clear,
                         StrategyType.FiftyFiftyGuess,
-                        assumedMoveProbability
+                        assumedMoveProbability,
                     );
                 }
             }
@@ -65,35 +64,31 @@ export default class FiftyFiftyGuessStrategy extends AbstractStrategy
                         new LocationDto(j, i),
                         ActionType.Clear,
                         StrategyType.FiftyFiftyGuess,
-                        assumedMoveProbability
+                        assumedMoveProbability,
                     );
                 }
             }
         }
     }
 
-    protected get getMoveMethod(): StrategyType
-    {
+    protected get getMoveMethod(): StrategyType {
         return StrategyType.FiftyFiftyGuess;
     }
 
-    private isTileHidden(x: number, y: number): boolean
-    {
+    private isTileHidden(x: number, y: number): boolean {
         return -1 === this.boardState.board[y][x];
     }
 
-    private isPotentialInfo(x: number, y: number): boolean
-    {
-        if (! isCoordinatesValid(y, x, this.boardState.height, this.boardState.width)) {
+    private isPotentialInfo(x: number, y: number): boolean {
+        if (! isCoordinateValid(y, x, this.boardState.height, this.boardState.width)) {
             return false;
         }
 
         return ! this.boardState.isConfirmedFlag(new LocationDto(y, x));
     }
 
-    private isOnlyOne(x: number, y: number): boolean
-    {
-        if (! isCoordinatesValid(y, x, this.boardState.height, this.boardState.width)) {
+    private isOnlyOne(x: number, y: number): boolean {
+        if (! isCoordinateValid(y, x, this.boardState.height, this.boardState.width)) {
             return false;
         }
 

@@ -21,10 +21,9 @@ export default class WitnessWebDto {
 
     public validWeb: boolean = true;
 
-    //private solutions: CrunchResultDto[] = [];
+    // private solutions: CrunchResultDto[] = [];
 
-    public constructor(allWit: LocationDto[], allSqu: LocationDto[])
-    {
+    public constructor(allWit: LocationDto[], allSqu: LocationDto[]) {
         this.originalWitnesses = allWit;
 
         for (const squ of allSqu) {
@@ -32,23 +31,19 @@ export default class WitnessWebDto {
         }
     }
 
-    public get getPrunedWitnesses(): WitnessDto[]
-    {
+    public get getPrunedWitnesses(): WitnessDto[] {
         return this.prunedWitnesses;
     }
 
-    public get getSquares(): SquareDto[]
-    {
+    public get getSquares(): SquareDto[] {
         return this.squares;
     }
 
-    public get getBoxes(): BoxDto[]
-    {
+    public get getBoxes(): BoxDto[] {
         return this.boxes;
     }
 
-    public isOnWeb(location: LocationDto): boolean
-    {
+    public isOnWeb(location: LocationDto): boolean {
         for (const s of this.squares) {
             if (s.equals(location)) {
                 return true;
@@ -58,8 +53,7 @@ export default class WitnessWebDto {
         return false;
     }
 
-    public get isWebValid(): boolean
-    {
+    public get isWebValid(): boolean {
         return this.validWeb;
     }
 }

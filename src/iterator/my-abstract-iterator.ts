@@ -1,38 +1,23 @@
 import LocationDto from '../dto/location.dto';
 
-export default abstract class MyAbstractIterator
-{
-    protected readonly numberBalls: number;
-    protected readonly numberHoles: number;
+export default abstract class MyAbstractIterator {
+    public readonly ballsCount: number;
+    public readonly holesCount: number;
 
-    protected constructor(n: number, m: number)
-    {
-        this.numberBalls = n;
-        this.numberHoles = m;
+    protected constructor(n: number, m: number) {
+        this.ballsCount = n;
+        this.holesCount = m;
     }
 
-    public get getBalls(): number
-    {
-        return this.numberBalls;
+    public getSample(): number[] {
+        return this.getSampleAt(this.ballsCount - 1);
     }
 
-    public get getHoles(): number
-    {
-        return this.numberHoles;
-    }
-
-    public getSampleAt(start: number): number[]
-    {
-        return undefined;
-    }
-
-    public getSample(): number[]
-    {
-        return this.getSampleAt(this.numberBalls - 1);
-    }
-
-    public witnessAlwaysSatisfied(location: LocationDto): boolean
-    {
+    public isWitnessAlwaysSatisfied(location: LocationDto): boolean {
         return false;
+    }
+
+    protected getSampleAt(start: number): number[] {
+        return undefined;
     }
 }

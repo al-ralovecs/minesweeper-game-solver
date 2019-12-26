@@ -1,15 +1,15 @@
 import ServiceInterface from '../interface/service.interface';
 
+import Binomial from '../utility/binomial';
+
 import BoardStateDto from '../dto/board-state.dto';
 import WitnessWebDto from '../dto/witness-web.dto';
-import Binomial from '../utility/binomial';
 import LocationDto from '../dto/location.dto';
 import SquareDto from '../dto/square.dto';
 import WitnessDto from '../dto/witness.dto';
 import BoxDto from '../dto/box.dto';
 
-export default class WitnessWebService implements ServiceInterface
-{
+export default class WitnessWebService implements ServiceInterface {
     private boardState: BoardStateDto;
     private witnessWeb: WitnessWebDto;
 
@@ -18,8 +18,7 @@ export default class WitnessWebService implements ServiceInterface
     private allWitnesses: LocationDto[];
     private allSquares: LocationDto[];
 
-    public constructor(boardState: BoardStateDto, binomialEngine: Binomial, init: boolean = true)
-    {
+    public constructor(boardState: BoardStateDto, binomialEngine: Binomial, init: boolean = true) {
         this.boardState = boardState;
         this.binomialEngine = binomialEngine;
         this.witnessWeb = null;
@@ -31,30 +30,25 @@ export default class WitnessWebService implements ServiceInterface
         this.init();
     }
 
-    public set setBoardState(boardState: BoardStateDto)
-    {
+    public set setBoardState(boardState: BoardStateDto) {
         this.boardState = boardState;
 
         this.init();
     }
 
-    public set setAllWitnesses(allWitnesses: LocationDto[])
-    {
+    public set setAllWitnesses(allWitnesses: LocationDto[]) {
         this.allWitnesses = allWitnesses;
     }
 
-    public set setAllSquares(allSquares: LocationDto[])
-    {
+    public set setAllSquares(allSquares: LocationDto[]) {
         this.allSquares = allSquares;
     }
 
-    public get getWitnessWeb(): WitnessWebDto
-    {
+    public get getWitnessWeb(): WitnessWebDto {
         return this.witnessWeb;
     }
 
-    public process(): void
-    {
+    public process(): void {
         if (typeof this.allWitnesses === 'undefined') {
             throw Error('[WitnessWebService] You should provide all-witnesses collection before processing');
         }
@@ -68,11 +62,10 @@ export default class WitnessWebService implements ServiceInterface
         this.analyze();
     }
 
-    private analyze(): void
-    {
+    private analyze(): void {
         let adjSqu: SquareDto[];
         this.witnessWeb.originalWitnesses.forEach(wit => {
-            let mines: number = this.boardState.getWitnessValue(wit) - this.boardState.countAdjacentConfirmedFlags(wit);
+            const mines: number = this.boardState.getWitnessValue(wit) - this.boardState.countAdjacentConfirmedFlags(wit);
 
             adjSqu = [];
             for (const squ of this.witnessWeb.squares) {
@@ -144,15 +137,14 @@ export default class WitnessWebService implements ServiceInterface
             boxCount++;
         }
 
-        let minesLeft: number = this.boardState.getMines - this.boardState.getConfirmedFlagCount;
+        const minesLeft: number = this.boardState.getMines - this.boardState.getConfirmedFlagCount;
 
         for (const b of this.witnessWeb.boxes) {
             b.calculate(minesLeft);
         }
     }
 
-    private set addWitness(wit: WitnessDto)
-    {
+    private set addWitness(wit: WitnessDto) {
         for (const w of this.witnessWeb.prunedWitnesses) {
             if (w.equivalent(wit)) {
                 if (this.boardState.getWitnessValue(w) - this.boardState.countAdjacentConfirmedFlags(w)
@@ -170,8 +162,7 @@ export default class WitnessWebService implements ServiceInterface
         this.witnessWeb.prunedWitnesses.push(wit);
     }
 
-    private setWeb(squ: SquareDto, num: number): void
-    {
+    private setWeb(squ: SquareDto, num: number): void {
         if (0 !== squ.getWebNum && num !== squ.getWebNum) {
             // log.error
         }
@@ -191,8 +182,7 @@ export default class WitnessWebService implements ServiceInterface
         }
     }
 
-    private init(): void
-    {
+    private init(): void {
         this.allWitnesses = this.boardState.getAllLivingWitnesses;
         this.allSquares = this.boardState.getUnrevealedArea(this.allWitnesses).getLocations.data;
     }

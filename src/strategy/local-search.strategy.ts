@@ -7,30 +7,27 @@ import CrunchResultDto from '../dto/crunch-result.dto';
 import WitnessDataDto from '../dto/witness-data.dto';
 import ActionDto, { ActionType } from '../dto/action.dto';
 
-export default class LocalSearchStrategy extends AbstractStrategy
-{
+export default class LocalSearchStrategy extends AbstractStrategy {
     private readonly wholeEdge: WitnessWebDto;
 
     private workRestNotFlags: boolean[];
     private workRestNotClear: boolean[];
 
-    public constructor(boardState: BoardStateDto, wholeEdge: WitnessWebDto)
-    {
+    public constructor(boardState: BoardStateDto, wholeEdge: WitnessWebDto) {
         super(boardState);
 
         this.wholeEdge = wholeEdge;
     }
 
-    protected applyStrategy()
-    {
+    protected applyStrategy() {
         let count: number = 0;
 
         let square: LocationDto[];
         let witness: LocationDto[];
 
         for (const location of this.wholeEdge.getPrunedWitnesses) {
-            let flags: number = this.boardState.countAdjacentConfirmedFlags(location);
-            let free: number = this.boardState.countAdjacentUnrevealed(location);
+            const flags: number = this.boardState.countAdjacentConfirmedFlags(location);
+            const free: number = this.boardState.countAdjacentUnrevealed(location);
 
             if (0 < free
                 && this.boardState.getWitnessValue(location) > flags
@@ -43,10 +40,10 @@ export default class LocalSearchStrategy extends AbstractStrategy
                     continue;
                 }
 
-                let output: CrunchResultDto = this.crunch(
+                const output: CrunchResultDto = this.crunch(
                     square,
                     witness,
-                    new SequentialIterator(this.boardState.getWitnessValue(location) - flags, square.length)
+                    new SequentialIterator(this.boardState.getWitnessValue(location) - flags, square.length),
                 );
 
                 count += this.checkBigTally(output, StrategyType.LocalSearch);
@@ -55,35 +52,33 @@ export default class LocalSearchStrategy extends AbstractStrategy
         }
     }
 
-    protected get getMoveMethod(): StrategyType
-    {
+    protected get getMoveMethod(): StrategyType {
         return StrategyType.LocalSearch;
     }
 
-    private crunch(square: LocationDto[], witness: LocationDto[], iterator: SequentialIterator): CrunchResultDto
-    {
-        let bigDistribution: bigint[][];
+    private crunch(square: LocationDto[], witness: LocationDto[], iterator: SequentialIterator): CrunchResultDto {
+        //let bigDistribution: Array<Array<bigint>>;
         let bign: bigint;
 
-        let witnessGood1: number[] = this.generateWitnessType(witness, square);
+        const witnessGood1: number[] = this.generateWitnessType(witness, square);
 
-        let witnessData: WitnessDataDto[] = [];
+        const witnessData: WitnessDataDto[] = [];
 
         for (let i: number = 0; i < witness.length; i++) {
-            let d: WitnessDataDto = new WitnessDataDto();
+            const d: WitnessDataDto = new WitnessDataDto();
 
             d.location = witness[i];
             d.witnessGood = witnessGood1[i];
             d.witnessRestClear = true;
             d.witnessRestFlag = true;
             d.currentFlags = this.boardState.countAdjacentConfirmedFlags(d.location);
-            d.alwaysSatisfied = iterator.witnessAlwaysSatisfied(d.location);
+            d.alwaysSatisfied = iterator.isWitnessAlwaysSatisfied(d.location);
 
             witnessData[i] = d;
         }
 
         let sample: number[] = iterator.getSample();
-        let tally: number[] = new Array<number>(square.length);
+        const tally: number[] = new Array<number>(square.length);
 
         for (let i: number = 0; i < tally.length; i++) {
             tally[i] = 0;
@@ -96,8 +91,8 @@ export default class LocalSearchStrategy extends AbstractStrategy
 
         while (null !== sample) {
             if (this.checkSample(sample, square, witnessData)) {
-                for (let i: number = 0; i < sample.length; i++) {
-                    tally[sample[i]]++;
+                for (const s of sample) {
+                    tally[s]++;
                 }
 
                 candidates++;
@@ -106,7 +101,7 @@ export default class LocalSearchStrategy extends AbstractStrategy
             sample = iterator.getSample();
         }
 
-        let bigTally: bigint[] = new Array<bigint>(square.length);
+        const bigTally: Array<bigint> = new Array<bigint>(square.length);
 
         for (let i: number = 0; i < square.length; i++) {
             bigTally[i] = ! isNaN(tally[i]) ? BigInt(tally[i]) : 0n;
@@ -114,11 +109,11 @@ export default class LocalSearchStrategy extends AbstractStrategy
 
         bign = BigInt(candidates);
 
-        let output: CrunchResultDto = new CrunchResultDto();
+        const output: CrunchResultDto = new CrunchResultDto();
 
         output.setSquare = square;
-        output.bigDistribution = bigDistribution;
-        output.originalNumMines = iterator.getBalls;
+        //output.bigDistribution = bigDistribution;
+        output.originalNumMines = iterator.ballsCount;
         output.bigGoodCandidates = bign;
         output.bigTally = bigTally;
 
@@ -137,9 +132,8 @@ export default class LocalSearchStrategy extends AbstractStrategy
         return output;
     }
 
-    private generateWitnessType(witness: LocationDto[], square: LocationDto[]): number[]
-    {
-        let result: number[] = new Array<number>(witness.length);
+    private generateWitnessType(witness: LocationDto[], square: LocationDto[]): number[] {
+        const result: number[] = new Array<number>(witness.length);
 
         for (let i: number = 0; i < witness.length; i++) {
             result[i] = 0;
@@ -163,14 +157,13 @@ export default class LocalSearchStrategy extends AbstractStrategy
         return result;
     }
 
-    private checkSample(sample: number[], square: LocationDto[], witnessData: WitnessDataDto[]): boolean
-    {
+    private checkSample(sample: number[], square: LocationDto[], witnessData: WitnessDataDto[]): boolean {
         for (let i: number = 0; i < witnessData.length; i++) {
             this.workRestNotFlags[i] = false;
             this.workRestNotClear[i] = false;
         }
 
-        let mine: LocationDto[] = new Array<LocationDto>(sample.length);
+        const mine: LocationDto[] = new Array<LocationDto>(sample.length);
 
         for (let i: number = 0; i < sample.length; i++) {
             mine[i] = square[sample[i]];
@@ -178,7 +171,7 @@ export default class LocalSearchStrategy extends AbstractStrategy
 
         for (let i: number = 0; i < witnessData.length; i++) {
             if (! witnessData[i].alwaysSatisfied) {
-                let flags1: number = witnessData[i].currentFlags;
+                const flags1: number = witnessData[i].currentFlags;
                 let flags2: number = 0;
 
                 for (let j: number = 0; j < mine.length; j++) {
@@ -187,10 +180,10 @@ export default class LocalSearchStrategy extends AbstractStrategy
                     }
                 }
 
-                let flags3 = this.boardState.getWitnessValue(witnessData[i].location);
+                const flags3 = this.boardState.getWitnessValue(witnessData[i].location);
 
                 if (flags3 < flags1 + flags2) {
-                    let d: WitnessDataDto = witnessData[0];
+                    const d: WitnessDataDto = witnessData[0];
                     witnessData[0] = witnessData[i];
                     witnessData[i] = d;
 
@@ -198,7 +191,7 @@ export default class LocalSearchStrategy extends AbstractStrategy
                 }
 
                 if (0 === witnessData[i].witnessGood && flags3 !== flags1 + flags2) {
-                    let d: WitnessDataDto = witnessData[0];
+                    const d: WitnessDataDto = witnessData[0];
                     witnessData[0] = witnessData[i];
                     witnessData[i] = d;
 
@@ -231,8 +224,7 @@ export default class LocalSearchStrategy extends AbstractStrategy
         return true;
     }
 
-    private checkBigTally(output: CrunchResultDto, method: StrategyType): number
-    {
+    private checkBigTally(output: CrunchResultDto, method: StrategyType): number {
         let result: number = 0;
 
         if (0n === output.bigGoodCandidates) {
@@ -241,7 +233,7 @@ export default class LocalSearchStrategy extends AbstractStrategy
 
         for (let i: number = 0; i < output.bigTally.length; i++) {
             if (0.01 >= Math.abs(Number(output.bigTally[i]) - Number(output.bigGoodCandidates))) {
-                let l: LocationDto = output.getSquare[i];
+                const l: LocationDto = output.getSquare[i];
 
                 if (! this.boardState.alreadyActioned(l)) {
                     result++;
@@ -262,8 +254,7 @@ export default class LocalSearchStrategy extends AbstractStrategy
         return result;
     }
 
-    private checkWitnesses(output: CrunchResultDto, method: StrategyType): number
-    {
+    private checkWitnesses(output: CrunchResultDto, method: StrategyType): number {
         let result: number = 0;
 
         for (let i: number = 0; i < output.witnessRestFlags.length; i++) {
@@ -280,8 +271,7 @@ export default class LocalSearchStrategy extends AbstractStrategy
         return result;
     }
 
-    private restKnown(witness: LocationDto, square: LocationDto[], type: ActionType, method: StrategyType): number
-    {
+    private restKnown(witness: LocationDto, square: LocationDto[], type: ActionType, method: StrategyType): number {
         let result: number = 0;
 
         for (const l of this.boardState.getAdjacentSquaresIterable(witness)) {

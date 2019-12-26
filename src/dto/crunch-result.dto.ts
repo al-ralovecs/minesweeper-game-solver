@@ -1,7 +1,6 @@
 import LocationDto from './location.dto';
 
-export default class CrunchResultDto
-{
+export default class CrunchResultDto {
     private square: LocationDto[];
     public witness: LocationDto[];
 
@@ -16,24 +15,18 @@ export default class CrunchResultDto
     private weight: bigint;
     public bigGoodCandidates: bigint = 0n;
 
-    public bigTally: bigint[];
+    public bigTally: Array<bigint>;
 
-    public bigDistribution: bigint[][];
+    public bigDistribution: Array<Array<bigint>>;
 
     private bigCount: number[];
     private maxBigCount: number = 0;
 
-    public get getSquare(): LocationDto[]
-    {
+    public get getSquare(): LocationDto[] {
         return this.square;
     }
 
-    public set setSquare(square: LocationDto[])
-    {
+    public set setSquare(square: LocationDto[]) {
         this.square = square;
     }
 }
-
-/**
-
- */

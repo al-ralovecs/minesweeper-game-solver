@@ -1,12 +1,10 @@
 import Primes from './primes';
 
-export default class PrimeSieve
-{
+export default class PrimeSieve {
     private readonly composite: boolean[] = [];
     private readonly max: number;
 
-    public constructor(n: number)
-    {
+    public constructor(n: number) {
         this.max = (2 > n) ? 2 : n;
 
         for (let i: number = 0; i <= this.max + 1; i++) {
@@ -29,8 +27,7 @@ export default class PrimeSieve
         }
     }
 
-    public isPrime(n: number): boolean
-    {
+    public isPrime(n: number): boolean {
         if (1 >= n || this.max < n) {
             throw Error(`[PrimeSieve] Test value [${n}] is out of range [2..${this.max}]`);
         }
@@ -38,8 +35,7 @@ export default class PrimeSieve
         return ! this.composite[n];
     }
 
-    public getPrimesIterable(start: number, stop: number): Iterable<number>
-    {
+    public getPrimesIterable(start: number, stop: number): Iterable<number> {
         if (start > stop) {
             throw Error(`[PrimeSieve] Start [${start}] must be less or equal to stop [${stop}]`);
         }

@@ -7,15 +7,14 @@ const preferences = {
     ALLOWABLE_SOLUTIONS_MAXIMUM: 4000,
 };
 
-export default class BruteForceStrategy extends AbstractStrategy
-{
+export default class BruteForceStrategy extends AbstractStrategy {
     private readonly wholeEdge: WitnessWebDto;
     private readonly probabilityDistribution: ProbabilityDistributionDto;
 
     public constructor(
         boardState: BoardStateDto,
         wholeEdge: WitnessWebDto,
-        probabilityDistribution: ProbabilityDistributionDto
+        probabilityDistribution: ProbabilityDistributionDto,
     ) {
         super(boardState);
 
@@ -24,21 +23,18 @@ export default class BruteForceStrategy extends AbstractStrategy
     }
 
     // if the number of candidate solutions is not greater than the allowable maximum
-    protected get isStrategyApplicable(): boolean
-    {
+    protected get isStrategyApplicable(): boolean {
         return false;
 
         // return 0 > this.probabilityDistribution.finalSolutionsCount - preferences.ALLOWABLE_SOLUTIONS_MAXIMUM
         //     && ! this.probabilityDistribution.foundCertainty;
     }
 
-    protected applyStrategy(): void
-    {
+    protected applyStrategy(): void {
         // @todo: implement
     }
 
-    protected get getMoveMethod(): StrategyType
-    {
+    protected get getMoveMethod(): StrategyType {
         return StrategyType.BruteForce;
     }
 }

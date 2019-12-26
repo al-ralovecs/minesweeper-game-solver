@@ -1,8 +1,10 @@
 import ServiceInterface from '../interface/service.interface';
 
+import Binomial from '../utility/binomial';
+
 import BoardStateDto from '../dto/board-state.dto';
 import WitnessWebDto from '../dto/witness-web.dto';
-import Binomial from '../utility/binomial';
+import ProbabilityDistributionDto, { PROBABILITY_ENGINE_TOLERANCE } from '../dto/probability-distribution.dto';
 
 import WitnessDto from '../dto/witness.dto';
 import BoxDto from '../dto/box.dto';
@@ -10,10 +12,9 @@ import AreaDto from '../dto/area.dto';
 import NextWitnessDto from '../dto/next-witness.dto';
 import ProbabilityLineDto from '../dto/probability-line.dto';
 import LinkedLocationDto from '../dto/linked-location.dto';
+import CandidateLocationDto from '../dto/candidate-location.dto';
 
 import bigintDivide from '../routine/bigint.divide';
-import ProbabilityDistributionDto, {PROBABILITY_ENGINE_TOLERANCE} from '../dto/probability-distribution.dto';
-import CandidateLocationDto from '../dto/candidate-location.dto';
 
 export const SmallCombinations = [
     [ 1 ],
@@ -24,11 +25,10 @@ export const SmallCombinations = [
     [ 1, 5, 10, 10, 5, 1 ],
     [ 1, 6, 15, 20, 15, 6, 1 ],
     [ 1, 7, 21, 35, 35, 21, 7, 1 ],
-    [ 1, 8, 28, 56, 70, 56, 28, 8, 1 ]
+    [ 1, 8, 28, 56, 70, 56, 28, 8, 1 ],
 ];
 
-export default class ProbabilityEngineService implements ServiceInterface
-{
+export default class ProbabilityEngineService implements ServiceInterface {
     protected readonly boardState: BoardStateDto;
     protected readonly web: WitnessWebDto;
     protected readonly binomial: Binomial;
@@ -36,9 +36,7 @@ export default class ProbabilityEngineService implements ServiceInterface
 
     public workingProbs: ProbabilityLineDto[] = [];
     public heldProbs: ProbabilityLineDto[] = [];
-    
     public mask: boolean[];
-
     private independentGroups: number = 0;
     private recursions: number = 0;
 
@@ -46,45 +44,40 @@ export default class ProbabilityEngineService implements ServiceInterface
         boardState: BoardStateDto,
         web: WitnessWebDto,
         binomial: Binomial,
-        deadLocations: AreaDto
+        deadLocations: AreaDto,
     ) {
         this.boardState = boardState;
         this.web = web;
         this.binomial = binomial;
-        
         this.data = new ProbabilityDistributionDto(
             this.web.getBoxes,
             this.web.getPrunedWitnesses,
             this.boardState.expectedTotalMines - this.boardState.getConfirmedFlagCount,
             this.boardState.getTotalUnrevealedCount - web.getSquares.length,
-            deadLocations
+            deadLocations,
         );
     }
 
-    public get getProbabilityDistribution(): ProbabilityDistributionDto
-    {
+    public get getProbabilityDistribution(): ProbabilityDistributionDto {
         return this.data;
     }
 
-    public process(): void
-    {
+    public process(): void {
         this.generateBoxProbabilities();
         this.calculateBoxProbabilities();
     }
 
-    public processBestCandidates(): void
-    {
+    public processBestCandidates(): void {
         this.getProbabilityDistribution.bestCandidates = this.getBestCandidates(PROBABILITY_ENGINE_TOLERANCE);
     }
 
-    protected generateBoxProbabilities(): void
-    {
+    protected generateBoxProbabilities(): void {
         // an array showing which boxes have been processed
         // this iteration - none have to start with
         this.mask = new Array<boolean>(this.data.boxCount).fill(false);
 
         // an initial solution of no mines anywhere
-        let held: ProbabilityLineDto = new ProbabilityLineDto(this.data.boxCount);
+        const held: ProbabilityLineDto = new ProbabilityLineDto(this.data.boxCount);
         held.solutionCount = 1n;
         this.heldProbs.push(held);
 
@@ -109,9 +102,8 @@ export default class ProbabilityEngineService implements ServiceInterface
 
     // here we expand the localised solution to one across the whole board and
     // sum them together to create a definitive probability for each box
-    protected calculateBoxProbabilities(): void
-    {
-        let tally: bigint[] = new Array<bigint>(this.data.boxCount).fill(0n);
+    protected calculateBoxProbabilities(): void {
+        const tally: Array<bigint> = new Array<bigint>(this.data.boxCount).fill(0n);
 
         // total game tally
         let totalTally: bigint = 0n;
@@ -126,7 +118,7 @@ export default class ProbabilityEngineService implements ServiceInterface
 
             // number of ways
             // the rest of the board can be formed
-            let mult: bigint = this.binomial.getCombination(this.data.minesLeft - pl.mineCount, this.data.squaresLeft);
+            const mult: bigint = this.binomial.getCombination(this.data.minesLeft - pl.mineCount, this.data.squaresLeft);
 
             outsideTally += mult * BigInt(this.data.minesLeft - pl.mineCount) * pl.solutionCount;
 
@@ -203,7 +195,7 @@ export default class ProbabilityEngineService implements ServiceInterface
                 break;
             }
 
-            let prob: number = this.data.boxProb[b.getUID];
+            const prob: number = this.data.boxProb[b.getUID];
 
             if (living || 0.01 >= Math.abs(prob - 1)) {
                 if (hwm - prob <= 0) {
@@ -222,9 +214,8 @@ export default class ProbabilityEngineService implements ServiceInterface
         }
     }
 
-    private getBestCandidates(threshold: number): CandidateLocationDto[]
-    {
-        let best: CandidateLocationDto[] = new Array<CandidateLocationDto>();
+    private getBestCandidates(threshold: number): CandidateLocationDto[] {
+        const best: CandidateLocationDto[] = new Array<CandidateLocationDto>();
         let test: number = this.data.bestProbability;
 
         if (0 < 1 - this.data.bestProbability) {
@@ -246,8 +237,8 @@ export default class ProbabilityEngineService implements ServiceInterface
                     squ.x,
                     this.data.boxProb[i],
                     this.boardState.countAdjacentUnrevealed(squ),
-                    this.boardState.countAdjacentConfirmedFlags(squ)
-                ))
+                    this.boardState.countAdjacentConfirmedFlags(squ),
+                ));
             }
         }
 
@@ -256,12 +247,11 @@ export default class ProbabilityEngineService implements ServiceInterface
         return best;
     }
 
-    private mergeProbabilitiesWithWitness(nw: NextWitnessDto): ProbabilityLineDto[]
-    {
-        let newProbs: ProbabilityLineDto[] = [];
+    private mergeProbabilitiesWithWitness(nw: NextWitnessDto): ProbabilityLineDto[] {
+        const newProbs: ProbabilityLineDto[] = [];
 
         for (const pl of this.workingProbs) {
-            let missingMines: number = nw.witness.getMines - ProbabilityEngineService.countPlacedMines(pl, nw);
+            const missingMines: number = nw.witness.getMines - ProbabilityEngineService.countPlacedMines(pl, nw);
 
             if (0 > missingMines) {
                 // invalid
@@ -277,11 +267,15 @@ export default class ProbabilityEngineService implements ServiceInterface
         return newProbs;
     }
 
-    private distributeMissingMines(pl: ProbabilityLineDto, nw: NextWitnessDto, missingMines: number, index: number): ProbabilityLineDto[]
-    {
+    private distributeMissingMines(
+        pl: ProbabilityLineDto,
+        nw: NextWitnessDto,
+        missingMines: number,
+        index: number,
+    ): ProbabilityLineDto[] {
         this.recursions++;
 
-        let result: ProbabilityLineDto[] = [];
+        const result: ProbabilityLineDto[] = [];
 
         // if there is only one box left to put the missing mines, then
         // we have reach the end of this branch of recursion
@@ -314,11 +308,11 @@ export default class ProbabilityEngineService implements ServiceInterface
             return result;
         }
 
-        let maxToPlace: number = Math.min(nw.newBoxes[index].getMaxMines, missingMines);
+        const maxToPlace: number = Math.min(nw.newBoxes[index].getMaxMines, missingMines);
 
         for (let i: number = nw.newBoxes[index].getMinMines; i <= maxToPlace; i++) {
 
-            let npl: ProbabilityLineDto = this.extendProbabilityLine(pl, nw.newBoxes[index], i);
+            const npl: ProbabilityLineDto = this.extendProbabilityLine(pl, nw.newBoxes[index], i);
 
             result.push(...this.distributeMissingMines(npl, nw, missingMines - i, index + 1));
         }
@@ -326,8 +320,7 @@ export default class ProbabilityEngineService implements ServiceInterface
         return result;
     }
 
-    private findFirstWitness(): NextWitnessDto
-    {
+    private findFirstWitness(): NextWitnessDto {
         for (const w of this.data.witnesses) {
             if (! w.isProcessed) {
                 return new NextWitnessDto(w);
@@ -337,8 +330,7 @@ export default class ProbabilityEngineService implements ServiceInterface
         return null;
     }
 
-    private findNextWitness(prevWitness: NextWitnessDto): NextWitnessDto
-    {
+    private findNextWitness(prevWitness: NextWitnessDto): NextWitnessDto {
         // flag the last set of details as processed
         prevWitness.witness.setProcessed = true;
 
@@ -422,20 +414,19 @@ export default class ProbabilityEngineService implements ServiceInterface
     // this combines newly generated probabilities
     // with ones we have already stored
     // from other independent sets of witnesses
-    private storeProbabilities(): void
-    {
+    private storeProbabilities(): void {
         if (0 === this.workingProbs.length) {
             return;
         }
 
-        let result: ProbabilityLineDto[] = [];
+        const result: ProbabilityLineDto[] = [];
 
         // crunch the new ones down to one line per mine count
         const crunched: ProbabilityLineDto[] = this.crunchByMineCount(this.workingProbs);
 
         for (const pl of crunched) {
             for (const epl of this.heldProbs) {
-                let npl: ProbabilityLineDto = new ProbabilityLineDto(this.data.boxCount);
+                const npl: ProbabilityLineDto = new ProbabilityLineDto(this.data.boxCount);
                 npl.mineCount = pl.mineCount + epl.mineCount;
 
                 if (this.data.maxTotalMines < npl.mineCount) {
@@ -489,8 +480,7 @@ export default class ProbabilityEngineService implements ServiceInterface
         this.heldProbs.push(npl);
     }
 
-    private crunchByMineCount(target: ProbabilityLineDto[]): ProbabilityLineDto[]
-    {
+    private crunchByMineCount(target: ProbabilityLineDto[]): ProbabilityLineDto[] {
         if (0 === target.length) {
             return target;
         }
@@ -498,7 +488,7 @@ export default class ProbabilityEngineService implements ServiceInterface
         // sort the solutions by number of mines
         target.sort(ProbabilityLineDto.sortByMineCount);
 
-        let result: ProbabilityLineDto[] = [];
+        const result: ProbabilityLineDto[] = [];
 
         let mc: number = target[0].mineCount;
         let npl: ProbabilityLineDto = new ProbabilityLineDto(this.data.boxCount);
@@ -522,17 +512,16 @@ export default class ProbabilityEngineService implements ServiceInterface
 
     // calculate how many ways this solution can be generated
     // and roll them into one
-    private mergeProbabilities(npl: ProbabilityLineDto, pl: ProbabilityLineDto): void
-    {
+    private mergeProbabilities(npl: ProbabilityLineDto, pl: ProbabilityLineDto): void {
         let solutions: bigint = 1n;
 
         for (let i: number = 0; i < pl.mineBoxCount.length; i++) {
             solutions = solutions * BigInt(
-                SmallCombinations[ this.data.boxes[i].getSquares.length ][ Number(pl.mineBoxCount[i]) ]
+                SmallCombinations[ this.data.boxes[i].getSquares.length ][ Number(pl.mineBoxCount[i]) ],
             );
         }
 
-        npl.solutionCount +=solutions;
+        npl.solutionCount += solutions;
 
         for (let i: number = 0; i < pl.mineBoxCount.length; i++) {
             if (! this.mask[i]) {
@@ -549,8 +538,7 @@ export default class ProbabilityEngineService implements ServiceInterface
         }
     }
 
-    private static countPlacedMines(pl: ProbabilityLineDto, nw: NextWitnessDto): number
-    {
+    private static countPlacedMines(pl: ProbabilityLineDto, nw: NextWitnessDto): number {
         let result: bigint = 0n;
 
         for (const b of nw.oldBoxes) {
@@ -562,9 +550,8 @@ export default class ProbabilityEngineService implements ServiceInterface
 
     // create a new probability line
     // by taking the old and adding the mines to the new Box
-    private extendProbabilityLine(pl: ProbabilityLineDto, newBox: BoxDto, mines: number): ProbabilityLineDto
-    {
-        let result: ProbabilityLineDto = new ProbabilityLineDto(this.data.boxCount);
+    private extendProbabilityLine(pl: ProbabilityLineDto, newBox: BoxDto, mines: number): ProbabilityLineDto {
+        const result: ProbabilityLineDto = new ProbabilityLineDto(this.data.boxCount);
 
         result.mineCount = pl.mineCount + mines;
 
@@ -575,8 +562,7 @@ export default class ProbabilityEngineService implements ServiceInterface
         return result;
     }
     
-    private static addLinkedLocation(list: LinkedLocationDto[], box: BoxDto, linkTo: BoxDto): void
-    {
+    private static addLinkedLocation(list: LinkedLocationDto[], box: BoxDto, linkTo: BoxDto): void {
         top:
         for (const s of box.getSquares) {
             for (const ll of list) {
@@ -586,7 +572,6 @@ export default class ProbabilityEngineService implements ServiceInterface
                     continue top;
                 }
             }
-            
             list.push(new LinkedLocationDto(s.y, s.x, linkTo.getSquares));
         }
     }

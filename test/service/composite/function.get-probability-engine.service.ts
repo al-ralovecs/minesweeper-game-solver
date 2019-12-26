@@ -14,7 +14,7 @@ export default function getProbabilityEngineService(
         boardStateService.getBoardState,
         witnessWebService.getWitnessWeb,
         binomialEngine,
-        deadLocationsService.getDead
+        deadLocationsService.getData
     );
     probabilityEngineService.process();
 

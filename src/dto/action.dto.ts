@@ -3,11 +3,10 @@ import { StrategyType } from '../strategy/abstract-strategy';
 
 export enum ActionType {
     Clear,
-    Flag
+    Flag,
 }
 
-export default class ActionDto extends LocationDto
-{
+export default class ActionDto extends LocationDto {
     public type: ActionType;
     public moveMethod: StrategyType;
     public bigProbability: number;
@@ -24,13 +23,11 @@ export default class ActionDto extends LocationDto
         this.certainty = 0.01 >= Math.abs(this.bigProbability - 1);
     }
 
-    public get isCertainty(): boolean
-    {
+    public get isCertainty(): boolean {
         return this.certainty;
     }
 
-    public get getAction(): ActionType
-    {
+    public get getAction(): ActionType {
         return this.type;
     }
 }
