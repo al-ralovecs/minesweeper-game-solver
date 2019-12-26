@@ -1,19 +1,4 @@
-import PlayInterface from '../interface/play.interface';
-
-import AreaDto from '../dto/area.dto';
-import ActionDto from '../dto/action.dto';
-import BoardDto from '../dto/board.dto';
-import BoardStateDto from '../dto/board-state.dto';
-import WitnessWebDto from '../dto/witness-web.dto';
-import ProbabilityDistributionDto from '../dto/probability-distribution.dto';
-
-import Binomial from '../utility/binomial';
-import BoardStateService from '../service/board-state.service';
-import WitnessWebService from '../service/witness-web.service';
-import DeadLocationsService from '../service/dead-locations.service';
-import ProbabilityEngineService from '../service/probability-engine.service';
-
-import {AbstractStrategy, StrategyType} from '../strategy/abstract-strategy';
+import { AbstractStrategy, StrategyType } from '../strategy/abstract-strategy';
 import FirstMoveStrategy from '../strategy/first-move.strategy';
 import TrivialSearchStrategy from '../strategy/trivial-search.strategy';
 import LocalSearchStrategy from '../strategy/local-search.strategy';
@@ -26,8 +11,20 @@ import CompareSolutionsStrategy from '../strategy/compare-solutions.strategy';
 import FinalGuessStrategy from '../strategy/final-guess.strategy';
 import EvaluateLocationsService from '../service/evaluate-locations.service';
 
-export default class Play implements PlayInterface {
-    private readonly board: BoardDto;
+import Binomial from '../utility/binomial';
+import BoardStateService from '../service/board-state.service';
+import WitnessWebService from '../service/witness-web.service';
+import DeadLocationsService from '../service/dead-locations.service';
+import ProbabilityEngineService from '../service/probability-engine.service';
+
+import AreaDto from '../dto/area.dto';
+import ActionDto from '../dto/action.dto';
+import BoardDto from '../dto/board.dto';
+import BoardStateDto from '../dto/board-state.dto';
+import WitnessWebDto from '../dto/witness-web.dto';
+import ProbabilityDistributionDto from '../dto/probability-distribution.dto';
+
+export default class Play {
     private readonly binomialEngine: Binomial;
     private readonly expectedMinesCountOnBoard: number;
 
@@ -40,18 +37,17 @@ export default class Play implements PlayInterface {
 
     private currentStrategyType: StrategyType = StrategyType.FirstMove;
 
-    public constructor(board: BoardDto, binomialEngine: Binomial, expectedMinesCountOnBoard: number) {
-        this.board = board;
+    public constructor(binomialEngine: Binomial, expectedMinesCountOnBoard: number) {
         this.binomialEngine = binomialEngine;
         this.expectedMinesCountOnBoard = expectedMinesCountOnBoard;
     }
 
-    public get getNextMove(): ActionDto {
+    public getNextMove(board: BoardDto): ActionDto {
         let strategy: AbstractStrategy;
 
         this.resetStrategySequence();
 
-        this.processBoardStateService();
+        this.getBoardStateService(board).process();
         let hasMove: boolean = this.getBoardState.hasNextMove;
 
         while (! hasMove) {
@@ -243,19 +239,18 @@ export default class Play implements PlayInterface {
         }
     }
 
-    private processBoardStateService(): void {
+    private getBoardStateService(board: BoardDto): BoardStateService {
         if (typeof this.boardStateService === 'undefined') {
             this.boardStateService = new BoardStateService(
-                this.board.height,
-                this.board.width,
+                board.height,
+                board.width,
                 this.expectedMinesCountOnBoard,
             );
-
-            this.boardStateService.setBoard = this.board;
             this.isWitnessWebProcessed = false;
         }
+        this.boardStateService.setBoard = board;
 
-        this.boardStateService.process();
+        return this.boardStateService;
     }
 
     private processWitnessWebService(): void {

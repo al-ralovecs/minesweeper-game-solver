@@ -8,11 +8,10 @@ import { StrategyType } from '../../src/strategy/abstract-strategy';
 
 describe('Play: TrivialSearch strategy', () => {
     test('check if provides a move', () => {
-        const board = new BoardDto(disposition);
         const binomialEngine: Binomial = new Binomial(1000000, 100);
-        const play: Play = new Play(board, binomialEngine, 16);
+        const play: Play = new Play(binomialEngine, 16);
 
-        expect(play.getNextMove).toStrictEqual(
+        expect(play.getNextMove(new BoardDto(disposition))).toStrictEqual(
             new ActionDto(new LocationDto(4, 0), ActionType.Clear, StrategyType.TrivialSearch, 1)
         );
     });

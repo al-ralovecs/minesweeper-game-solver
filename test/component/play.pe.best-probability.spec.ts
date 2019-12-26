@@ -8,11 +8,10 @@ import {StrategyType} from '../../src/strategy/abstract-strategy';
 
 describe('Play: Probability Engine results', () => {
     test('check if probability distribution matches', () => {
-        const board = new BoardDto(disposition);
         const binomialEngine: Binomial = new Binomial(1000000, 100);
-        const play: Play = new Play(board, binomialEngine, 40);
+        const play: Play = new Play(binomialEngine, 40);
 
-        expect(play.getNextMove).toStrictEqual(
+        expect(play.getNextMove(new BoardDto(disposition))).toStrictEqual(
             new ActionDto(new LocationDto(2, 7), ActionType.Clear, StrategyType.CompareRemainingSolutions, 0.925609)
         );
 

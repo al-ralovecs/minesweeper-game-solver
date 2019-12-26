@@ -8,11 +8,10 @@ import {StrategyType} from '../../src/strategy/abstract-strategy';
 
 describe('Play: LocalSearch strategy', () => {
     test('check if provides a move', () => {
-        const board = new BoardDto(disposition);
         const binomialEngine: Binomial = new Binomial(1000000, 100);
-        const play: Play = new Play(board, binomialEngine, 2);
+        const play: Play = new Play(binomialEngine, 2);
 
-        expect(play.getNextMove).toStrictEqual(
+        expect(play.getNextMove(new BoardDto(disposition))).toStrictEqual(
             new ActionDto(new LocationDto(2, 2), ActionType.Clear, StrategyType.LocalSearch, 1)
         );
     });
