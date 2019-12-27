@@ -3,11 +3,15 @@ import {BoardParserHelper} from "../helper/board-parser.helper";
 export enum GameServerResponseType {
     NewGame,
     Map,
+    TileCleared,
+    GotMine,
+    Win,
 }
 
 export class GameServerResponseDto
 {
     type: GameServerResponseType;
+    password: string;
     board: number[][];
 
     public constructor(response: string)
@@ -17,18 +21,33 @@ export class GameServerResponseDto
 
     private parse(response: string): void
     {
-        if ('new: OK' === response) {
-            this.type = GameServerResponseType.NewGame;
-            this.board = null;
+        this.board = null;
+        this.password = null;
 
-            return;
-        }
-
-        if (response.includes('map:')) {
-            this.type = GameServerResponseType.Map;
-            this.board = BoardParserHelper.parse(response.replace(/map:/g,'').trim());
-
-            return;
+        switch (true) {
+            case 'new: OK' === response:
+                this.type = GameServerResponseType.NewGame;
+                break;
+            case response.includes('map:'):
+                this.type = GameServerResponseType.Map;
+                this.board = BoardParserHelper.parse(
+                    response
+                        .replace(/map:/g,'')
+                        .trim(),
+                );
+                break;
+            case 'open: OK' === response:
+                this.type = GameServerResponseType.TileCleared;
+                break;
+            case 'open: You lose' === response:
+                this.type = GameServerResponseType.GotMine;
+                break;
+            case response.includes('open: You win.'):
+                this.type = GameServerResponseType.Win;
+                this.password = response
+                    .replace(/open: You win. The password for this level is:/g, '')
+                    .trim();
+                break;
         }
     }
 }

@@ -64,7 +64,7 @@ export default class Play {
             }
         }
 
-        return null === strategy ? this.getBoardState.getNextMove : strategy.getNextMove;
+        return typeof strategy === 'undefined' ? this.getBoardState.getNextMove : strategy.getNextMove;
     }
 
     public get getBinomialEngine(): Binomial {

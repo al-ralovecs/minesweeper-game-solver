@@ -9,6 +9,11 @@ import Play from "../../minesweeper/component/play";
 import Binomial from "../../minesweeper/utility/binomial";
 import BoardDto from "../../minesweeper/dto/board.dto";
 import ActionDto from "../../minesweeper/dto/action.dto";
+import {LogPayloadParserHelper} from "../helper/log-payload-parser.helper";
+
+export const MinesPerLevel = {
+    1: 16,
+};
 
 @Injectable()
 @WebSocketGateway({ upgrade: false, reconnection: true, forceNew: false })
@@ -16,17 +21,20 @@ export class GameService
 {
     @WebSocketServer()
     server: Server;
-
+    // dependencies
     private play: Play;
     private gameServer: WebSocket;
-
+    // user settings
     private silent: boolean = false;
     private level: number = 1;
     private rounds: number = 1;
-
+    private isMineCountKnown: boolean = true;
+    private maxMineCount: number;
+    // dynamic state
+    private isSessionOpened: boolean = false;
     private currentRound: number = 0;
-
-    private minesCountList: object = { 1: 16, };
+    private isFinalMap: boolean = false;
+    private attempt: number = 0;
 
     public set setSilent(silent: boolean)
     {
@@ -47,9 +55,25 @@ export class GameService
 
     public start(): void
     {
+        if (this.isSessionOpened) {
+            return;
+        }
+
+        this.isSessionOpened = true;
         this.currentRound = 0;
 
-        if (this.currentRound >= this.rounds) {
+        this.startRound();
+    }
+
+    private startRound(): void
+    {
+        this.initPlay();
+        this.currentRound++;
+        this.attempt++;
+
+        if (this.currentRound > this.rounds) {
+            this.isSessionOpened = false;
+
             return;
         }
 
@@ -84,17 +108,33 @@ export class GameService
 
         switch (response.type) {
             case GameServerResponseType.NewGame:
+            case GameServerResponseType.TileCleared:
                 this.getMap()
                     .catch((e) => this.log(LogPriority.Error, 'Failed to get the board disposition map', e));
                 break;
             case GameServerResponseType.Map:
-                this.log(LogPriority.Debug, 'A new map received', data);
-                //this.getOpen(this.getPlay.getNextMove(new BoardDto(response.board)))
-                //    .catch((e) => this.log(LogPriority.Error, 'Failed to open a new tile on board', e));
+                if (! this.isFinalMap) {
+                    this.log(LogPriority.Info, 'Game disposition', data);
+                    this.getOpen(this.getPlay.getNextMove(new BoardDto(response.board)))
+                        .catch((e) => this.log(LogPriority.Error, 'Failed to open a new tile on board', e));
+                } else {
+                    this.isFinalMap = false;
+                    this.log(LogPriority.Info, 'Final failed disposition', data);
+                    this.startRound();
+                }
+                break;
+            case GameServerResponseType.GotMine:
+                this.isFinalMap = true;
+                this.getMap()
+                    .catch((e) => this.log(LogPriority.Error, 'Failed to get the board disposition map', e));
+                break;
+            case GameServerResponseType.Win:
+                this.log(
+                    LogPriority.Success,
+                    `Level: ${this.level}. Password: ${response.password}. Attempts: ${this.attempt}. Mine count: ${this.getMines}.`);
                 break;
             default:
                 this.log(LogPriority.Debug, 'A new message from Game-server received', data);
-                //throw Error(`[GameService::processor] Invalid operation type ${response.type} provided`);
         }
     }
 
@@ -114,6 +154,8 @@ export class GameService
 
     private getOpen(move: ActionDto): Promise<any>
     {
+        this.log(LogPriority.Info, `Solver\'s next move is (${move.x}, ${move.y})`);
+
         return this.isConnected()
             .catch((e) => this.log(LogPriority.Error, 'Error on connecting to the Game-server', e))
             .then(() => this.send('open ' + move.x + ' ' + move.y));
@@ -132,48 +174,37 @@ export class GameService
 
     private get getPlay(): Play {
         if (typeof this.play === 'undefined') {
-            this.play = new Play(new Binomial(1000000, 100), this.getMines);
+            this.initPlay();
         }
 
         return this.play;
     }
 
+    private initPlay(): void
+    {
+        this.play = new Play(new Binomial(1000000, 100), this.getMines);
+    }
+
     private get getMines(): number
     {
-        return this.minesCountList[this.level];
+        if (this.isMineCountKnown) {
+            return MinesPerLevel[this.level];
+        }
+
+        return this.maxMineCount - Math.floor(this.attempt / 10);
     }
 
     private log(level: LogPriority, message: string, payload?: any): WsResponse<string>
     {
-        if (this.silent && LogPriority.Error !== level) {
+        if (this.silent && LogPriority.Error > level) {
             return;
         }
 
-        this.server.emit('logger', '[' + LogPriority[level] + '] ' + message + GameService.getPayload(payload) + '\n');
-    }
-
-    private static getPayload(payload: any): string
-    {
-        const prefix: string = '; payload: \n';
-
-        if (typeof payload === 'string') {
-            return prefix + payload;
-        }
-
-        if (typeof payload === 'undefined') {
-            return '';
-        }
-
-        if (null === payload) {
-            return '';
-        }
-
-        try {
-            return prefix + payload.toString();
-        } catch (e) {
-            //
-        }
-
-        return prefix + typeof payload;
+        this.server.emit(
+            'logger',
+            '[' + LogPriority[level] + '] ' +
+            message +
+            LogPayloadParserHelper.parse('; payload: \n', payload) + '\n',
+        );
     }
 }
