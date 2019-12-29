@@ -12,7 +12,7 @@ export class GameEventDto implements LoggerEventInterface {
         const datePart =
             date.getFullYear() + '-' +
             (date.getMonth() + 1) + '-' +
-            date.getDay() + ' ' +
+            date.getDate() + ' ' +
             date.getHours() + ':' +
             date.getMinutes() + ':' +
             date.getSeconds();

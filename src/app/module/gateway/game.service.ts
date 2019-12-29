@@ -7,11 +7,14 @@ import BoardDto from "../../../minesweeper/dto/board.dto";
 import {LoggerService} from "@nestjs/common";
 import {GameEventDto} from "../../dto/game.event.dto";
 import {StrategyType} from "../../../minesweeper/strategy/abstract-strategy";
-import WebSocket = require("ws");
 import BinomialSetupDto from "../../../minesweeper/dto/binomial-setup.dto";
+import WebSocket = require("ws");
 
 const MinesPerLevel = {
     1: 16,
+    2: 150,
+    3: 1000,
+    4: 3500,
 };
 
 class Move {
@@ -85,7 +88,7 @@ export class GameService {
         ) {
             this.log(LogPriority.Failure,
                 `Failed ${this.failureStrategies.length} times ` +
-                `over previous ${this.rounds} rounds. Total attempts ${this.attempt} played.` +
+                `over previous ${this.rounds} rounds. Total ${this.attempt} attempt(s) played. ` +
                 'Failure strategies list follows.',
                 this.failureStrategies
             );
@@ -126,6 +129,7 @@ export class GameService {
             case GameServerResponseType.GotMap:
                 if (! this.isFinalMap) {
                     this.log(LogPriority.Info, 'Game disposition', data);
+                    this.log(LogPriority.Success, '. ');
 
                     let nextMove: ActionDto;
                     try {
@@ -148,16 +152,18 @@ export class GameService {
                 } else {
                     this.isFinalMap = false;
 
-                    this.log(LogPriority.Failure, 'Final failure disposition', data);
+                    //this.log(LogPriority.Failure, 'Final failure disposition', data);
                     this.startRound();
                 }
                 break;
             case GameServerResponseType.GotMine:
                 this.isFinalMap = true;
+                this.log(LogPriority.Failure, '*\n');
                 this.log(
                     LogPriority.Failure,
                     `Failed. Attempt # ${this.attempt} ` +
-                    `on ${this.getPlay.getBoardState.width} x ${this.getPlay.getBoardState.height} board.`
+                    ` on ${this.getPlay.getBoardState.width} x ${this.getPlay.getBoardState.height} board. ` +
+                    `Mines revealed so far: ${this.getPlay.getBoardState.getConfirmedFlagCount}`
                 );
                 this.failureStrategies.push(this.roundHistory[this.roundHistory.length - 1].value.moveMethod);
 
@@ -165,9 +171,13 @@ export class GameService {
                     .catch((e) => this.log(LogPriority.Error, 'Failed to get the board disposition map', e));
                 break;
             case GameServerResponseType.Win:
+                this.log(LogPriority.Success, '*\n');
                 this.log(
                     LogPriority.Success,
-                    `Level: ${this.level}. Password: ${response.password}. Attempts: ${this.attempt}. Mine count: ${this.getMines}.`
+                    `Level: ${this.level}. ` +
+                    `Password: ${response.password}. ` +
+                    `Attempts: ${this.attempt}. ` +
+                    `Mine count: ${this.getPlay.getBoardState.getConfirmedFlagCount}.`
                 );
                 //this.startRound();
                 break;
@@ -251,7 +261,7 @@ export class GameService {
             this.attempt / 10,
         );
 
-        if (0 === this.attempt % 10) {
+        if (0 === this.attempt % 25) {
             this.log(LogPriority.Error, `Trying ${mineCount} mines ` +
                 `on ${this.getPlay.getBoardState.width} x ${this.getPlay.getBoardState.height} board.`);
         }
@@ -260,6 +270,6 @@ export class GameService {
     }
 
     private log(level: LogPriority, message: string, payload?: any): void {
-        this.logger.log(new GameEventDto(level, message, payload));
+        this.logger.log('. ' === message || '*\n' === message ? message : new GameEventDto(level, message, payload));
     }
 }

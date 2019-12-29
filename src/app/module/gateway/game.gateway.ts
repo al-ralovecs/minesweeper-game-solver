@@ -41,6 +41,9 @@ export class GameGateway implements LoggerService {
                     this.sendMessage('logger', 'Error: ' + e);
                 }
                 break;
+            case 'stop':
+                //
+                break;
             default:
                 return this.sendMessage('game', 'unrecognized directive: ' + directive);
         }
