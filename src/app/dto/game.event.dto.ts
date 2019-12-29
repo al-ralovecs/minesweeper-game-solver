@@ -1,7 +1,6 @@
-import { LoggerEventInterface } from '../interface/logger-event.interface';
-import {LogPriority} from "../enum/log.priority.enum";
+import { LogPriority } from '../enum/log.priority.enum';
 
-export class GameEventDto implements LoggerEventInterface {
+export class GameEventDto {
     public prefix: string = '. Payload: ';
 
     constructor(public readonly level: LogPriority, public readonly message: string, public readonly payload?: any) {}
