@@ -22,7 +22,7 @@ export default class FinalGuessStrategy extends AbstractStrategy {
     }
     
     protected applyStrategy(): void {
-        guess(this.boardState, this.wholeEdge, this.probabilityDistribution, this.getMoveMethod);
+        this.boardState.setAction = guess(this.boardState, this.wholeEdge, this.probabilityDistribution, this.getMoveMethod);
     }
 
     protected get getMoveMethod(): StrategyType {

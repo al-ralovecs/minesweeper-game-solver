@@ -9,6 +9,7 @@ import getWitnessWebService from '../composite/function.get-witness-web.service'
 import applyTrivialSearchStrategy from '../composite/function.apply-trivial-search.strategy';
 import applyLocalSearchStrategy from '../composite/function.apply-local-search.strategy';
 import {StrategyType} from '../../../src/minesweeper/strategy/abstract-strategy';
+import BinomialSetupDto from "../../../src/minesweeper/dto/binomial-setup.dto";
 
 export default function getService(
     disposition: number[][],
@@ -17,7 +18,7 @@ export default function getService(
     expectedOnLocal: number = 0
 ): BoardStateService {
     const boardStateService = getBoardStateService(disposition, minesTotal);
-    const binomialEngine: Binomial = new Binomial(1000000, 100);
+    const binomialEngine: Binomial = new Binomial(new BinomialSetupDto(1000000, 100));
     const witnessWebService: WitnessWebService = getWitnessWebService(boardStateService, binomialEngine);
 
     applyTrivialSearchStrategy(boardStateService, witnessWebService);

@@ -11,7 +11,7 @@ export default function pickOnEdgeMethod(
     boardState: BoardStateDto,
     probabilityDistribution: ProbabilityDistributionDto,
     moveMethod: StrategyType,
-): void {
+): ActionDto {
     const allWitnesses: LocationDto[] = boardState.getAllLivingWitnesses;
     const allWitnessedSquares: AreaDto = boardState.getUnrevealedArea(allWitnesses);
 
@@ -20,7 +20,11 @@ export default function pickOnEdgeMethod(
         .data
         .shift();
 
-    boardState.setAction = new ActionDto(
+    if (typeof picked === 'undefined' || null === picked) {
+        throw Error('[PickOnEdge] Something went wrong, none tiles picked');
+    }
+
+    return new ActionDto(
         picked,
         ActionType.Clear,
         moveMethod,

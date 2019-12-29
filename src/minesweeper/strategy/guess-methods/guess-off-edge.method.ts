@@ -6,13 +6,14 @@ import ProbabilityDistributionDto from '../../dto/probability-distribution.dto';
 
 import CandidateLocationDto from '../../dto/candidate-location.dto';
 import LocationDto from '../../dto/location.dto';
+import ActionDto from '../../dto/action.dto';
 
 export default function guessOffEdgeMethod(
     boardState: BoardStateDto,
     wholeEdge: WitnessWebDto,
     probabilityDistribution: ProbabilityDistributionDto,
     moveMethod: StrategyType,
-) {
+): ActionDto {
     const candidateList: CandidateLocationDto[] = [];
 
     for (let i: number = 0; i < boardState.height; i++) {
@@ -39,7 +40,11 @@ export default function guessOffEdgeMethod(
         }
     }
 
-    boardState.setAction = candidateList
+    if (0 === candidateList.length) {
+        throw Error('[GuessOffEdge] Something went wrong, none tiles guessed');
+    }
+
+    return candidateList
         .sort(CandidateLocationDto.sortByProbabilityFreeFlag)
         .shift()
         .buildAction(moveMethod);

@@ -9,11 +9,12 @@ import getWitnessWebService from '../composite/function.get-witness-web.service'
 import applyTrivialSearchStrategy from '../composite/function.apply-trivial-search.strategy';
 import applyLocalSearchStrategy from '../composite/function.apply-local-search.strategy';
 import getDeadLocationsService from '../composite/function.get-dead-locations.service';
+import BinomialSetupDto from "../../../src/minesweeper/dto/binomial-setup.dto";
 
 export default function getService(disposition: number[][], minesTotal: number): DeadLocationsService
 {
     const boardStateService = getBoardStateService(disposition, minesTotal);
-    const binomialEngine: Binomial = new Binomial(1000000, 100);
+    const binomialEngine: Binomial = new Binomial(new BinomialSetupDto(1000000, 100));
     const witnessWebService: WitnessWebService = getWitnessWebService(boardStateService, binomialEngine);
 
     applyTrivialSearchStrategy(boardStateService, witnessWebService);

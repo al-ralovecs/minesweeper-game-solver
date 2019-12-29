@@ -1,13 +1,18 @@
+import BinomialSetupDto from '../dto/binomial-setup.dto';
 import PrimeSieve from './prime-sieve';
 
 export default class Binomial {
-    private readonly lookupLimit: number;
-    private readonly max: number;
-    private readonly ps: PrimeSieve;
+    private lookupLimit: number;
+    private max: number;
+    private ps: PrimeSieve;
 
     private binomialLookup: Array<Array<bigint>> = [];
 
-    public constructor(max: number, lookup: number) {
+    public constructor(setup: BinomialSetupDto) {
+        this.init(setup.max, setup.lookup);
+    }
+
+    private init(max: number, lookup: number) {
         this.max = max;
         this.ps = new PrimeSieve(this.max);
         this.lookupLimit = (10 > lookup) ? 10 : lookup;

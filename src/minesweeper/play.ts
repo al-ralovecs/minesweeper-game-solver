@@ -1,44 +1,45 @@
-import { AbstractStrategy, StrategyType } from '../strategy/abstract-strategy';
-import FirstMoveStrategy from '../strategy/first-move.strategy';
-import TrivialSearchStrategy from '../strategy/trivial-search.strategy';
-import LocalSearchStrategy from '../strategy/local-search.strategy';
-import FiftyFiftyGuessStrategy from '../strategy/fifty-fifty-guess.strategy';
-import DeadGuessStrategy from '../strategy/dead-guess.strategy';
-import BruteForceStrategy from '../strategy/brute-force.strategy';
-import OffEdgeEvaluationStrategy from '../strategy/off-edge-evaluation.strategy';
-import CertainSolutionsStrategy from '../strategy/certain-solutions.strategy';
-import CompareSolutionsStrategy from '../strategy/compare-solutions.strategy';
-import FinalGuessStrategy from '../strategy/final-guess.strategy';
-import EvaluateLocationsService from '../service/evaluate-locations.service';
+import { AbstractStrategy, StrategyType } from './strategy/abstract-strategy';
+import FirstMoveStrategy from './strategy/first-move.strategy';
+import TrivialSearchStrategy from './strategy/trivial-search.strategy';
+import LocalSearchStrategy from './strategy/local-search.strategy';
+import FiftyFiftyGuessStrategy from './strategy/fifty-fifty-guess.strategy';
+import DeadGuessStrategy from './strategy/dead-guess.strategy';
+import BruteForceStrategy from './strategy/brute-force.strategy';
+import OffEdgeEvaluationStrategy from './strategy/off-edge-evaluation.strategy';
+import CertainSolutionsStrategy from './strategy/certain-solutions.strategy';
+import CompareSolutionsStrategy from './strategy/compare-solutions.strategy';
+import FinalGuessStrategy from './strategy/final-guess.strategy';
+import EvaluateLocationsService from './service/evaluate-locations.service';
 
-import Binomial from '../utility/binomial';
-import BoardStateService from '../service/board-state.service';
-import WitnessWebService from '../service/witness-web.service';
-import DeadLocationsService from '../service/dead-locations.service';
-import ProbabilityEngineService from '../service/probability-engine.service';
+import Binomial from './utility/binomial';
+import BoardStateService from './service/board-state.service';
+import WitnessWebService from './service/witness-web.service';
+import DeadLocationsService from './service/dead-locations.service';
+import ProbabilityEngineService from './service/probability-engine.service';
 
-import AreaDto from '../dto/area.dto';
-import ActionDto from '../dto/action.dto';
-import BoardDto from '../dto/board.dto';
-import BoardStateDto from '../dto/board-state.dto';
-import WitnessWebDto from '../dto/witness-web.dto';
-import ProbabilityDistributionDto from '../dto/probability-distribution.dto';
+import AreaDto from './dto/area.dto';
+import ActionDto from './dto/action.dto';
+import BoardDto from './dto/board.dto';
+import BoardStateDto from './dto/board-state.dto';
+import WitnessWebDto from './dto/witness-web.dto';
+import ProbabilityDistributionDto from './dto/probability-distribution.dto';
+import BinomialSetupDto from './dto/binomial-setup.dto';
 
 export default class Play {
-    private readonly binomialEngine: Binomial;
+    private readonly binomialSetup: BinomialSetupDto;
     private readonly expectedMinesCountOnBoard: number;
 
     private boardStateService: BoardStateService;
+    private binomialEngine: Binomial;
     private witnessWebService: WitnessWebService;
-    private isWitnessWebProcessed: boolean;
     private deadLocationsService: DeadLocationsService;
     private probabilityEngine: ProbabilityEngineService;
     private evaluateLocationsService: EvaluateLocationsService;
 
     private currentStrategyType: StrategyType = StrategyType.FirstMove;
 
-    public constructor(binomialEngine: Binomial, expectedMinesCountOnBoard: number) {
-        this.binomialEngine = binomialEngine;
+    public constructor(binomialSetup: BinomialSetupDto, expectedMinesCountOnBoard: number) {
+        this.binomialSetup = binomialSetup;
         this.expectedMinesCountOnBoard = expectedMinesCountOnBoard;
     }
 
@@ -49,6 +50,10 @@ export default class Play {
 
         this.getBoardStateService(board).process();
         let hasMove: boolean = this.getBoardState.hasNextMove;
+
+        if (! hasMove) {
+            this.resetState(board);
+        }
 
         while (! hasMove) {
             this.processAnalysis();
@@ -68,11 +73,15 @@ export default class Play {
     }
 
     public get getBinomialEngine(): Binomial {
+        if (typeof this.binomialEngine === 'undefined' || null === this.binomialEngine) {
+            this.binomialEngine = new Binomial(this.binomialSetup);
+        }
+
         return this.binomialEngine;
     }
 
     public get getBoardState(): BoardStateDto {
-        if (typeof this.boardStateService === 'undefined') {
+        if (typeof this.boardStateService === 'undefined' || null === this.boardStateService) {
             throw Error('[Play::getBoardState] Failed on attempt to get an empty BoardState');
         }
 
@@ -80,7 +89,7 @@ export default class Play {
     }
 
     public get getWitnessWeb(): WitnessWebDto {
-        if (typeof this.witnessWebService === 'undefined') {
+        if (typeof this.witnessWebService === 'undefined' || null === this.witnessWebService) {
             throw Error('[Play::getWitnessWeb] Failed on attempt to get an empty WitnessWeb');
         }
 
@@ -88,7 +97,7 @@ export default class Play {
     }
 
     public get getDeadLocations(): AreaDto {
-        if (typeof this.deadLocationsService === 'undefined') {
+        if (typeof this.deadLocationsService === 'undefined' || null === this.deadLocationsService) {
             throw Error('[Play::getDeadLocations] Failed on attempt to get an empty DeadLocations');
         }
 
@@ -96,7 +105,7 @@ export default class Play {
     }
 
     public get getProbabilityDistribution(): ProbabilityDistributionDto {
-        if (typeof this.probabilityEngine === 'undefined') {
+        if (typeof this.probabilityEngine === 'undefined' || null === this.probabilityEngine) {
             throw Error('[Play::getProbabilityDistribution] Failed on attempt to get an empty ProbabilityEngine');
         }
 
@@ -104,11 +113,11 @@ export default class Play {
     }
 
     public get getEvaluateLocationsService(): EvaluateLocationsService {
-        if (typeof this.evaluateLocationsService === 'undefined') {
+        if (typeof this.evaluateLocationsService === 'undefined' || null === this.evaluateLocationsService) {
             this.evaluateLocationsService = new EvaluateLocationsService(
                 this.getBoardState,
                 this.getWitnessWeb,
-                this.getBinomialEngine,
+                this.binomialSetup,
                 this.getProbabilityDistribution,
             );
         }
@@ -134,6 +143,17 @@ export default class Play {
         // there is no reason to implement FirstMove strategy
         // on any subsequent iteration
         this.currentStrategyType = StrategyType.TrivialSearch;
+    }
+
+    private resetState(board: BoardDto): void {
+        this.boardStateService = null;
+        this.binomialEngine = null;
+        this.witnessWebService = null;
+        this.deadLocationsService = null;
+        this.probabilityEngine = null;
+        this.evaluateLocationsService = null;
+
+        this.getBoardStateService(board).process();
     }
 
     private get getNextStrategy(): AbstractStrategy {
@@ -240,13 +260,12 @@ export default class Play {
     }
 
     private getBoardStateService(board: BoardDto): BoardStateService {
-        if (typeof this.boardStateService === 'undefined') {
+        if (typeof this.boardStateService === 'undefined' || null === this.boardStateService) {
             this.boardStateService = new BoardStateService(
                 board.height,
                 board.width,
                 this.expectedMinesCountOnBoard,
             );
-            this.isWitnessWebProcessed = false;
         }
         this.boardStateService.setBoard = board;
 
@@ -254,21 +273,17 @@ export default class Play {
     }
 
     private processWitnessWebService(): void {
-        if (typeof this.witnessWebService === 'undefined') {
+        if (typeof this.witnessWebService === 'undefined' || null === this.witnessWebService) {
             this.witnessWebService = new WitnessWebService(this.getBoardState, this.getBinomialEngine);
-
             this.witnessWebService.process();
-        } else if (! this.isWitnessWebProcessed || this.getBoardState.hasNewFlagFound) {
+        } else  {
             this.witnessWebService.setBoardState = this.getBoardState;
-
             this.witnessWebService.process();
         }
-
-        this.isWitnessWebProcessed = true;
     }
 
     private processDeadLocationsService(): void {
-        if (typeof this.deadLocationsService === 'undefined') {
+        if (typeof this.deadLocationsService === 'undefined' || null === this.deadLocationsService) {
             this.deadLocationsService = new DeadLocationsService(
                 this.getBoardState,
                 this.getWitnessWeb.getPrunedWitnesses,
@@ -279,7 +294,7 @@ export default class Play {
     }
 
     private processProbabilityEngine(): void {
-        if (typeof this.probabilityEngine === 'undefined') {
+        if (typeof this.probabilityEngine === 'undefined' || null === this.probabilityEngine) {
             this.probabilityEngine = new ProbabilityEngineService(
                 this.getBoardState,
                 this.getWitnessWeb,

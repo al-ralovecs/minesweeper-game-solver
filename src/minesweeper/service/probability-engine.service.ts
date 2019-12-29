@@ -100,7 +100,7 @@ export default class ProbabilityEngineService implements ServiceInterface {
         }
     }
 
-    // here we expand the localised solution to one across the whole board and
+    // here we expand the localised solution to one across the whole boFard and
     // sum them together to create a definitive probability for each box
     protected calculateBoxProbabilities(): void {
         const tally: Array<bigint> = new Array<bigint>(this.data.boxCount).fill(BigInt(0));

@@ -14,6 +14,7 @@ import applyTrivialSearchStrategy from '../composite/function.apply-trivial-sear
 import applyLocalSearchStrategy from '../composite/function.apply-local-search.strategy';
 import getDeadLocationsService from '../composite/function.get-dead-locations.service';
 import getProbabilityEngineService from '../composite/function.get-probability-engine.service';
+import BinomialSetupDto from "../../../src/minesweeper/dto/binomial-setup.dto";
 
 describe('ProbabilityEngineService', () => {
     test('process on adopted disposition #1', () => {
@@ -43,7 +44,7 @@ function getService(disposition: number[][]): ProbabilityEngineService
     const mines: number = 40;
 
     const boardStateService = getBoardStateService(disposition, mines);
-    const binomialEngine: Binomial = new Binomial(1000000, 100);
+    const binomialEngine: Binomial = new Binomial(new BinomialSetupDto(1000000, 100));
     const witnessWebService: WitnessWebService = getWitnessWebService(boardStateService, binomialEngine);
 
     applyTrivialSearchStrategy(boardStateService, witnessWebService);

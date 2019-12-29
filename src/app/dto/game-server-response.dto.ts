@@ -2,7 +2,7 @@ import {BoardParserHelper} from "../helper/board-parser.helper";
 
 export enum GameServerResponseType {
     NewGame,
-    Map,
+    GotMap,
     TileCleared,
     GotMine,
     Win,
@@ -29,7 +29,7 @@ export class GameServerResponseDto
                 this.type = GameServerResponseType.NewGame;
                 break;
             case response.includes('map:'):
-                this.type = GameServerResponseType.Map;
+                this.type = GameServerResponseType.GotMap;
                 this.board = BoardParserHelper.parse(
                     response
                         .replace(/map:/g,'')

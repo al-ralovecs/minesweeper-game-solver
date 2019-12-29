@@ -9,6 +9,7 @@ import WitnessWebDto from '../dto/witness-web.dto';
 import ProbabilityDistributionDto from '../dto/probability-distribution.dto';
 import EvaluatedLocationDto from '../dto/evaluated-location.dto';
 
+import BinomialSetupDto from '../dto/binomial-setup.dto';
 import ActionDto, { ActionType } from '../dto/action.dto';
 import LocationDto from '../dto/location.dto';
 import LocationSetDto from '../dto/location-set.dto';
@@ -30,7 +31,7 @@ const SORT_ORDER = EvaluatedLocationDto.sortByProgressProbability;
 export default class EvaluateLocationsService {
     private readonly boardState: BoardStateDto;
     private readonly wholeEdge: WitnessWebDto;
-    private readonly binomialEngine: Binomial;
+    private readonly binomialSetup: BinomialSetupDto;
     private readonly probabilityDistribution: ProbabilityDistributionDto;
 
     private moveMethod: StrategyType;
@@ -40,12 +41,12 @@ export default class EvaluateLocationsService {
     public constructor(
         boardState: BoardStateDto,
         wholeEdge: WitnessWebDto,
-        binomialEngine: Binomial,
+        binomialSetup: BinomialSetupDto,
         probabilityDistribution: ProbabilityDistributionDto,
     ) {
         this.boardState = boardState;
         this.wholeEdge  = wholeEdge;
-        this.binomialEngine = binomialEngine;
+        this.binomialSetup = binomialSetup;
         this.probabilityDistribution = probabilityDistribution;
     }
 
@@ -306,7 +307,7 @@ export default class EvaluateLocationsService {
 
         const witnessed: AreaDto = this.boardState.getUnrevealedArea(witnesses);
 
-        const edgeService: WitnessWebService = new WitnessWebService(this.boardState, this.binomialEngine);
+        const edgeService: WitnessWebService = new WitnessWebService(this.boardState, new Binomial(this.binomialSetup));
         edgeService.setAllWitnesses = witnesses;
         edgeService.setAllSquares = witnessed.getLocations.data;
 
@@ -320,7 +321,7 @@ export default class EvaluateLocationsService {
         const counter: SolutionCounterService = new SolutionCounterService(
             this.boardState,
             edgeService.getWitnessWeb,
-            this.binomialEngine,
+            new Binomial(this.binomialSetup),
             new AreaDto(new LocationSetDto()),
         );
         counter.getProbabilityDistribution

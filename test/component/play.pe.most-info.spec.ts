@@ -1,15 +1,15 @@
 import {disposition} from '../__fixtures__/state/16x16x40.pe.most-info.json';
 import BoardDto from '../../src/minesweeper/dto/board.dto';
-import Play from '../../src/minesweeper/component/play';
+import Play from '../../src/minesweeper/play';
 import Binomial from '../../src/minesweeper/utility/binomial';
 import ActionDto, {ActionType} from '../../src/minesweeper/dto/action.dto';
 import LocationDto from '../../src/minesweeper/dto/location.dto';
 import {StrategyType} from '../../src/minesweeper/strategy/abstract-strategy';
+import BinomialSetupDto from "../../src/minesweeper/dto/binomial-setup.dto";
 
 describe('Play: Probability Engine results', () => {
     test('check if probability distribution matches', () => {
-        const binomialEngine: Binomial = new Binomial(1000000, 100);
-        const play: Play = new Play(binomialEngine, 40);
+        const play: Play = new Play(new BinomialSetupDto(1000000, 100), 40);
 
         expect(play.getNextMove(new BoardDto(disposition))).toStrictEqual(
             new ActionDto(new LocationDto(3, 0), ActionType.Clear, StrategyType.CompareRemainingSolutions, 0.909021)
