@@ -34,8 +34,6 @@ export default class EvaluateLocationsService {
     private readonly binomialSetup: BinomialSetupDto;
     private readonly probabilityDistribution: ProbabilityDistributionDto;
 
-    private moveMethod: StrategyType;
-
     public evaluated: EvaluatedLocationDto[] = [];
 
     public constructor(
@@ -54,19 +52,7 @@ export default class EvaluateLocationsService {
         return 0 < this.evaluated.length;
     }
 
-    public set setMoveMethod(moveMethod: StrategyType) {
-        this.moveMethod = moveMethod;
-    }
-
-    public get getMoveMethod(): StrategyType {
-        if (typeof this.moveMethod === 'undefined') {
-            throw Error('[EvaluateLocationsService::getMoveMethod] Calling get method before set method was called');
-        }
-
-        return this.moveMethod;
-    }
-
-    public get getBestMove(): ActionDto {
+    public getBestMove(moveMethod: StrategyType): ActionDto {
         if (! this.hasBestMove) {
             throw Error('[EvaluateLocationsService::getBestMove] Calling method when none best move exists');
         }
@@ -78,7 +64,7 @@ export default class EvaluateLocationsService {
         return new ActionDto(
             evaluatedLocation,
             ActionType.Clear,
-            this.getMoveMethod,
+            moveMethod,
             evaluatedLocation.clearProbability,
         );
     }

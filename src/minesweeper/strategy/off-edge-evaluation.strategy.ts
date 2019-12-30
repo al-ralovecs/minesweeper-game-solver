@@ -35,8 +35,7 @@ export default class OffEdgeEvaluationStrategy extends AbstractStrategy {
             return;
         }
 
-        this.evaluateLocationsService.setMoveMethod = this.getMoveMethod;
-        this.boardState.setAction = this.evaluateLocationsService.getBestMove;
+        this.boardState.setAction = this.evaluateLocationsService.getBestMove(this.getMoveMethod);
     }
 
     protected get getMoveMethod(): StrategyType {

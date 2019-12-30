@@ -20,7 +20,7 @@ export default class ActionDto extends LocationDto {
         this.moveMethod = moveMethod;
         this.bigProbability = bigProbability;
 
-        this.certainty = 0.01 >= Math.abs(this.bigProbability - 1);
+        this.certainty = 0 === this.bigProbability - 1;
     }
 
     public get isCertainty(): boolean {

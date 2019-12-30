@@ -28,12 +28,12 @@ export default class CertainSolutionsStrategy extends AbstractStrategy {
 
 	protected applyStrategy(): void {
 		this.probabilityDistribution.bestCandidates.forEach((cl) => {
-			this.boardState.setAction = cl.buildAction(StrategyType.CertainSolutions);
+			this.boardState.setAction = cl.buildAction(this.getMoveMethod);
 		});
 		
 		if (this.probabilityDistribution.foundCertainty) {
 			this.probabilityDistribution.mines.forEach((loc) => {
-				this.boardState.setAction = new ActionDto(loc, ActionType.Flag, StrategyType.CertainSolutions, 1);
+				this.boardState.setAction = new ActionDto(loc, ActionType.Flag, this.getMoveMethod, 1);
 			});
 		}
 	}

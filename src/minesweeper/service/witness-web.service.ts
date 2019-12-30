@@ -1,5 +1,3 @@
-import ServiceInterface from '../interface/service.interface';
-
 import Binomial from '../utility/binomial';
 
 import BoardStateDto from '../dto/board-state.dto';
@@ -9,7 +7,7 @@ import SquareDto from '../dto/square.dto';
 import WitnessDto from '../dto/witness.dto';
 import BoxDto from '../dto/box.dto';
 
-export default class WitnessWebService implements ServiceInterface {
+export default class WitnessWebService {
     private boardState: BoardStateDto;
     private witnessWeb: WitnessWebDto;
 

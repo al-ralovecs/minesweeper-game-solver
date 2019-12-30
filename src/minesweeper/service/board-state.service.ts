@@ -1,5 +1,3 @@
-import ServiceInterface from '../interface/service.interface';
-
 import { StrategyType } from '../strategy/abstract-strategy';
 
 import ActionDto, {ActionType} from '../dto/action.dto';
@@ -11,7 +9,7 @@ import AdjacentSquaresDto from '../dto/adjacent-squares.dto';
 import whileLoopOverBoardDo from '../routine/while.loop-over-board.do';
 import whileLoopAroundTileDo from '../routine/while.loop-around-tile.do';
 
-export default class BoardStateService implements ServiceInterface {
+export default class BoardStateService {
     private board: BoardDto;
     private readonly boardState: BoardStateDto;
 

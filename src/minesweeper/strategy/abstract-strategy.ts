@@ -1,5 +1,3 @@
-import PlayInterface from '../interface/play.interface';
-
 import BoardStateDto from '../dto/board-state.dto';
 import ActionDto, { ActionType } from '../dto/action.dto';
 
@@ -16,7 +14,7 @@ export enum StrategyType {
     FinalGuess,
 }
 
-export abstract class AbstractStrategy implements PlayInterface {
+export abstract class AbstractStrategy {
     protected readonly moveMethod: StrategyType;
     protected readonly boardState: BoardStateDto;
 

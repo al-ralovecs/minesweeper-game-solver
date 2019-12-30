@@ -1,5 +1,3 @@
-import ServiceInterface from '../interface/service.interface';
-
 import Binomial from '../utility/binomial';
 
 import BoardStateDto from '../dto/board-state.dto';
@@ -28,7 +26,7 @@ export const SmallCombinations = [
     [ 1, 8, 28, 56, 70, 56, 28, 8, 1 ],
 ];
 
-export default class ProbabilityEngineService implements ServiceInterface {
+export default class ProbabilityEngineService {
     protected readonly boardState: BoardStateDto;
     protected readonly web: WitnessWebDto;
     protected readonly binomial: Binomial;

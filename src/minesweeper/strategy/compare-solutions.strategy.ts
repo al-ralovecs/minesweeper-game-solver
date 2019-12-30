@@ -27,8 +27,8 @@ export default class CompareSolutionsStrategy extends AbstractStrategy {
         if (! this.evaluateLocationsService.hasBestMove) {
             return;
         }
-        this.evaluateLocationsService.setMoveMethod = this.getMoveMethod;
-        this.boardState.setAction = this.evaluateLocationsService.getBestMove;
+
+        this.boardState.setAction = this.evaluateLocationsService.getBestMove(this.getMoveMethod);
     }
 
     protected get getMoveMethod(): StrategyType {

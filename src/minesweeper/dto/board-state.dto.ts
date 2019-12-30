@@ -1,5 +1,3 @@
-import PlayInterface from '../interface/play.interface';
-
 import ActionDto, { ActionType } from './action.dto';
 import LocationDto from './location.dto';
 import LocationSetDto from './location-set.dto';
@@ -7,7 +5,7 @@ import AreaDto from './area.dto';
 import AdjacentSquaresDto from './adjacent-squares.dto';
 import ChordLocationDto from './chord-location.dto';
 
-export default class BoardStateDto implements PlayInterface {
+export default class BoardStateDto {
     public readonly height: number;
     public readonly width: number;
     public readonly expectedTotalMines: number;
@@ -56,12 +54,6 @@ export default class BoardStateDto implements PlayInterface {
         return this.getActions
             .filter(a => ActionType.Clear === a.type && a.isCertainty)
             .shift();
-    }
-
-    public get hasNewFlagFound(): boolean {
-        return 0 < this.actionList
-            .filter(a => ActionType.Flag === a.type)
-            .length;
     }
 
     public get getTotalUnrevealedCount(): number {
