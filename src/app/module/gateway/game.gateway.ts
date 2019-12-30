@@ -59,7 +59,7 @@ export class GameGateway implements LoggerService {
 
     public log(message: any): void
     {
-        if (this.isDebug || (message instanceof GameEventDto && LogLevelEnum.Error > message.level)){
+        if (! this.isDebug && (message instanceof GameEventDto && LogLevelEnum.Error > message.level)){
             return;
         }
 
