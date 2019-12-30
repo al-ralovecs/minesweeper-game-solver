@@ -1,40 +1,24 @@
-import {LogPriority} from "../../enum/log.priority.enum";
-import Play from "../../../minesweeper/play";
-import {config} from "../../../config/config.json";
-import ActionDto from "../../../minesweeper/dto/action.dto";
-import {GameServerResponseDto, GameServerResponseType} from "../../dto/game-server-response.dto";
-import BoardDto from "../../../minesweeper/dto/board.dto";
-import {LoggerService} from "@nestjs/common";
-import {GameEventDto} from "../../dto/game.event.dto";
-import {StrategyType} from "../../../minesweeper/strategy/abstract-strategy";
-import BinomialSetupDto from "../../../minesweeper/dto/binomial-setup.dto";
-import WebSocket = require("ws");
+import { AbstractGameLoggerAwareService } from '../logger/abstract.game-logger-aware.service';
+import WebSocket = require('ws');
+import Play from '../../../minesweeper/play';
+import { config } from '../../../config/config.json';
 
-const MinesPerLevel = {
+import ActionDto from '../../../minesweeper/dto/action.dto';
+import BinomialSetupDto from '../../../minesweeper/dto/binomial-setup.dto';
+import BoardDto from '../../../minesweeper/dto/board.dto';
+import { StrategyType } from '../../../minesweeper/strategy/abstract-strategy';
+
+import { GameServerResponseDto, GameServerResponseType } from '../../dto/game-server-response.dto';
+import { GameMoveDto } from '../../dto/game-move.dto';
+
+const ProvisionalMinesPerLevel = {
     1: 16,
     2: 150,
     3: 1000,
     4: 3500,
 };
 
-class Move {
-    constructor(
-        public readonly step: number,
-        public readonly disposition: string,
-        public readonly value?: ActionDto,
-    ) {}
-
-    toString(): string {
-        return '\n' + this.step + '\n' +
-            this.disposition +
-            ( typeof this.value === 'undefined'
-                ? '(?, ?, ?)'
-                : `(${this.value.x}, ${this.value.y}, ${StrategyType[this.value.moveMethod]}) \n`
-            );
-    }
-}
-
-export class GameService {
+export class GameService extends AbstractGameLoggerAwareService {
     // dependency
     private server: WebSocket;
     private play: Play;
@@ -45,11 +29,9 @@ export class GameService {
     private currentRound: number;
     private attempt: number = 0;
     private isFinalMap: boolean = false;
-    // history of rounds
-    private roundHistory: Array<Move>;
+    // short-term history
+    private roundHistory: Array<GameMoveDto>;
     private failureStrategies: Array<StrategyType>;
-
-    constructor(private readonly logger: LoggerService) {}
 
     public set setLevel(level: number) {
         this.level = level;
@@ -57,6 +39,14 @@ export class GameService {
 
     public set setRounds(rounds: number) {
         this.rounds = rounds;
+    }
+
+    public get getPlay(): Play {
+        if (typeof this.play === 'undefined') {
+            this.initPlay();
+        }
+
+        return this.play;
     }
 
     public playMinesweeper(): void {
@@ -68,8 +58,6 @@ export class GameService {
             throw Error('[GameService:play] Cannot initiate a game without number of rounds to play specified');
         }
 
-        this.log(LogPriority.Debug, 'Got Play');
-
         this.start();
     }
 
@@ -77,20 +65,21 @@ export class GameService {
         this.currentRound = 0;
         this.failureStrategies = [];
 
-        this.log(LogPriority.Success, 'Start a new game');
+        this.success('The new game has started');
 
         this.startRound();
     }
 
     private startRound(): void {
+        // aimed at statistical targets in mind;
+        // possibly could be made to switch on/off
         if (this.currentRound === this.rounds
             && this.failureStrategies.length > Math.floor(0.1 * this.rounds)
         ) {
-            this.log(LogPriority.Failure,
-                `Failed ${this.failureStrategies.length} times ` +
+            this.failure(`Failed ${this.failureStrategies.length} times ` +
                 `over previous ${this.rounds} rounds. Total ${this.attempt} attempt(s) played. ` +
                 'Failure strategies list follows.',
-                this.failureStrategies
+                this.failureStrategies.map((id) => StrategyType[id])
             );
 
             this.currentRound = 0;
@@ -107,13 +96,13 @@ export class GameService {
         }
 
         this.getNewRound()
-            .catch((e) => this.log(LogPriority.Error, 'Failed to initiate the game\'s new round', e));
+            .catch((e) => this.error('Failed to initiate the game\'s new round', e));
     }
 
     private responseProcessor(data: WebSocket.Data): void
     {
         if (typeof data !== 'string') {
-            this.log(LogPriority.Error, `Invalid typeof [${typeof data}] received from Game server`);
+            this.error(`Invalid typeof [${typeof data}] received from Game server`);
 
             return;
         }
@@ -124,57 +113,40 @@ export class GameService {
             case GameServerResponseType.NewGame:
             case GameServerResponseType.TileCleared:
                 this.getMap()
-                    .catch((e) => this.log(LogPriority.Error, 'Failed to get the board disposition map', e));
+                    .catch((e) => this.error('Failed to get a board disposition map', e));
                 break;
             case GameServerResponseType.GotMap:
-                if (! this.isFinalMap) {
-                    this.log(LogPriority.Info, 'Game disposition', data);
-                    this.log(LogPriority.Success, '. ');
+                this.info('Game disposition', data);
 
-                    let nextMove: ActionDto;
-                    try {
-                        nextMove = this.getPlay.getNextMove(new BoardDto(response.board));
-                    } catch (e) {
-                        const move: Move = new Move(this.roundHistory.length, data);
-                        this.roundHistory.push(move);
+                let nextMove: ActionDto = this.getNexMoveFromPlay(response.board);
 
-                        this.log(LogPriority.Error, 'Play has throw an exception', e);
-                        this.log(LogPriority.Failure, 'Replay of the entire game', this.roundHistory);
+                if (typeof nextMove === 'undefined') {
+                    this.roundHistory.push(new GameMoveDto(this.roundHistory.length, data));
+                    this.debug('Here comes the replay of the entire game for debug', this.roundHistory);
 
-                        return;
-                    }
-
-                    const move: Move = new Move(this.roundHistory.length, data, nextMove);
-                    this.roundHistory.push(move);
-
-                    this.getOpen(nextMove)
-                        .catch((e) => this.log(LogPriority.Error, 'Failed to open a new tile on board', e));
-                } else {
-                    this.isFinalMap = false;
-
-                    //this.log(LogPriority.Failure, 'Final failure disposition', data);
-                    this.startRound();
+                    return;
                 }
+
+                this.roundHistory.push(new GameMoveDto(this.roundHistory.length, data, nextMove));
+
+                this.getOpen(nextMove)
+                    .catch((e) => this.error('Failed to open a new tile on board', e));
                 break;
             case GameServerResponseType.GotMine:
                 this.isFinalMap = true;
-                this.log(LogPriority.Failure, '*\n');
-                this.log(
-                    LogPriority.Failure,
-                    `Failed. Attempt # ${this.attempt} ` +
-                    ` on ${this.getPlay.getBoardState.width} x ${this.getPlay.getBoardState.height} board. ` +
-                    `Mines revealed so far: ${this.getPlay.getBoardState.getConfirmedFlagCount}`
+
+                this.failure(`Failed. Attempt # ${this.attempt} ` +
+                    `on ${this.getPlay.getBoardState.width} x ${this.getPlay.getBoardState.height} board. ` +
+                    `Mines revealed so far: ${this.getPlay.getBoardState.getConfirmedFlagCount}.`
                 );
+
+                // save strategies that failed over entire round of several games
                 this.failureStrategies.push(this.roundHistory[this.roundHistory.length - 1].value.moveMethod);
 
-                this.getMap()
-                    .catch((e) => this.log(LogPriority.Error, 'Failed to get the board disposition map', e));
+                this.startRound();
                 break;
             case GameServerResponseType.Win:
-                this.log(LogPriority.Success, '*\n');
-                this.log(
-                    LogPriority.Success,
-                    `Level: ${this.level}. ` +
+                this.success(`Level: ${this.level}. ` +
                     `Password: ${response.password}. ` +
                     `Attempts: ${this.attempt}. ` +
                     `Mine count: ${this.getPlay.getBoardState.getConfirmedFlagCount}.`
@@ -182,7 +154,15 @@ export class GameService {
                 //this.startRound();
                 break;
             default:
-                this.log(LogPriority.Debug, 'A new message from Game-server received', data);
+                this.error('Unrecognized message from Game-server received', data);
+        }
+    }
+
+    private getNexMoveFromPlay(board: number[][]): ActionDto {
+        try {
+            return this.getPlay.getNextMove(new BoardDto(board));
+        } catch (e) {
+            this.error('Play has throw an exception', e);
         }
     }
 
@@ -206,23 +186,23 @@ export class GameService {
     private async getNewRound(): Promise<any>
     {
         return this.isConnected()
-            .catch((e) => this.log(LogPriority.Error, 'Error on connecting to the Game-server', e))
+            .catch((e) => this.error('Error on connecting to the Game-server', e))
             .then(() => this.send('new ' + this.level));
     }
 
     private async getMap(): Promise<any>
     {
         return this.isConnected()
-            .catch((e) => this.log(LogPriority.Error, 'Error on connecting to the Game-server', e))
+            .catch((e) => this.error('Error on connecting to the Game-server', e))
             .then(() => this.send('map'));
     }
 
     private getOpen(move: ActionDto): Promise<any>
     {
-        this.log(LogPriority.Info, `Solver\'s next move is (${move.x}, ${move.y})`);
+        this.info(`Solver\'s next move is (${move.x}, ${move.y})`);
 
         return this.isConnected()
-            .catch((e) => this.log(LogPriority.Error, 'Error on connecting to the Game-server', e))
+            .catch((e) => this.error('Error on connecting to the Game-server', e))
             .then(() => this.send('open ' + move.x + ' ' + move.y));
     }
 
@@ -237,39 +217,12 @@ export class GameService {
         return Promise.resolve('ok');
     }
 
-    private get getPlay(): Play {
-        if (typeof this.play === 'undefined') {
-            this.initPlay();
-        }
-
-        return this.play;
-    }
-
     private initPlay(): void {
         this.play = new Play(new BinomialSetupDto(1000000, 100), this.getMines);
     }
 
     private get getMines(): number
     {
-        if (typeof MinesPerLevel[this.level] !== 'undefined') {
-            return MinesPerLevel[this.level];
-        }
-
-        const mineCount: number = Math.round(
-            this.getPlay.getBoardState.height * this.getPlay.getBoardState.width * 0.35,
-        ) - Math.floor(
-            this.attempt / 10,
-        );
-
-        if (0 === this.attempt % 25) {
-            this.log(LogPriority.Error, `Trying ${mineCount} mines ` +
-                `on ${this.getPlay.getBoardState.width} x ${this.getPlay.getBoardState.height} board.`);
-        }
-
-        return mineCount;
-    }
-
-    private log(level: LogPriority, message: string, payload?: any): void {
-        this.logger.log('. ' === message || '*\n' === message ? message : new GameEventDto(level, message, payload));
+        return ProvisionalMinesPerLevel[this.level];
     }
 }

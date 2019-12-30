@@ -1,4 +1,4 @@
-export class DirectiveDto
+export class GameDirectiveDto
 {
     command: string;
     count: number;

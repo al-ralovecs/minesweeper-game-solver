@@ -1,4 +1,4 @@
-export enum LogPriority {
+export enum LogLevelEnum {
     Debug,
     Info,
     Error,

@@ -1,4 +1,4 @@
-import {BoardParserHelper} from "../helper/board-parser.helper";
+import { BoardParserHelper } from '../helper/board-parser.helper';
 
 export enum GameServerResponseType {
     NewGame,

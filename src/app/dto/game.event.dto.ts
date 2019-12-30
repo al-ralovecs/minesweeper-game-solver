@@ -1,9 +1,9 @@
-import { LogPriority } from '../enum/log.priority.enum';
+import { LogLevelEnum } from '../enum/log.level.enum';
 
 export class GameEventDto {
     public prefix: string = '. Payload: ';
 
-    constructor(public readonly level: LogPriority, public readonly message: string, public readonly payload?: any) {}
+    constructor(public readonly level: LogLevelEnum, public readonly message: string, public readonly payload?: any) {}
 
     public get toString(): string {
         const date: Date = new Date();
@@ -16,7 +16,7 @@ export class GameEventDto {
             date.getMinutes() + ':' +
             date.getSeconds();
 
-        const priorityPart = ' [' + LogPriority[this.level] + ']';
+        const priorityPart = ' [' + LogLevelEnum[this.level] + ']';
         const messagePart = ' ' + this.message;
         const payloadPart = this.getPayloadParsed;
 

@@ -6,10 +6,10 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { GameService } from './game.service';
-import { DirectiveDto } from '../../dto/directive.dto';
+import { GameDirectiveDto } from '../../dto/game-directive.dto';
 import { GameEventDto } from '../../dto/game.event.dto';
-import { LoggerService } from "@nestjs/common";
-import {LogPriority} from "../../enum/log.priority.enum";
+import { LoggerService } from '@nestjs/common';
+import { LogLevelEnum } from '../../enum/log.level.enum';
 
 @WebSocketGateway()
 export class GameGateway implements LoggerService {
@@ -22,7 +22,7 @@ export class GameGateway implements LoggerService {
 
     @SubscribeMessage('game')
     async handleGame(@MessageBody() directive: string) {
-        const directiveDto: DirectiveDto = new DirectiveDto(directive);
+        const directiveDto: GameDirectiveDto = new GameDirectiveDto(directive);
 
         switch (directiveDto.command) {
             case 'silent':
@@ -38,7 +38,7 @@ export class GameGateway implements LoggerService {
                 try {
                     this.runGame(directiveDto.count);
                 } catch (e) {
-                    this.sendMessage('logger', 'Error: ' + e);
+                    return this.sendMessage('logger', 'Error: ' + e);
                 }
                 break;
             case 'stop':
@@ -59,7 +59,7 @@ export class GameGateway implements LoggerService {
 
     public log(message: any): void
     {
-        if (! this.isDebug || (message instanceof GameEventDto && LogPriority.Error > message.level)){
+        if (this.isDebug || (message instanceof GameEventDto && LogLevelEnum.Error > message.level)){
             return;
         }
 
@@ -67,36 +67,17 @@ export class GameGateway implements LoggerService {
             this.sendMessage('logger', message.toString);
         }
 
-        if (message instanceof Array) {
-            message.forEach((m) => {
-                if (typeof m === 'string') {
-                    this.sendMessage('logger', m);
-                }
-                if (typeof m === 'object') {
-                    this.sendMessage('logger', m.toString());
-                }
-            })
-        }
-
         if (typeof message === 'string') {
             this.sendMessage('logger', message);
         }
     }
 
-    error(message: any, trace?: string, context?: string): any {
-        if (message instanceof GameEventDto) {
-            this.sendMessage('logger', message.toString);
-        }
-
-        if (typeof message === 'string') {
-            this.sendMessage('logger', message);
-        }
+    error(message: any, trace?: string, context?: string): void {
+        //
     }
 
-    warn(message: any, context?: string): any {
-        if (message instanceof GameEventDto) {
-            this.sendMessage('logger', message.toString);
-        }
+    warn(message: any, context?: string): void {
+        //
     }
 
     private runGame(rounds: number): void
@@ -108,7 +89,7 @@ export class GameGateway implements LoggerService {
         try {
             this.gameService.playMinesweeper();
         } catch (e) {
-            this.error('GameService has thrown an exception: ' + e);
+            this.log('GameService has thrown an exception: ' + (typeof e === 'string' ? e : ''));
         } finally {
             this.gameService = null;
         }
