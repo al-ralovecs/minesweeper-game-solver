@@ -17,7 +17,7 @@ describe('Play: on Dec. 29, at 0:03', () => {
         );
 
         expect(play.getNextMove(new BoardDto(BoardParserHelper.parse(dynamicDisposition[1])))).toStrictEqual(
-            new ActionDto(new LocationDto(0, 0), ActionType.Clear, StrategyType.OffEdgeEvaluation, 0.926702)
+            new ActionDto(new LocationDto(0, 0), ActionType.Clear, StrategyType.OffEdgeEvaluation, 0.846154)
         );
 
         expect(play.getNextMove(new BoardDto(BoardParserHelper.parse(dynamicDisposition[2])))).toStrictEqual(

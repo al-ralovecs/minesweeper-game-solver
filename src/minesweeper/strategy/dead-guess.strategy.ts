@@ -40,7 +40,7 @@ export default class DeadGuessStrategy extends AbstractStrategy {
 
     // then just use any one
     protected applyStrategy(): void {
-        guess(this.boardState, this.wholeEdge, this.probabilityDistribution, this.getMoveMethod);
+        this.boardState.setAction = guess(this.boardState, this.wholeEdge, this.probabilityDistribution, this.getMoveMethod);
     }
 
     protected get getMoveMethod(): StrategyType {
