@@ -3,7 +3,7 @@ import { LogLevelEnum } from '../../enum/log.level.enum';
 import { GameEventDto } from '../../dto/game.event.dto';
 
 export abstract class AbstractGameLoggerAwareService {
-    protected constructor(private readonly logger: LoggerService) {}
+    constructor(private readonly logger: LoggerService) {}
 
     protected debug(message: string, payload?: any): void {
         this.log(LogLevelEnum.Debug, message, payload);
